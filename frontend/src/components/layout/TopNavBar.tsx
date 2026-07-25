@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import { useState } from 'react'
+import logo from '@/assets/logo.png'
 
 const MOBILE_TABS = [
   { to: '/dashboard',      icon: 'dashboard',   label: 'Home'      },
@@ -30,9 +31,7 @@ export function TopNavBar() {
       >
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-          <span className="material-symbols-outlined text-2xl" style={{ color: 'var(--color-primary)', fontVariationSettings: "'FILL' 1" }}>
-            school
-          </span>
+          <img src={logo} alt="DevPrep AI logo" className="h-8 w-8 object-contain" />
           <span className="font-bold text-lg tracking-tight" style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-on-surface)' }}>
             DevPrep<span style={{ color: 'var(--color-primary)' }}>AI</span>
           </span>
