@@ -1,0 +1,225 @@
+{
+  "System Design Case Scenarios": [
+    {
+      "scenario": "Design a URL Shortening Service (like Bitly)",
+      "key_points_to_cover": [
+        "How to generate unique short codes (hashing, base62 encoding, counter-based)",
+        "Database schema for mapping short URLs to long URLs",
+        "Handling collisions in generated codes",
+        "Read-heavy vs write-heavy traffic and caching strategy",
+        "Redirect performance (HTTP 301 vs 302)",
+        "Analytics tracking (click counts) without slowing down redirects",
+        "Scaling with sharding/partitioning as data grows"
+      ]
+    },
+    {
+      "scenario": "Design a Rate Limiter for a Public API",
+      "key_points_to_cover": [
+        "Algorithms: token bucket, leaky bucket, fixed window, sliding window log/counter",
+        "Where to enforce it: API gateway vs application layer",
+        "Storing counters in a fast store like Redis",
+        "Per-user vs per-IP vs per-API-key limiting",
+        "Handling distributed rate limiting across multiple servers",
+        "Returning proper HTTP 429 responses with retry-after headers"
+      ]
+    },
+    {
+      "scenario": "Design a Chat Application (like WhatsApp or Slack)",
+      "key_points_to_cover": [
+        "Real-time messaging using WebSockets vs long polling",
+        "Message delivery guarantees (at-least-once vs exactly-once)",
+        "Storing chat history and pagination for old messages",
+        "Online/offline presence tracking",
+        "Group chat fan-out strategy",
+        "Push notifications for offline users",
+        "End-to-end encryption considerations"
+      ]
+    },
+    {
+      "scenario": "Design a News Feed System (like Facebook or Twitter/X)",
+      "key_points_to_cover": [
+        "Fan-out on write vs fan-out on read for feed generation",
+        "Handling celebrity/high-follower accounts (hybrid approach)",
+        "Ranking algorithm considerations (chronological vs engagement-based)",
+        "Caching the feed for fast retrieval",
+        "Pagination and infinite scroll implementation",
+        "Consistency vs latency trade-offs"
+      ]
+    },
+    {
+      "scenario": "Design a Notification System (email, SMS, push)",
+      "key_points_to_cover": [
+        "Using a message queue (Kafka/RabbitMQ) to decouple senders and receivers",
+        "Handling retries and failures for third-party providers",
+        "Rate limiting to avoid spamming users",
+        "Prioritization of notification types (transactional vs promotional)",
+        "Batching notifications to reduce load",
+        "Tracking delivery status and read receipts"
+      ]
+    },
+    {
+      "scenario": "Design an E-commerce Checkout & Inventory System",
+      "key_points_to_cover": [
+        "Preventing overselling of limited stock (pessimistic vs optimistic locking)",
+        "Handling concurrent purchase requests for the same item",
+        "Order state machine (pending, confirmed, shipped, cancelled)",
+        "Payment gateway integration and idempotency for payment retries",
+        "Cart expiration and inventory reservation windows",
+        "Handling flash sales / high-traffic spikes"
+      ]
+    },
+    {
+      "scenario": "Design a File Storage and Sharing Service (like Google Drive/Dropbox)",
+      "key_points_to_cover": [
+        "Chunking large files for upload/download",
+        "Storing file metadata vs actual file blobs (object storage like S3)",
+        "Versioning and conflict resolution for simultaneous edits",
+        "Sharing permissions and access control",
+        "Deduplication of identical files",
+        "Sync across multiple devices"
+      ]
+    },
+    {
+      "scenario": "Design a Ride-Sharing System (like Uber/Careem)",
+      "key_points_to_cover": [
+        "Matching riders with nearby drivers (geospatial indexing, quad-trees/geohashing)",
+        "Real-time location tracking and updates",
+        "Handling surge pricing logic",
+        "Trip state management (requested, accepted, in-progress, completed)",
+        "Payment and fare calculation",
+        "Handling driver/rider cancellations and timeouts"
+      ]
+    },
+    {
+      "scenario": "Design a Video Streaming Service (like YouTube/Netflix)",
+      "key_points_to_cover": [
+        "Video upload, transcoding into multiple resolutions",
+        "Adaptive bitrate streaming (HLS/DASH)",
+        "CDN usage for global low-latency delivery",
+        "Storing and serving video metadata",
+        "Recommendation system considerations",
+        "View count tracking without bottlenecking playback"
+      ]
+    },
+    {
+      "scenario": "Design a Web Crawler / Search Engine Indexer",
+      "key_points_to_cover": [
+        "URL frontier management and avoiding duplicate crawling",
+        "Respecting robots.txt and crawl politeness/rate limits",
+        "Distributed crawling across multiple workers",
+        "Storing crawled content and building an inverted index",
+        "Handling dynamic/JavaScript-rendered pages",
+        "Freshness vs coverage trade-offs"
+      ]
+    },
+    {
+      "scenario": "Design a Distributed Cache (like Redis at scale)",
+      "key_points_to_cover": [
+        "Cache eviction policies (LRU, LFU, TTL-based)",
+        "Cache invalidation strategies (write-through, write-back, write-around)",
+        "Handling cache stampede/thundering herd problem",
+        "Consistent hashing for distributing keys across nodes",
+        "Replication for high availability",
+        "Cache-aside vs read-through patterns"
+      ]
+    },
+    {
+      "scenario": "Design a Payment Processing System",
+      "key_points_to_cover": [
+        "Ensuring idempotency for retried payment requests",
+        "Handling distributed transactions across services (saga pattern)",
+        "Reconciliation between internal ledger and payment gateway",
+        "Fraud detection considerations",
+        "PCI compliance and secure handling of card data",
+        "Handling partial failures and rollback"
+      ]
+    },
+    {
+      "scenario": "Design a Job Scheduler / Task Queue System",
+      "key_points_to_cover": [
+        "Storing and prioritizing scheduled jobs",
+        "Handling job retries and dead-letter queues for failed jobs",
+        "Distributed locking to avoid duplicate job execution",
+        "Scaling workers horizontally to process jobs in parallel",
+        "Delayed/cron-based scheduling implementation",
+        "Monitoring job status and failure alerting"
+      ]
+    },
+    {
+      "scenario": "Design an Autocomplete / Typeahead Search Feature",
+      "key_points_to_cover": [
+        "Using a trie data structure for prefix matching",
+        "Ranking suggestions by popularity/frequency",
+        "Updating the trie/index in near real-time",
+        "Caching top results for common prefixes",
+        "Handling typos and fuzzy matching",
+        "Scaling to low-latency responses under high query volume"
+      ]
+    },
+    {
+      "scenario": "Design a Booking System (like hotel or movie ticket booking)",
+      "key_points_to_cover": [
+        "Preventing double-booking of the same seat/room (locking strategy)",
+        "Handling temporary holds during checkout flow",
+        "Consistency requirements vs availability trade-offs",
+        "Search and filtering across large inventory",
+        "Handling cancellations and refund logic",
+        "Scaling for high-demand events (e.g., popular concert on-sale)"
+      ]
+    },
+    {
+      "scenario": "Design a Distributed Logging/Monitoring System",
+      "key_points_to_cover": [
+        "Collecting logs from many services without impacting performance",
+        "Using a message queue to buffer log ingestion",
+        "Storing logs for fast search (e.g., Elasticsearch-like indexing)",
+        "Setting up alerting thresholds and anomaly detection",
+        "Log retention and archival policy",
+        "Correlating logs across microservices with trace IDs"
+      ]
+    },
+    {
+      "scenario": "Design an Online Voting/Polling System",
+      "key_points_to_cover": [
+        "Preventing duplicate votes (per user/device/IP)",
+        "Handling high read traffic for live vote counts",
+        "Ensuring vote integrity and auditability",
+        "Real-time result updates (WebSockets/polling)",
+        "Handling sudden traffic spikes during high-profile events",
+        "Data consistency vs eventual consistency trade-offs for counters"
+      ]
+    },
+    {
+      "scenario": "Design a Multi-Tenant SaaS Application Architecture",
+      "key_points_to_cover": [
+        "Data isolation strategies (separate DB per tenant vs shared DB with tenant ID)",
+        "Handling tenant-specific customization and configuration",
+        "Scaling considerations for tenants with very different usage patterns",
+        "Authentication/authorization across tenant boundaries",
+        "Billing and usage metering per tenant",
+        "Backup and disaster recovery per tenant vs globally"
+      ]
+    },
+    {
+      "scenario": "Design a Real-Time Collaborative Document Editor (like Google Docs)",
+      "key_points_to_cover": [
+        "Conflict resolution using Operational Transformation (OT) or CRDTs",
+        "Real-time sync via WebSockets",
+        "Handling offline edits and reconciliation on reconnect",
+        "Storing document version history",
+        "Cursor/presence indicators for collaborators",
+        "Scaling concurrent editing sessions"
+      ]
+    },
+    {
+      "scenario": "Design a WhatsApp-style Read Receipt & Delivery Status System",
+      "key_points_to_cover": [
+        "Tracking message states: sent, delivered, read",
+        "Handling status updates when recipient is offline",
+        "Batch updating read receipts to reduce write load",
+        "Ensuring correct ordering of status transitions",
+        "Privacy considerations (allowing users to disable read receipts)"
+      ]
+    }
+  ]
+}

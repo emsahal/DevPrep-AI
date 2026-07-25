@@ -1,0 +1,266 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String   @id @default(uuid())
+  email          String   @unique
+  name           String
+  password       String
+  avatar         String?
+  refreshToken   String?
+  role           String   @default("user")
+  emailVerified  Boolean  @default(false)
+  learningPrefs  Json?
+  completedTopics String[] @default([])
+  savedResources String[] @default([])
+  bookmarks      String[] @default([])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  sessions       Session[]
+  quizAttempts   QuizAttempt[]
+  flashcardProgress FlashcardProgress[]
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+model Technology {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  slug        String   @unique
+  description String
+  category    String
+  icon        String
+  color       String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  topics      Topic[]
+  learningPaths LearningPathTechnology[]
+}
+
+model Topic {
+  id           String   @id @default(uuid())
+  title        String
+  slug         String   @unique
+  description  String
+  content      String   @db.Text
+  category     String
+  technologyId String
+  difficulty   String   @default("beginner")
+  order        Int      @default(0)
+  isPublished  Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  technology     Technology     @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+  quizzes        Quiz[]
+  flashCards     FlashCard[]
+  revisionNotes  RevisionNote[]
+  userProgress   UserProgress[]
+
+  @@index([technologyId])
+  @@index([slug])
+}
+
+model Quiz {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  topicId     String
+  difficulty  String   @default("beginner")
+  timeLimit   Int      @default(300)
+  passingScore Int     @default(70)
+  isDaily     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  topic        Topic           @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  questions    Question[]
+  quizAttempts QuizAttempt[]
+
+  @@index([topicId])
+}
+
+model Question {
+  id            String   @id @default(uuid())
+  quizId        String
+  text          String
+  options       String[]
+  correctAnswer Int
+  explanation   String?
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+
+  quiz          Quiz          @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([quizId])
+}
+
+model QuizAttempt {
+  id        String   @id @default(uuid())
+  userId    String
+  quizId    String
+  score     Int
+  answers   Json?
+  completed Boolean  @default(false)
+  startedAt DateTime @default(now())
+  completedAt DateTime?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([quizId])
+}
+
+model FlashCard {
+  id         String   @id @default(uuid())
+  front      String
+  back       String
+  topicId    String
+  difficulty String   @default("beginner")
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  topic      Topic              @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  progress   FlashcardProgress[]
+
+  @@index([topicId])
+}
+
+model FlashcardProgress {
+  id        String   @id @default(uuid())
+  userId    String
+  flashCardId String
+  status    String   @default("new") // new, learning, reviewing, mastered
+  easeFactor Float    @default(2.5)
+  interval  Int      @default(0)
+  repetitions Int    @default(0)
+  nextReview DateTime?
+  lastReview DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  flashCard FlashCard @relation(fields: [flashCardId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, flashCardId])
+  @@index([userId])
+  @@index([flashCardId])
+}
+
+model RevisionNote {
+  id        String   @id @default(uuid())
+  title     String
+  content   String   @db.Text
+  summary   String?
+  topicId   String
+  userId    String?
+  type      String   @default("note") // note, summary, cheat-sheet
+  tags      String[] @default([])
+  isPublic  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  topic     Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@index([topicId])
+  @@index([userId])
+}
+
+model LearningPath {
+  id          String   @id @default(uuid())
+  title       String   @unique
+  slug        String   @unique
+  description String
+  icon        String   @default("book-open")
+  color       String   @default("from-blue-500 to-cyan-500")
+  category    String   @default("development")
+  difficulty  String   @default("beginner")
+  estimatedHours Int   @default(0)
+  topicCount  Int      @default(0)
+  order       Int      @default(0)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  technologies LearningPathTechnology[]
+}
+
+model LearningPathTechnology {
+  id             String @id @default(uuid())
+  learningPathId String
+  technologyId   String
+  order          Int    @default(0)
+
+  learningPath LearningPath @relation(fields: [learningPathId], references: [id], onDelete: Cascade)
+  technology   Technology   @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+
+  @@unique([learningPathId, technologyId])
+  @@index([learningPathId])
+  @@index([technologyId])
+}
+
+model UserProgress {
+  id        String   @id @default(uuid())
+  userId    String
+  topicId   String
+  completed Boolean  @default(false)
+  score     Int?
+  timeSpent Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  topic     Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, topicId])
+  @@index([userId])
+  @@index([topicId])
+}
+
+model ChatHistory {
+  id        String   @id @default(uuid())
+  userId    String
+  sessionId String
+  role      String   // user, assistant
+  content   String   @db.Text
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId, sessionId])
+  @@index([sessionId])
+}
+
+model Bookmark {
+  id        String   @id @default(uuid())
+  userId    String
+  topicId   String?
+  noteId    String?
+  flashCardId String?
+  type      String   // topic, note, flashcard
+  createdAt DateTime @default(now())
+
+  @@unique([userId, topicId, type])
+  @@index([userId])
+}
