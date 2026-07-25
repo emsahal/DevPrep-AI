@@ -20,7 +20,7 @@ export function DashboardPage() {
 
   const isLoading = statsLoading
 
-  const token = (v: string) => ({ '--tw-color': v } as React.CSSProperties)
+
 
   if (isLoading) {
     return (
@@ -132,7 +132,7 @@ export function DashboardPage() {
                 <div className="absolute -left-[22px] top-0.5 w-4 h-4 rounded-full ring-4 flex items-center justify-center"
                      style={{
                        background: s.progress >= 100 ? 'var(--color-success)' : i === 0 ? 'var(--color-primary)' : 'var(--color-surface-container)',
-                       ringColor: 'var(--color-bg-base)',
+
                        border: s.progress < 100 && i > 0 ? '1px solid var(--color-border-muted)' : 'none',
                      }}>
                   {s.progress >= 100 && <span className="material-symbols-outlined text-[10px] font-bold" style={{ color: '#000', fontVariationSettings: "'FILL' 1" }}>check</span>}

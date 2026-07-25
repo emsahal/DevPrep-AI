@@ -23,7 +23,7 @@ console.log(findDuplicates([1, 2, 3, 2, 4, 3]));
 export function CodeAnalyzerPage() {
   const [code, setCode] = useState(DEFAULT_CODE)
 
-  const analyzeMutation = useMutation({
+  const analyzeMutation = useMutation<any, Error, void>({
     mutationFn: () => codeAnalyzerService.analyze(code),
   })
 
@@ -106,7 +106,7 @@ export function CodeAnalyzerPage() {
                 <div>
                   <h4 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--color-outline)' }}>Bugs</h4>
                   <ul className="space-y-2">
-                    {analyzeMutation.data.bugs.map((bug, i) => (
+                    {analyzeMutation.data.bugs.map((bug: string, i: number) => (
                       <li key={i} className="flex items-start gap-2 p-3 rounded-xl text-sm" style={{ background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.15)' }}>
                         <span className="material-symbols-outlined text-[16px] flex-shrink-0" style={{ color: 'var(--color-error)' }}>bug_report</span>
                         <span style={{ color: 'var(--color-on-surface-variant)' }}>{bug}</span>
@@ -120,7 +120,7 @@ export function CodeAnalyzerPage() {
                 <div>
                   <h4 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--color-outline)' }}>Improvements</h4>
                   <ul className="space-y-2">
-                    {analyzeMutation.data.improvements.map((imp, i) => (
+                    {analyzeMutation.data.improvements.map((imp: string, i: number) => (
                       <li key={i} className="flex items-start gap-2 p-3 rounded-xl text-sm" style={{ background: 'var(--color-surface-container)', border: '1px solid var(--color-border-muted)' }}>
                         <span className="material-symbols-outlined text-[16px] flex-shrink-0" style={{ color: 'var(--color-primary)' }}>tips_and_updates</span>
                         <span style={{ color: 'var(--color-on-surface-variant)' }}>{imp}</span>

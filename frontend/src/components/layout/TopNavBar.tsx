@@ -13,7 +13,7 @@ const MOBILE_TABS = [
 
 export function TopNavBar() {
   const location = useLocation()
-  const { isAuthenticated, user, logout } = useAuthStore()
+  const { isAuthenticated, user } = useAuthStore()
   const [searchOpen, setSearchOpen] = useState(false)
 
   return (
@@ -81,7 +81,7 @@ export function TopNavBar() {
               {/* Avatar */}
               <Link to="/profile">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm cursor-pointer ring-2 ring-offset-2 transition-all hover:ring-primary"
-                     style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)', ringOffsetColor: 'var(--color-bg-base)' }}>
+                     style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
                   {user?.name?.charAt(0) ?? 'U'}
                 </div>
               </Link>

@@ -66,7 +66,7 @@ export function AITutorPage() {
         streamingRef.current += chunk
         setStreamingContent(streamingRef.current)
       },
-      (sessionId) => {
+      (_sessionId) => {
         // Use ref value to ensure we have the complete content
         const finalContent = streamingRef.current
         setMessages(prev => [...prev, { role: 'assistant', text: finalContent }])

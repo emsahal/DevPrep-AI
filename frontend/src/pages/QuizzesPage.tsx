@@ -3,7 +3,7 @@ import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { quizService } from '@/services/quizService'
-import type { PaginatedResponse } from '@/types'
+
 
 const DIFF_COLOR: Record<string, string> = {
   beginner: 'var(--color-success)',
@@ -20,7 +20,7 @@ export function QuizzesPage() {
   const [page, setPage] = useState(1)
   const navigate = useNavigate()
 
-  const { data: response, isLoading } = useQuery<PaginatedResponse>({
+  const { data: response, isLoading } = useQuery<any>({
     queryKey: ['quizzes', page],
     queryFn: () => quizService.getAll({ page }),
   })
@@ -28,11 +28,11 @@ export function QuizzesPage() {
   const quizzes = response?.data ?? []
   const pagination = response?.pagination
 
-  const tags = ['All', ...new Set(quizzes.map(q => q.topic?.title ?? '').filter(Boolean))]
+  const tags: string[] = ['All', ...new Set(quizzes.map((q: any) => q.topic?.title ?? '').filter(Boolean) as string[])]
 
   const filtered = filter === 'All'
     ? quizzes
-    : quizzes.filter(q => q.topic?.title === filter)
+    : quizzes.filter((q: any) => q.topic?.title === filter)
 
   const createQuizMutation = useMutation({
     mutationFn: () => quizService.createAIQuiz({
@@ -145,7 +145,7 @@ export function QuizzesPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 animate-fade-up animation-delay-300">
-        {filtered.map(quiz => (
+        {filtered.map((quiz: any) => (
           <div key={quiz.id} className="bento-card ai-glow-border group p-6 flex flex-col gap-4">
             <div className="flex items-start justify-between">
               <div>

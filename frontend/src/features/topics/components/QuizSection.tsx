@@ -3,10 +3,10 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { CheckCircle2, XCircle, ChevronRight, RefreshCw } from 'lucide-react'
-import type { TopicQuiz } from '@/services/topicService'
+import type { Quiz } from '@/types'
 
 interface QuizSectionProps {
-  quiz: TopicQuiz
+  quiz: Quiz
 }
 
 export function QuizSection({ quiz }: QuizSectionProps) {
@@ -90,7 +90,7 @@ export function QuizSection({ quiz }: QuizSectionProps) {
       </div>
 
       <div className="space-y-2">
-        {question.options.map((option, index) => {
+        {question.options.map((option: string, index: number) => {
           const isCorrect = index === question.correctAnswer
           const isSelected = index === selectedAnswer
 

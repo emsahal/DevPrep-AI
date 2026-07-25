@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { flashcardService } from '@/services/flashcardService'
-import type { PaginatedResponse, FlashCard } from '@/types'
+
 
 export function FlashcardsPage() {
   const [page, setPage] = useState(1)
@@ -9,7 +9,7 @@ export function FlashcardsPage() {
   const [flipped, setFlipped] = useState(false)
   const [done, setDone] = useState<number[]>([])
 
-  const { data: response, isLoading } = useQuery<PaginatedResponse<FlashCard>>({
+  const { data: response, isLoading } = useQuery<any>({
     queryKey: ['flashcards', page],
     queryFn: () => flashcardService.getAll({ page, limit: 20 }),
   })

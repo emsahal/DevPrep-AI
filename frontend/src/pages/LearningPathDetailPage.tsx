@@ -29,7 +29,7 @@ export function LearningPathDetailPage() {
   )
 
   const allTopics = path.technologies.flatMap(t => t.topics)
-  const done = allTopics.filter(t => t.completed).length
+
   const pct = path.progress
 
   return (

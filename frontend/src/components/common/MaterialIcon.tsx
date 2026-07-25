@@ -32,8 +32,7 @@ const ICON_ALIASES: Record<string, string> = {
   next_js: 'deployed_code',
   node_js: 'dns',
   express_js: 'route',
-  mongodb: 'database',
-  postgresql: 'table_chart',
+
   api: 'api',
   test_tube: 'science',
   speed: 'speed',
