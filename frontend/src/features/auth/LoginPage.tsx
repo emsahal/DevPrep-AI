@@ -45,7 +45,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-bg-base text-on-surface">
+    <div className="flex h-screen overflow-hidden bg-bg-base text-on-surface">
       <section className="relative hidden w-1/2 overflow-hidden border-r border-border-subtle lg:flex lg:items-center lg:justify-center">
         <img src={backImage} alt="DevPrep AI engineering workspace" className="absolute inset-0 h-full w-full object-cover opacity-70" />
         <div className="absolute inset-0 bg-gradient-to-t from-bg-base via-bg-base/20 to-transparent" />
@@ -70,9 +70,9 @@ export function LoginPage() {
         </div>
       </section>
 
-      <section className="relative flex min-h-screen w-full flex-col justify-center overflow-hidden bg-surface-container-lowest px-gutter py-unit-12 md:px-unit-12 lg:w-1/2 xl:px-24">
+      <section className="relative flex h-screen w-full flex-col justify-center overflow-hidden bg-surface-container-lowest px-gutter py-unit-8 md:px-unit-12 lg:w-1/2 xl:px-24">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(600px_circle_at_70%_20%,rgba(139,92,246,0.12),transparent_42%),radial-gradient(500px_circle_at_10%_90%,rgba(76,215,246,0.06),transparent_35%)]" />
-        <div className="relative z-10 mb-unit-12 flex items-center gap-unit-2">
+        <div className="relative z-10 mb-unit-8 flex items-center gap-unit-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-on-primary shadow-lg shadow-primary/10">
             <Bolt className="h-5 w-5" />
           </div>
@@ -80,12 +80,12 @@ export function LoginPage() {
         </div>
 
         <div className="relative z-10 mx-auto w-full max-w-md lg:mx-0">
-          <header className="mb-unit-8">
+          <header className="mb-unit-6">
             <h2 className="mb-unit-2 text-display-lg-mobile font-bold tracking-tight md:text-display-lg">Welcome back.</h2>
             <p className="text-body-md text-on-surface-variant">Access your technical growth dashboard.</p>
           </header>
 
-          <div className="mb-unit-8 grid grid-cols-2 gap-unit-4">
+          <div className="mb-unit-6 grid grid-cols-2 gap-unit-4">
             <button type="button" className="flex items-center justify-center gap-unit-2 rounded-lg border border-border-muted bg-surface-container-lowest py-unit-3 text-body-sm font-medium transition-all hover:border-outline-variant hover:bg-surface-container active:scale-95">
               <span className="text-base font-bold">G</span>
               Google
@@ -98,7 +98,7 @@ export function LoginPage() {
             </button>
           </div>
 
-          <div className="relative mb-unit-8">
+          <div className="relative mb-unit-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-border-muted" />
             </div>
@@ -107,7 +107,7 @@ export function LoginPage() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-unit-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-unit-5">
             {error && (
               <div className="rounded-lg border border-error/30 bg-error-container/20 p-unit-3 text-body-sm text-on-error-container">
                 {error}
@@ -137,7 +137,7 @@ export function LoginPage() {
             </Button>
           </form>
 
-          <footer className="mt-unit-8 border-t border-border-muted pt-unit-8 text-center">
+          <footer className="mt-unit-6 border-t border-border-muted pt-unit-6 text-center">
             <p className="text-body-sm text-on-surface-variant">
               Don&apos;t have an account?{' '}
               <Link to="/register" className="font-semibold text-primary transition-colors hover:text-primary-container">Sign up for free</Link>
