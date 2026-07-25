@@ -1,7 +1,10 @@
 import axios from 'axios'
 
+const apiBaseUrl = import.meta.env.VITE_API_URL
+  || (import.meta.env.PROD ? 'https://devprep-ai-xxvk.onrender.com/api' : '/api')
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: apiBaseUrl,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -25,7 +28,7 @@ api.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem('refreshToken')
         if (!refreshToken) throw new Error('No refresh token')
-        const { data } = await axios.post('/api/auth/refresh', { refreshToken })
+        const { data } = await axios.post(`${apiBaseUrl}/auth/refresh`, { refreshToken })
         localStorage.setItem('accessToken', data.accessToken)
         originalRequest.headers.Authorization = `Bearer ${data.accessToken}`
         return api(originalRequest)
