@@ -1,4 +1,4 @@
-import api from '@/lib/axios'
+import api, { apiBaseUrl } from '@/lib/axios'
 
 export type AITutorAction =
   | 'explain'
@@ -53,14 +53,18 @@ export const aiTutorService = {
   ): Promise<void> {
     const token = localStorage.getItem('accessToken')
 
-    const response = await fetch('/api/ai-tutor/chat/stream', {
+    const response = await fetch(`${apiBaseUrl}/ai-tutor/chat/stream`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: JSON.stringify({ query, type, context, sessionId }),
     })
+
+    if (!response.ok) {
+      throw new Error(`AI tutor stream failed: ${response.status} ${response.statusText}`)
+    }
 
     const reader = response.body?.getReader()
     if (!reader) return

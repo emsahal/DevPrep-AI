@@ -11,7 +11,7 @@ interface TopicContentInput {
   category: string
 }
 
-function codeLanguage(technologySlug: string) {
+function codeLanguage(technologySlug: string): string {
   if (technologySlug === 'html') return 'html'
   if (technologySlug === 'css') return 'css'
   if (technologySlug === 'typescript' || technologySlug === 'react' || technologySlug === 'nextjs') return 'tsx'
@@ -22,40 +22,211 @@ function codeLanguage(technologySlug: string) {
   return 'typescript'
 }
 
-function interviewQuestions(input: TopicContentInput) {
-  return [
+function splitSentences(text: string): string[] {
+  return text
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0)
+}
+
+function capitalizeFirst(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1)
+}
+
+function formatBulletList(items: string[]): string {
+  return items
+    .map((item) => {
+      const trimmed = item.trim()
+      return `  - ${capitalizeFirst(trimmed)}`
+    })
+    .join('\n')
+}
+
+function highlightInlineCode(text: string): string {
+  const keywords = [
+    'const',
+    'let',
+    'var',
+    'function',
+    'return',
+    'if',
+    'else',
+    'for',
+    'while',
+    'try',
+    'catch',
+    'throw',
+    'async',
+    'await',
+    'import',
+    'export',
+    'from',
+    'interface',
+    'type',
+    'extends',
+    'implements',
+    'class',
+    'new',
+    'this',
+    'super',
+    'public',
+    'private',
+    'protected',
+    'readonly',
+    'static',
+    'console.log',
+    'fetch',
+    'JSON.parse',
+    'JSON.stringify',
+    'Promise',
+    'map',
+    'filter',
+    'reduce',
+    'find',
+    'includes',
+    'push',
+    'pop',
+    'shift',
+    'unshift',
+    'slice',
+    'splice',
+    'useState',
+    'useEffect',
+    'useMemo',
+    'useCallback',
+    'useRef',
+    'useContext',
+    'useReducer',
+    'createContext',
+    'React',
+    'JSX',
+    'props',
+    'state',
+    'component',
+    'hook',
+  ]
+
+  let result = text
+  for (const kw of keywords) {
+    const regex = new RegExp(`\\b${kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g')
+    result = result.replace(regex, `\`${kw}\``)
+  }
+  return result
+}
+
+function toBullets(text: string, maxBullets = 5): string {
+  const sentences = splitSentences(text)
+  const bullets = sentences.slice(0, maxBullets).map((s) => capitalizeFirst(s))
+  return formatBulletList(bullets)
+}
+
+function makeExplanation(text: string): string {
+  const sentences = splitSentences(text)
+  const intro = sentences.slice(0, 2).map((s) => capitalizeFirst(s)).join(' ')
+  const bullets = toBullets(sentences.slice(2).join(' '), 4)
+  return `${intro}\n\n${bullets}`
+}
+
+function makeCodeExplanation(text: string): string {
+  return toBullets(text, 5)
+}
+
+function interviewQuestions(input: TopicContentInput): string {
+  const questions = [
     `What problem does ${input.title} solve in a real ${input.technologyName} project?`,
     `Can you explain ${input.title} in simple words to a beginner?`,
-    `What are the most important rules or steps to remember when using ${input.title}?`,
-    `What common mistake do developers make with ${input.title}, and how would you avoid it?`,
-    `How would you test or debug a feature that uses ${input.title}?`,
-    `When would you choose this approach, and when would you use something else?`,
+    `What are the most important rules to remember when using ${input.title}?`,
+    `What common mistake do developers make with ${input.title}?`,
+    `How would you test a feature that uses ${input.title}?`,
   ]
+  return formatBulletList(questions)
 }
 
-function englishExplanation(input: TopicContentInput) {
-  return `${input.title} is an important ${input.technologyName} topic. In simple English, it means: ${input.description}
-
-You should learn it because it helps you understand how real applications are built, debugged, and improved. Do not only memorize the name. Focus on what problem it solves, when you should use it, and what can go wrong if you use it incorrectly.
-
-When reading this topic, keep three things in mind:
-
-- **Purpose**: what this concept is used for in real projects.
-- **Implementation**: how the code is written step by step.
-- **Trade-offs**: mistakes, limitations, and better alternatives.
-
-For interviews, you should be able to explain ${input.title} in your own words, write a small example, and discuss one practical edge case.`
+function englishExplanation(input: TopicContentInput): string {
+  const base = `${input.title} is a core ${input.technologyName} concept. ${input.description}. It helps you build real applications and solve practical problems. Learn when to use it and what pitfalls to avoid.`
+  return makeExplanation(base)
 }
 
-function englishCodeExplanation(input: TopicContentInput) {
-  return `The code example shows a small practical use of ${input.title}. Read it line by line instead of copying it blindly.
-
-First, identify the main structure. Then notice which values are inputs, which part performs the main logic, and what output or behavior is expected. This is the same method you should use in interviews: explain the goal, explain the code flow, then explain why this approach is safe and readable.
-
-If you want to practice further, change one input, add one edge case, and see how the code behaves. That will make the concept much easier to remember.`
+function englishCodeExplanation(input: TopicContentInput): string {
+  const base = `The code demonstrates ${input.title.toLowerCase()} in practice. Identify the main structure first. Note which values are inputs and which are outputs. Follow the logic flow step by step. Explain the goal, the flow, and why this approach works. Try changing one input to see how behavior changes.`
+  return makeCodeExplanation(base)
 }
 
-function codeExample(input: TopicContentInput) {
+function romanUrduExplanation(input: TopicContentInput): string {
+  const base = `${input.title} ${input.technologyName} ka ek zaroori concept hai. ${input.description}. Yeh aapko real apps banane aur problems solve karne mein madad karta hai. Seekhein ke kab use karna hai aur kya galtiyan avoid karni hain.`
+  return makeExplanation(base)
+}
+
+function romanUrduCodeExplanation(input: TopicContentInput): string {
+  const base = `Yeh code ${input.title.toLowerCase()} ka practical example dikhata hai. Pehle main structure samjhein. Phir inputs aur outputs identify karein. Logic flow step by step follow karein. Goal, flow, aur approach explain karein. Ek input change karke dekhein behavior kaise badalta hai.`
+  return makeCodeExplanation(base)
+}
+
+function buildContent(
+  title: string,
+  explanation: string,
+  code: string,
+  codeExplanation: string,
+  questions: string,
+  language: string
+): string {
+  return `# ${title}
+
+## Easy Explanation
+
+${explanation}
+
+## Code Example
+
+\`\`\`${language}
+${code}
+\`\`\`
+
+## Code Explanation
+
+${codeExplanation}
+
+## Interview Questions
+
+${questions}`
+}
+
+function formatDetailContent(
+  detail: { explanation: string; code: string; codeExplanation: string },
+  input: TopicContentInput,
+  language: string
+): string {
+  const romanDetail = topicDetailDataset[input.slug]
+  const explanation = romanDetail?.explanation ? makeExplanation(romanDetail.explanation) : romanUrduExplanation(input)
+  const codeExplanation = romanDetail?.codeExplanation ? makeCodeExplanation(romanDetail.codeExplanation) : romanUrduCodeExplanation(input)
+  const questions = interviewQuestions(input)
+
+  return buildContent(input.title, explanation, detail.code, codeExplanation, questions, language)
+}
+
+function englishContent(
+  detail: { explanation?: string; code: string; codeExplanation?: string },
+  input: TopicContentInput,
+  language: string
+): string {
+  const englishDetail = topicEnglishDataset[input.slug]
+  const explanation = englishDetail?.explanation ? makeExplanation(englishDetail.explanation) : englishExplanation(input)
+  const codeExplanation = englishDetail?.codeExplanation ? makeCodeExplanation(englishDetail.codeExplanation) : englishCodeExplanation(input)
+  const questions = interviewQuestions(input)
+
+  return buildContent(input.title, explanation, detail.code, codeExplanation, questions, language)
+}
+
+function fallbackContent(input: TopicContentInput, language: string): string {
+  const code = codeExample(input)
+  const explanation = englishExplanation(input)
+  const codeExplanation = englishCodeExplanation(input)
+  const questions = interviewQuestions(input)
+
+  return buildContent(input.title, explanation, code, codeExplanation, questions, language)
+}
+
+function codeExample(input: TopicContentInput): string {
   const lower = input.title.toLowerCase()
 
   if (input.technologySlug === 'html' && lower.includes('form')) {
@@ -186,68 +357,19 @@ CMD ["node", "dist/server.js"]`
 }`
 }
 
-export function generateTopicContent(input: TopicContentInput) {
+export function generateTopicContent(input: TopicContentInput): string {
   const detail = topicDetailDataset[input.slug]
   const language = codeLanguage(input.technologySlug)
 
   if (detail) {
-    const romanUrduContent = `# ${input.title}
-
-## Easy Explanation
-
-${detail.explanation}
-
-## Code Example
-
-\`\`\`${language}
-${detail.code}
-\`\`\`
-
-## Code Explanation
-
-${detail.codeExplanation}
-
-## Interview Questions
-
-${interviewQuestions(input).map((question, index) => `${index + 1}. ${question}`).join('\n')}`
-
-    const englishDetail = topicEnglishDataset[input.slug]
-    const englishExplanationText = englishDetail?.explanation ?? englishExplanation(input)
-    const englishCodeExplanationText = englishDetail?.codeExplanation ?? englishCodeExplanation(input)
-
-    const englishContent = `# ${input.title}
-
-## Easy Explanation
-
-${englishExplanationText}
-
-## Code Example
-
-\`\`\`${language}
-${detail.code}
-\`\`\`
-
-## Code Explanation
-
-${englishCodeExplanationText}
-
-## Interview Questions
-
-${interviewQuestions(input).map((question, index) => `${index + 1}. ${question}`).join('\n')}`
+    const romanUrduContent = formatDetailContent(detail, input, language)
+    const englishContentText = englishContent(detail, input, language)
 
     return `<!--LANG:roman-->
 ${romanUrduContent}
 <!--LANG:english-->
-${englishContent}`
+${englishContentText}`
   }
 
-  return `# ${input.title}
-
-## Code Example
-
-\`\`\`${language}
-${codeExample(input)}
-\`\`\`
-
-This code shows the main concept of ${input.title.toLowerCase()} in action.`
+  return fallbackContent(input, language)
 }
