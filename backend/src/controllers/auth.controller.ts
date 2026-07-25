@@ -21,6 +21,15 @@ export class AuthController {
     }
   }
 
+  async google(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await authService.google(req.body)
+      res.json(result)
+    } catch (error) {
+      next(error)
+    }
+  }
+
   async refresh(req: Request, res: Response, next: NextFunction) {
     try {
       const { refreshToken } = req.body

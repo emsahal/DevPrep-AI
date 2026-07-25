@@ -1,10 +1,20 @@
 import bcrypt from 'bcryptjs'
+import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
 import prisma from '@/utils/prisma'
 import { config } from '@/config'
 import { AppError } from '@/middleware/errorHandler'
-import type { RegisterInput, LoginInput } from '@/validators/auth'
+import type { RegisterInput, LoginInput, GoogleAuthInput } from '@/validators/auth'
 import type { Prisma } from '@prisma/client'
+
+interface GoogleTokenInfo {
+  aud?: string
+  sub?: string
+  email?: string
+  email_verified?: string | boolean
+  name?: string
+  picture?: string
+}
 
 export class AuthService {
   private generateAccessToken(userId: string, role: string): string {
@@ -23,6 +33,55 @@ export class AuthService {
     return jwt.verify(token, config.jwt.refreshSecret) as { userId: string }
   }
 
+  private userSelect = {
+    id: true,
+    name: true,
+    email: true,
+    avatar: true,
+    role: true,
+    createdAt: true,
+    updatedAt: true,
+  } satisfies Prisma.UserSelect
+
+  private async issueTokens(user: { id: string; role: string }) {
+    const accessToken = this.generateAccessToken(user.id, user.role)
+    const refreshToken = this.generateRefreshToken(user.id)
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { refreshToken: await bcrypt.hash(refreshToken, 10) },
+    })
+
+    return { accessToken, refreshToken }
+  }
+
+  private async verifyGoogleCredential(credential: string) {
+    if (!config.google.clientId) {
+      throw new AppError(500, 'Google sign-in is not configured')
+    }
+
+    const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`)
+    if (!response.ok) {
+      throw new AppError(401, 'Invalid Google credential')
+    }
+
+    const tokenInfo = await response.json() as GoogleTokenInfo
+    if (
+      tokenInfo.aud !== config.google.clientId ||
+      !tokenInfo.sub ||
+      !tokenInfo.email ||
+      tokenInfo.email_verified !== true && tokenInfo.email_verified !== 'true'
+    ) {
+      throw new AppError(401, 'Invalid Google credential')
+    }
+
+    return {
+      email: tokenInfo.email.toLowerCase(),
+      name: tokenInfo.name || tokenInfo.email.split('@')[0],
+      avatar: tokenInfo.picture,
+    }
+  }
+
   async register(input: RegisterInput) {
     const existing = await prisma.user.findUnique({ where: { email: input.email } })
     if (existing) {
@@ -36,25 +95,10 @@ export class AuthService {
         email: input.email,
         password: hashedPassword,
       },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        avatar: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      select: this.userSelect,
     })
 
-    const accessToken = this.generateAccessToken(user.id, user.role)
-    const refreshToken = this.generateRefreshToken(user.id)
-
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { refreshToken: await bcrypt.hash(refreshToken, 10) },
-    })
-
+    const { accessToken, refreshToken } = await this.issueTokens(user)
     return { user, accessToken, refreshToken }
   }
 
@@ -69,16 +113,33 @@ export class AuthService {
       throw new AppError(401, 'Invalid email or password')
     }
 
-    const accessToken = this.generateAccessToken(user.id, user.role)
-    const refreshToken = this.generateRefreshToken(user.id)
-
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { refreshToken: await bcrypt.hash(refreshToken, 10) },
-    })
+    const { accessToken, refreshToken } = await this.issueTokens(user)
 
     const { password: _, refreshToken: _r, ...userData } = user
     return { user: userData, accessToken, refreshToken }
+  }
+
+  async google(input: GoogleAuthInput) {
+    const googleUser = await this.verifyGoogleCredential(input.credential)
+
+    const user = await prisma.user.upsert({
+      where: { email: googleUser.email },
+      update: {
+        emailVerified: true,
+        avatar: googleUser.avatar,
+      },
+      create: {
+        name: googleUser.name,
+        email: googleUser.email,
+        avatar: googleUser.avatar,
+        emailVerified: true,
+        password: await bcrypt.hash(`google:${crypto.randomUUID()}`, 12),
+      },
+      select: this.userSelect,
+    })
+
+    const { accessToken, refreshToken } = await this.issueTokens(user)
+    return { user, accessToken, refreshToken }
   }
 
   async refresh(refreshToken: string) {

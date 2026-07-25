@@ -20,6 +20,10 @@ export const refreshSchema = z.object({
   refreshToken: z.string().min(1, 'Refresh token is required'),
 })
 
+export const googleAuthSchema = z.object({
+  credential: z.string().min(1, 'Google credential is required'),
+})
+
 export const changePasswordSchema = z.object({
   currentPassword: z.string().min(1, 'Current password is required'),
   newPassword: z
@@ -32,3 +36,4 @@ export const changePasswordSchema = z.object({
 
 export type RegisterInput = z.infer<typeof registerSchema>
 export type LoginInput = z.infer<typeof loginSchema>
+export type GoogleAuthInput = z.infer<typeof googleAuthSchema>

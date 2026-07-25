@@ -16,6 +16,13 @@ export const authService = {
     return data
   },
 
+  async googleSignIn(credential: string): Promise<AuthResponse> {
+    const { data } = await api.post<AuthResponse>('/auth/google', { credential })
+    localStorage.setItem('accessToken', data.accessToken)
+    localStorage.setItem('refreshToken', data.refreshToken)
+    return data
+  },
+
   async logout(): Promise<void> {
     try {
       await api.post('/auth/logout')

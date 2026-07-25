@@ -30,6 +30,10 @@ export const config = {
     baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
   },
 
+  google: {
+    clientId: process.env.GOOGLE_CLIENT_ID || '',
+  },
+
   cors: {
     frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',
   },
