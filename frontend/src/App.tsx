@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { LoginPage } from '@/features/auth/LoginPage'
 import { RegisterPage } from '@/features/auth/RegisterPage'
+import { AuthCallbackPage } from '@/features/auth/AuthCallbackPage'
 import { HomePage } from '@/pages/HomePage'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { LearningPathsPage } from '@/pages/LearningPathsPage'
@@ -52,6 +53,7 @@ export default function App() {
           <Routes>
             <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
             <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+            <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
             <Route element={<AppLayout />}>
               <Route path="/" element={<HomePage />} />

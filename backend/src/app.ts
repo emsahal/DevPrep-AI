@@ -13,6 +13,8 @@ import logger from './utils/logger'
 
 const app = express()
 
+app.set('trust proxy', 1)
+
 const swaggerSpec = swaggerJsdoc({
   definition: {
     openapi: '3.0.0',
