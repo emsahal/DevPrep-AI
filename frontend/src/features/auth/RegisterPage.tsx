@@ -55,7 +55,7 @@ export function RegisterPage() {
   }
 
   return (
-    <div className="-mt-16 flex min-h-screen bg-bg-base text-on-surface lg:-ml-60">
+    <div className="flex min-h-screen bg-bg-base text-on-surface">
       <section className="relative hidden w-1/2 flex-col justify-between overflow-hidden p-unit-12 lg:flex">
         <img src={backImage} alt="DevPrep AI neural engineering visual" className="absolute inset-0 h-full w-full object-cover opacity-60" />
         <div className="absolute inset-0 bg-gradient-to-r from-transparent to-bg-base" />

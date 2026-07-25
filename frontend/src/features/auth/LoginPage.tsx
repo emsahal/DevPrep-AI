@@ -45,7 +45,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="-mt-16 flex min-h-screen bg-bg-base text-on-surface lg:-ml-60">
+    <div className="flex min-h-screen bg-bg-base text-on-surface">
       <section className="relative hidden w-1/2 overflow-hidden border-r border-border-subtle lg:flex lg:items-center lg:justify-center">
         <img src={backImage} alt="DevPrep AI engineering workspace" className="absolute inset-0 h-full w-full object-cover opacity-70" />
         <div className="absolute inset-0 bg-gradient-to-t from-bg-base via-bg-base/20 to-transparent" />
