@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { gamificationService } from '@/services/gamificationService'
-import type { BadgeDef, UserBadge } from '@/types'
+import type { UserBadge } from '@/types'
 
 interface BadgesGridProps {
   earnedBadges: UserBadge[]
