@@ -1,6 +1,5 @@
 import express from 'express'
 import http from 'http'
-import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
@@ -17,14 +16,30 @@ import { setupDuelSocket } from './socket/duel.socket'
 const app = express()
 const server = http.createServer(app)
 
-const corsOptions: cors.CorsOptions = {
-  origin: true,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}
+// Manual CORS: sets the header unconditionally.
+// The `cors` package sometimes fails on Render due to proxy/env issues.
+app.use((req, res, next) => {
+  const origin = req.headers.origin
+  if (origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin)
+  }
+  res.setHeader('Access-Control-Allow-Credentials', 'true')
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204)
+  }
+  next()
+})
 
-const io = new Server(server, { cors: corsOptions })
+const io = new Server(server, {
+  cors: {
+    origin: true,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  },
+})
 
 setupDuelSocket(io)
 
@@ -54,7 +69,6 @@ const swaggerSpec = swaggerJsdoc({
 })
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }))
-app.use(cors(corsOptions))
 app.use(morgan(config.isDev ? 'dev' : 'combined'))
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true, limit: '10mb' }))
