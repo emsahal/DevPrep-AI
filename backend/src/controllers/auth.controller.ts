@@ -7,7 +7,7 @@ export class AuthController {
   private oauthCookieOptions = {
     httpOnly: true,
     secure: config.isProd,
-    sameSite: config.isProd ? 'none' : 'lax',
+    sameSite: config.isProd ? ('none' as const) : ('lax' as const),
     maxAge: 10 * 60 * 1000,
   }
 
