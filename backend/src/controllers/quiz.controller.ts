@@ -106,9 +106,9 @@ export class QuizController {
       res.setHeader('Connection', 'keep-alive')
       res.setHeader('X-Accel-Buffering', 'no')
 
-      // Check if it's placeholder/templated
-      const isPlaceholder = quiz.questions.length > 0 && 
-        (quiz.questions[0].text.includes('mainly about?') || quiz.questions[0].text.includes('In simple words'));
+      // Check if it's placeholder/templated or empty
+      const isPlaceholder = quiz.questions.length === 0 || 
+        (quiz.questions[0] && (quiz.questions[0].text.includes('mainly about?') || quiz.questions[0].text.includes('In simple words')));
 
       if (!isPlaceholder) {
         // Send existing questions instantly
