@@ -20,6 +20,7 @@ import { RevisionPage } from '@/pages/RevisionPage'
 import { SearchPage } from '@/pages/SearchPage'
 import { BookmarksPage } from '@/pages/BookmarksPage'
 import { InterviewPrepPage } from '@/pages/InterviewPrepPage'
+import { LeaderboardPage } from '@/pages/LeaderboardPage'
 import { InterviewPrepTopicPage } from '@/pages/InterviewPrepTopicPage'
 import { ProfilePage } from '@/pages/ProfilePage'
 import { SettingsPage } from '@/pages/SettingsPage'
@@ -74,6 +75,7 @@ export default function App() {
               <Route path="/interview-prep" element={<InterviewPrepPage />} />
               <Route path="/interview-prep/:slug" element={<InterviewPrepTopicPage />} />
               <Route path="/bookmarks" element={<ProtectedRoute><BookmarksPage /></ProtectedRoute>} />
+              <Route path="/leaderboard" element={<LeaderboardPage />} />
               <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
             </Route>

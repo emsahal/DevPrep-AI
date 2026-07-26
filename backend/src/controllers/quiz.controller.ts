@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
+import prisma from '@/utils/prisma'
 import { quizService } from '@/services/quiz.service'
+import { gamificationService } from '@/services/gamification.service'
 import type { AuthRequest } from '@/middleware/auth'
 
 export class QuizController {
@@ -39,7 +41,10 @@ export class QuizController {
     try {
       const { id } = req.params
       const { answers } = req.body
+      const quiz = await prisma.quiz.findUnique({ where: { id }, select: { difficulty: true } })
+      const difficulty = quiz?.difficulty || 'beginner'
       const result = await quizService.submitAttempt(req.userId!, id, answers)
+      gamificationService.handleQuizCompleted(req.userId!, id, result.score, difficulty).catch(() => {})
       res.json(result)
     } catch (error) {
       next(error)

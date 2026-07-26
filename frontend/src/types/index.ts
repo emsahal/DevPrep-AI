@@ -132,3 +132,63 @@ export interface ApiError {
   statusCode: number
   errors?: Record<string, string[]>
 }
+
+export interface UserStats {
+  totalPoints: number
+  weeklyPoints: number
+  xp: number
+  level: number
+  title: string
+  currentStreak: number
+  longestStreak: number
+  nextLevelXp: number
+  currentLevelXp: number
+  badges: UserBadge[]
+}
+
+export interface UserBadge {
+  key: string
+  name: string
+  description: string
+  iconUrl: string | null
+  unlockedAt: string
+}
+
+export interface BadgeDef {
+  key: string
+  name: string
+  description: string
+  iconUrl: string | null
+  criteria: Record<string, unknown>
+}
+
+export interface LeaderboardEntry {
+  userId: string
+  name: string
+  avatar: string | null
+  points: number
+  level: number
+}
+
+export interface PointTransaction {
+  id: string
+  userId: string
+  amount: number
+  reason: string
+  referenceType: string | null
+  referenceId: string | null
+  multiplier: number
+  streakDays: number
+  createdAt: string
+}
+
+export interface LeaderboardResponse {
+  entries: LeaderboardEntry[]
+  pagination: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+  }
+  currentUser: { rank: number; points: number } | null
+}

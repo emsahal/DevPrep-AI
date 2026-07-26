@@ -1,6 +1,8 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
+import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
+import { gamificationService } from '@/services/gamificationService'
 import logo from '@/assets/logo.png'
 
 const MOBILE_TABS = [
@@ -16,6 +18,13 @@ export function TopNavBar() {
   const location = useLocation()
   const { isAuthenticated, user } = useAuthStore()
   const [searchOpen, setSearchOpen] = useState(false)
+
+  const { data: gamificationStats } = useQuery({
+    queryKey: ['gamification', 'stats'],
+    queryFn: () => gamificationService.getStats(),
+    enabled: isAuthenticated,
+    staleTime: 60_000,
+  })
 
   return (
     <>
@@ -66,11 +75,18 @@ export function TopNavBar() {
           {isAuthenticated ? (
             <>
               {/* Streak */}
-              <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold"
+              <Link to="/leaderboard" className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold transition-colors hover:opacity-80"
                    style={{ background: 'var(--color-tertiary-container)/20', color: 'var(--color-tertiary)' }}>
                 <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>local_fire_department</span>
-                <span>7</span>
-              </div>
+                <span>{gamificationStats?.currentStreak ?? 0}</span>
+              </Link>
+              {/* Level badge */}
+              {gamificationStats && (
+                <Link to="/leaderboard" className="hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors hover:opacity-80"
+                     style={{ background: 'var(--color-primary)/15', color: 'var(--color-primary)' }}>
+                  Lvl {gamificationStats.level}
+                </Link>
+              )}
               {/* Notifications */}
               <button className="relative p-2 rounded-xl transition-colors hover:bg-surface-container-low"
                       style={{ color: 'var(--color-on-surface-variant)' }}>

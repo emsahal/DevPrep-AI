@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { to: '/flashcards',     icon: 'style',            label: 'Flashcards' },
   { to: '/revision',       icon: 'event_repeat',     label: 'Revision'   },
   { to: '/interview-prep', icon: 'quiz',              label: 'Interview'   },
+  { to: '/leaderboard',    icon: 'leaderboard',      label: 'Leaderboard'},
   { to: '/bookmarks',      icon: 'bookmark',         label: 'Bookmarks'  },
 ]
 

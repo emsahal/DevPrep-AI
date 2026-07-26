@@ -2,11 +2,16 @@ import app from './app'
 import { config } from './config'
 import logger from './utils/logger'
 import prisma from './utils/prisma'
+import { gamificationService } from './services/gamification.service'
+import { startWeeklyLeaderboardReset } from './jobs/weeklyLeaderboardReset'
 
 async function main() {
   try {
     await prisma.$connect()
     logger.info('Database connected successfully')
+
+    await gamificationService.ensureBadgeDefinitions()
+    startWeeklyLeaderboardReset()
 
     app.listen(config.port, () => {
       logger.info(`Server running on port ${config.port} in ${config.nodeEnv} mode`)

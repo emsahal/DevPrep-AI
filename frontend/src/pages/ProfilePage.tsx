@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/authStore'
 import { profileService } from '@/services/profileService'
 import { dashboardService } from '@/services/dashboardService'
+import { gamificationService } from '@/services/gamificationService'
+import { BadgesGrid } from '@/features/gamification/components/BadgesGrid'
 
 export function ProfilePage() {
   const { user: storeUser } = useAuthStore()
@@ -14,6 +16,11 @@ export function ProfilePage() {
   const { data: stats } = useQuery({
     queryKey: ['dashboard', 'stats'],
     queryFn: () => dashboardService.getStats(),
+  })
+
+  const { data: gamificationStats } = useQuery({
+    queryKey: ['gamification', 'stats'],
+    queryFn: () => gamificationService.getStats(),
   })
 
   const user = profile ?? storeUser
@@ -33,16 +40,58 @@ export function ProfilePage() {
           <div className="flex flex-wrap justify-center sm:justify-start gap-2">
             <span className="pill" style={{ background: 'rgba(208,188,255,0.1)', color: 'var(--color-primary)', border: '1px solid rgba(208,188,255,0.25)' }}>Full Stack Track</span>
             <span className="pill" style={{ background: 'rgba(16,185,129,0.1)', color: 'var(--color-success)', border: '1px solid rgba(16,185,129,0.25)' }}>{stats?.streakDays ?? 0}-Day Streak 🔥</span>
+            {gamificationStats && (
+              <span className="pill" style={{ background: 'rgba(208,188,255,0.15)', color: 'var(--color-tertiary)', border: '1px solid rgba(208,188,255,0.25)' }}>
+                Lvl {gamificationStats.level} · {gamificationStats.title}
+              </span>
+            )}
           </div>
         </div>
       </div>
+
+      {/* XP Bar */}
+      {gamificationStats && (
+        <div className="bento-card p-5 mb-6 animate-fade-up animation-delay-50">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-bold" style={{ color: 'var(--color-on-surface)' }}>
+              Level {gamificationStats.level} — {gamificationStats.title}
+            </span>
+            <span className="text-xs" style={{ color: 'var(--color-outline)' }}>
+              {gamificationStats.xp.toLocaleString()} / {gamificationStats.nextLevelXp.toLocaleString()} XP
+            </span>
+          </div>
+          <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'var(--color-surface-container)' }}>
+            <div
+              className="h-full rounded-full transition-all duration-500"
+              style={{
+                width: `${Math.min(100, ((gamificationStats.xp - gamificationStats.currentLevelXp) / (gamificationStats.nextLevelXp - gamificationStats.currentLevelXp)) * 100)}%`,
+                background: 'linear-gradient(90deg, var(--color-primary), var(--color-tertiary))',
+              }}
+            />
+          </div>
+          <div className="flex justify-between mt-3 text-xs" style={{ color: 'var(--color-outline)' }}>
+            <span>🔥 {gamificationStats.currentStreak}-day streak</span>
+            <span>🏆 {gamificationStats.totalPoints.toLocaleString()} total points</span>
+          </div>
+        </div>
+      )}
+
+      {/* Badges */}
+      {gamificationStats && gamificationStats.badges.length > 0 && (
+        <div className="mb-8 animate-fade-up animation-delay-75">
+          <h2 className="font-bold text-sm uppercase tracking-widest mb-4" style={{ color: 'var(--color-outline)' }}>
+            Badges & Achievements
+          </h2>
+          <BadgesGrid earnedBadges={gamificationStats.badges} />
+        </div>
+      )}
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 animate-fade-up animation-delay-100">
         {[
           { label: 'Topics Mastered', value: String(stats?.completedTopics ?? 0),  icon: 'school'            },
           { label: 'Quizzes Taken',   value: String(stats?.quizAttempts ?? 0),     icon: 'quiz'              },
-          { label: 'Day Streak',      value: String(stats?.streakDays ?? 0),       icon: 'local_fire_department' },
-          { label: 'Avg Score',       value: `${stats?.avgQuizScore ?? 0}%`,       icon: 'grade'             },
+          { label: 'Level',           value: gamificationStats ? `Lvl ${gamificationStats.level}` : '—', icon: 'stars' },
+          { label: 'Total Points',    value: gamificationStats ? gamificationStats.totalPoints.toLocaleString() : '0', icon: 'trophy' },
         ].map(s => (
           <div key={s.label} className="bento-card p-5 flex flex-col items-center gap-2 text-center">
             <span className="material-symbols-outlined text-3xl" style={{ color: 'var(--color-primary)', fontVariationSettings: "'FILL' 0" }}>{s.icon}</span>

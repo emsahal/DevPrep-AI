@@ -26,6 +26,8 @@ model User {
   sessions       Session[]
   quizAttempts   QuizAttempt[]
   flashcardProgress FlashcardProgress[]
+  stats          UserStats?
+  badges         UserBadge[]
 }
 
 model Session {
@@ -263,4 +265,67 @@ model Bookmark {
 
   @@unique([userId, topicId, type])
   @@index([userId])
+}
+
+model UserStats {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  totalPoints     Int      @default(0)
+  weeklyPoints    Int      @default(0)
+  xp              Int      @default(0)
+  level           Int      @default(1)
+  currentStreak   Int      @default(0)
+  longestStreak   Int      @default(0)
+  lastActivityDate DateTime?
+  weeklyPointsArchived Json?  @default("[]")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user              User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pointTransactions PointTransaction[]
+
+  @@index([totalPoints])
+  @@index([weeklyPoints])
+}
+
+model Badge {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  name        String
+  description String
+  iconUrl     String?
+  criteria    Json
+  createdAt   DateTime @default(now())
+
+  users UserBadge[]
+}
+
+model UserBadge {
+  id         String   @id @default(uuid())
+  userId     String
+  badgeId    String
+  unlockedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+  @@index([userId])
+}
+
+model PointTransaction {
+  id            String   @id @default(uuid())
+  userId        String
+  amount        Int
+  reason        String
+  referenceType String?
+  referenceId   String?
+  multiplier    Float    @default(1.0)
+  streakDays    Int      @default(0)
+  createdAt     DateTime @default(now())
+
+  userStats UserStats @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([createdAt])
 }

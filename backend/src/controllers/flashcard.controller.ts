@@ -1,5 +1,6 @@
 import { Response, NextFunction } from 'express'
 import { flashcardService } from '@/services/flashcard.service'
+import { gamificationService } from '@/services/gamification.service'
 import type { AuthRequest } from '@/middleware/auth'
 
 export class FlashcardController {
@@ -30,6 +31,7 @@ export class FlashcardController {
       const { quality } = req.body
       const progress = await flashcardService.updateCard(req.userId!, id, quality)
       if (!progress) return res.status(404).json({ message: 'Flashcard not found' })
+      gamificationService.handleFlashcardReviewed(req.userId!, id, progress.status).catch(() => {})
       res.json(progress)
     } catch (error) {
       next(error)
