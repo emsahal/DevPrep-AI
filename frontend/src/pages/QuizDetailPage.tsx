@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { quizService, type QuizQuestion } from '@/services/quizService'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 export function QuizDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -205,9 +207,30 @@ export function QuizDetailPage() {
 
       {/* Question Card */}
       <div className="bento-card p-8 mb-5 animate-fade-up animation-delay-100">
-        <h2 className="text-xl font-bold mb-6 whitespace-pre-line leading-relaxed" style={{ color: 'var(--color-on-surface)' }}>
-          {q.text}
-        </h2>
+        <div className="mb-6 leading-relaxed" style={{ color: 'var(--color-on-surface)' }}>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              h1({ children }) { return <h1 className="text-xl font-bold mb-4">{children}</h1> },
+              h2({ children }) { return <h2 className="text-lg font-bold mb-3">{children}</h2> },
+              p({ children }) { return <p className="mb-4 text-base font-semibold leading-relaxed text-left">{children}</p> },
+              strong({ children }) { return <strong style={{ color: 'var(--color-primary)', fontWeight: 700 }}>{children}</strong> },
+              code({ className, children, ...props }) {
+                const isInline = !className
+                if (isInline) return <code className="px-1 py-0.5 rounded text-sm font-code" style={{ background: 'var(--color-surface-container-high)', color: 'var(--color-primary)', fontSize: '13px' }} {...props}>{children}</code>
+                return (
+                  <div className="rounded-xl overflow-hidden my-4 text-sm" style={{ border: '1px solid var(--color-border-muted)' }}>
+                    <pre className="p-4 m-0 overflow-x-auto font-code text-left" style={{ background: 'var(--color-surface-container)', fontSize: '13px', lineHeight: '1.6' }}>
+                      <code className={className} {...props}>{children}</code>
+                    </pre>
+                  </div>
+                )
+              }
+            }}
+          >
+            {q.text}
+          </ReactMarkdown>
+        </div>
         <div className="space-y-3">
           {q.options.map((opt, i) => (
             <button
