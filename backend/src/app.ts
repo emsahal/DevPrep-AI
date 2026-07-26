@@ -1,6 +1,5 @@
 import express from 'express'
 import http from 'http'
-import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
@@ -17,23 +16,8 @@ import { setupDuelSocket } from './socket/duel.socket'
 const app = express()
 const server = http.createServer(app)
 
-// Build a function-based origin checker for robustness
+// Allowed origins for CORS — also used by Socket.IO
 const allowedOriginsSet = new Set(config.cors.allowedOrigins)
-const corsOriginFn = (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-  // Allow requests with no origin (e.g. curl, Postman, server-to-server)
-  if (!origin) return callback(null, true)
-  if (allowedOriginsSet.has(origin)) return callback(null, true)
-  logger.warn(`CORS blocked origin: ${origin}`)
-  callback(new Error(`Origin ${origin} not allowed by CORS policy`))
-}
-
-const corsOptions = {
-  origin: corsOriginFn,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  optionsSuccessStatus: 204,
-}
 
 const io = new Server(server, {
   cors: {
@@ -75,10 +59,24 @@ const swaggerSpec = swaggerJsdoc({
   apis: ['./src/routes/*.ts', './src/controllers/*.ts'],
 })
 
-// CORS must be applied BEFORE helmet so its headers aren't stripped on error responses
-// Pre-flight OPTIONS handled explicitly so browsers get immediate CORS approval
-app.use(cors(corsOptions))
-app.options('*', cors(corsOptions))
+// ── CORS ─────────────────────────────────────────────────────────────────────
+// Raw middleware runs before helmet, rateLimiter, auth, and error handlers.
+// Sets headers directly — nothing in the chain can block or strip them.
+app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+  const origin = req.headers.origin as string | undefined
+  if (origin && allowedOriginsSet.has(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin)
+    res.setHeader('Vary', 'Origin')
+    res.setHeader('Access-Control-Allow-Credentials', 'true')
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  }
+  // Answer preflight immediately — never reaches helmet/routes
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end()
+  }
+  next()
+})
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }))
 app.use(morgan(config.isDev ? 'dev' : 'combined'))
 app.use(express.json({ limit: '10mb' }))

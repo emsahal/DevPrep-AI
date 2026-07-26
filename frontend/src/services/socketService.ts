@@ -9,11 +9,14 @@ export function getDuelSocket(): Socket {
     const token = localStorage.getItem('accessToken')
     socket = io(`${baseUrl}/duels`, {
       auth: { token },
-      transports: ['polling'],
+      // WebSocket first — persistent connection, avoids Render's HTTP timeout that drops long-polling
+      // Polling is kept as a fallback only
+      transports: ['websocket', 'polling'],
+      upgrade: true,
       reconnection: true,
-      reconnectionAttempts: 10,
-      reconnectionDelay: 2000,
-      reconnectionDelayMax: 10000,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 3000,
+      reconnectionDelayMax: 15000,
       timeout: 20000,
     })
   }
