@@ -228,7 +228,7 @@ export function QuizDetailPage() {
               }
             }}
           >
-            {q.text}
+            {q.text.replace(/\\n/g, '\n')}
           </ReactMarkdown>
         </div>
         <div className="space-y-3">
