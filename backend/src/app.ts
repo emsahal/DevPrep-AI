@@ -73,7 +73,8 @@ app.use((req: express.Request, res: express.Response, next: express.NextFunction
   }
   // Answer preflight immediately — never reaches helmet/routes
   if (req.method === 'OPTIONS') {
-    return res.status(204).end()
+    res.status(204).end()
+    return
   }
   next()
 })

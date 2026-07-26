@@ -1,6 +1,5 @@
 import cron from 'node-cron'
 import http from 'http'
-import https from 'https'
 import { config } from '@/config'
 import logger from '@/utils/logger'
 
@@ -10,22 +9,13 @@ import logger from '@/utils/logger'
  * This job fires every 14 minutes to prevent that.
  */
 function pingHealthEndpoint(): void {
-  // In production we hit the real public URL; locally we hit localhost
-  const healthUrl = config.isProd
-    ? `${config.cors.frontendUrl.replace('devpreps.tech', 'devprep-ai-xxvk.onrender.com')}/api/health`
-    : `http://localhost:${config.port}/api/health`
-
-  // Use the self-referencing internal URL on Render so there's no round-trip through the internet
-  const internalUrl = config.isProd
-    ? `http://localhost:${config.port}/api/health`
-    : `http://localhost:${config.port}/api/health`
-
-  const targetUrl = internalUrl
-  const client = targetUrl.startsWith('https') ? https : http
+  // Always ping localhost internally — faster and no network round-trip
+  const targetUrl = `http://localhost:${config.port}/api/health`
+  const client = http
 
   const req = client.get(targetUrl, (res) => {
     let body = ''
-    res.on('data', (chunk) => { body += chunk })
+    res.on('data', (chunk: Buffer) => { body += chunk.toString() })
     res.on('end', () => {
       if (res.statusCode === 200) {
         logger.info(`[keep-alive] Health ping OK — status ${res.statusCode}`)
@@ -35,7 +25,7 @@ function pingHealthEndpoint(): void {
     })
   })
 
-  req.on('error', (err) => {
+  req.on('error', (err: Error) => {
     logger.warn(`[keep-alive] Health ping failed: ${err.message}`)
   })
 
