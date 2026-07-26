@@ -15,6 +15,11 @@ interface Message {
 
 interface AIResponse {
   content: string
+  usage?: {
+    promptTokens: number
+    completionTokens: number
+    totalTokens: number
+  }
 }
 
 function toGeminiPayload(messages: Message[]) {
@@ -96,7 +101,14 @@ export class NvidiaAIService {
 
       const data = await response.json() as any
       const content = data.choices?.[0]?.message?.content ?? ''
-      const result = { content }
+      const usage = data.usage
+        ? {
+            promptTokens: data.usage.prompt_tokens ?? 0,
+            completionTokens: data.usage.completion_tokens ?? 0,
+            totalTokens: data.usage.total_tokens ?? 0,
+          }
+        : undefined
+      const result = { content, usage }
       await setCache(cacheKey, result, 3600)
       return result
     } else {
@@ -116,7 +128,14 @@ export class NvidiaAIService {
 
       const data = await response.json() as any
       const content = data.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
-      const result = { content }
+      const usage = data.usageMetadata
+        ? {
+            promptTokens: data.usageMetadata.promptTokenCount ?? 0,
+            completionTokens: data.usageMetadata.candidatesTokenCount ?? 0,
+            totalTokens: data.usageMetadata.totalTokenCount ?? 0,
+          }
+        : undefined
+      const result = { content, usage }
       await setCache(cacheKey, result, 3600)
       return result
     }
