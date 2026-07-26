@@ -3,6 +3,68 @@ import prisma from '@/utils/prisma'
 import { quizService } from '@/services/quiz.service'
 import { gamificationService } from '@/services/gamification.service'
 import type { AuthRequest } from '@/middleware/auth'
+import { nvidiaAI } from '@/ai/nvidia.service'
+
+class QuestionStreamParser {
+  private buffer = ''
+  private braceCount = 0
+  private inString = false
+  private escapeNext = false
+  private onQuestion: (question: any) => void
+
+  constructor(onQuestion: (question: any) => void) {
+    this.onQuestion = onQuestion
+  }
+
+  feed(chunk: string) {
+    for (let i = 0; i < chunk.length; i++) {
+      const char = chunk[i]
+      this.buffer += char
+
+      if (this.escapeNext) {
+        this.escapeNext = false
+        continue
+      }
+
+      if (char === '\\') {
+        this.escapeNext = true
+        continue
+      }
+
+      if (char === '"') {
+        this.inString = !this.inString
+        continue
+      }
+
+      if (!this.inString) {
+        if (char === '{') {
+          if (this.braceCount === 0) {
+            this.buffer = '{'
+          }
+          this.braceCount++
+        } else if (char === '}') {
+          this.braceCount--
+          if (this.braceCount === 0) {
+            try {
+              const question = JSON.parse(this.buffer)
+              if (
+                question &&
+                typeof question.text === 'string' &&
+                Array.isArray(question.options) &&
+                question.options.length === 4
+              ) {
+                this.onQuestion(question)
+              }
+            } catch (e) {
+              // ignore parse errors for partial/incomplete JSON
+            }
+            this.buffer = ''
+          }
+        }
+      }
+    }
+  }
+}
 
 export class QuizController {
   async getAll(req: Request, res: Response, next: NextFunction) {
@@ -24,6 +86,119 @@ export class QuizController {
       res.json(quiz)
     } catch (error) {
       next(error)
+    }
+  }
+
+  async streamById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params
+      const quiz = await prisma.quiz.findUnique({
+        where: { id },
+        include: {
+          questions: { orderBy: { order: 'asc' } },
+          topic: { select: { id: true, title: true, slug: true } },
+        },
+      })
+      if (!quiz) return res.status(404).json({ message: 'Quiz not found' })
+
+      res.setHeader('Content-Type', 'text/event-stream')
+      res.setHeader('Cache-Control', 'no-cache')
+      res.setHeader('Connection', 'keep-alive')
+      res.setHeader('X-Accel-Buffering', 'no')
+
+      // Check if it's placeholder/templated
+      const isPlaceholder = quiz.questions.length > 0 && 
+        (quiz.questions[0].text.includes('mainly about?') || quiz.questions[0].text.includes('In simple words'));
+
+      if (!isPlaceholder) {
+        // Send existing questions instantly
+        for (const q of quiz.questions) {
+          res.write(`data: ${JSON.stringify({ type: 'question', question: q })}\n\n`)
+        }
+        res.write(`data: ${JSON.stringify({ done: true })}\n\n`)
+        res.end()
+        return
+      }
+
+      const difficultyInstruction =
+        quiz.difficulty === 'mixed'
+          ? 'Mix easy, intermediate, and hard questions.'
+          : `All questions should be ${quiz.difficulty} level.`
+
+      const prompt = `You are an expert technical interviewer and software staff engineer.
+Generate exactly 15 high-quality multiple-choice questions (MCQs) for the topic "${quiz.topic?.title || 'this topic'}".
+These questions must be realistic, challenging, and suitable for technical interview preparation at top tech companies.
+
+CRITICAL INSTRUCTIONS:
+1. NO PLACEHOLDERS: Do not use template questions. Every question must be distinct and explore specific technical mechanics.
+2. REAL-WORLD CODE: Include code snippets or mock output scenarios in at least 5 questions.
+3. TOPIC DEPTH: Cover deep, practical concepts (syntax, execution steps, performance characteristics, memory, common edge cases, errors).
+4. QUALITY OPTIONS: Ensure options are realistic distractors.
+5. EXPLANATIONS: Provide clear, technical, step-by-step explanations of why the correct option is right.
+
+${difficultyInstruction}
+
+IMPORTANT: Return ONLY a valid JSON array. Do not wrap it in markdown code blocks. No text before or after the JSON.
+Format:
+[
+  {
+    "text": "Detailed, specific question testing a concept or code snippet.",
+    "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
+    "correctAnswer": 0,
+    "explanation": "Thorough technical explanation...",
+    "difficulty": "intermediate"
+  }
+]`
+
+      const generatedQuestions: any[] = []
+      const parser = new QuestionStreamParser((question) => {
+        const formatted = {
+          id: `ai-${generatedQuestions.length}`,
+          text: question.text,
+          options: question.options,
+          correctAnswer: question.correctAnswer,
+          explanation: question.explanation,
+          order: generatedQuestions.length + 1,
+        }
+        generatedQuestions.push(formatted)
+        res.write(`data: ${JSON.stringify({ type: 'question', question: formatted })}\n\n`)
+      })
+
+      await nvidiaAI.generateStream(
+        [{ role: 'user', content: prompt }],
+        (chunk) => {
+          parser.feed(chunk)
+        },
+        { temperature: 0.75, maxTokens: 8192 }
+      )
+
+      if (generatedQuestions.length >= 5) {
+        prisma.$transaction(async (tx) => {
+          await tx.question.deleteMany({ where: { quizId: id } })
+          await tx.question.createMany({
+            data: generatedQuestions.map((q, idx) => ({
+              quizId: id,
+              text: q.text,
+              options: q.options,
+              correctAnswer: q.correctAnswer,
+              explanation: q.explanation,
+              order: idx + 1,
+            }))
+          })
+        }).then(async () => {
+          const { invalidateCache } = await import('@/utils/redis')
+          await invalidateCache(`quiz:${id}`)
+        }).catch((err) => {
+          console.error('Failed to save generated quiz in transaction:', err)
+        })
+      }
+
+      res.write(`data: ${JSON.stringify({ done: true })}\n\n`)
+      res.end()
+    } catch (error) {
+      if (!res.headersSent) {
+        next(error)
+      }
     }
   }
 

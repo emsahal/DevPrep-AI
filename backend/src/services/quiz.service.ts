@@ -2,6 +2,7 @@ import prisma from '@/utils/prisma'
 import { getCached, invalidateCache, setCache } from '@/utils/redis'
 import { AppError } from '@/middleware/errorHandler'
 import { nvidiaAI } from '@/ai/nvidia.service'
+import logger from '@/utils/logger'
 import { slugify } from '@/utils/helpers'
 import { normalizePagination, createPaginatedResult } from '@/utils/pagination'
 
@@ -82,6 +83,26 @@ export class QuizService {
 
     if (!quiz) return null
 
+    // Check if it's placeholder/templated
+    const isPlaceholder = quiz.questions.length > 0 && 
+      (quiz.questions[0].text.includes('mainly about?') || quiz.questions[0].text.includes('In simple words'));
+
+    if (isPlaceholder) {
+      const result = {
+        id: quiz.id,
+        title: quiz.title,
+        description: quiz.description,
+        difficulty: quiz.difficulty,
+        timeLimit: quiz.timeLimit,
+        passingScore: quiz.passingScore,
+        isDaily: quiz.isDaily,
+        topic: quiz.topic,
+        isPlaceholder: true,
+        questions: [],
+      }
+      return result
+    }
+
     const result = {
       id: quiz.id,
       title: quiz.title,
@@ -91,6 +112,7 @@ export class QuizService {
       passingScore: quiz.passingScore,
       isDaily: quiz.isDaily,
       topic: quiz.topic,
+      isPlaceholder: false,
       questions: quiz.questions.map((q) => ({
         id: q.id,
         text: q.text,

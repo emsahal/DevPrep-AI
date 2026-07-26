@@ -1,4 +1,4 @@
-import api from '@/lib/axios'
+import api, { apiBaseUrl } from '@/lib/axios'
 
 export interface PaginatedResponse<T> {
   data: T[]
@@ -102,6 +102,57 @@ export const quizService = {
   async getById(id: string): Promise<QuizDetail> {
     const { data } = await api.get(`/quizzes/${id}`)
     return data
+  },
+
+  async streamQuizQuestions(
+    id: string,
+    onQuestion: (question: QuizQuestion) => void,
+    onDone: () => void
+  ): Promise<void> {
+    const token = localStorage.getItem('accessToken')
+
+    const response = await fetch(`${apiBaseUrl}/quizzes/${id}/stream`, {
+      method: 'GET',
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`Quiz stream failed: ${response.status} ${response.statusText}`)
+    }
+
+    const reader = response.body?.getReader()
+    if (!reader) return
+
+    const decoder = new TextDecoder()
+    let buffer = ''
+
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+
+      buffer += decoder.decode(value, { stream: true })
+      const lines = buffer.split('\n')
+      buffer = lines.pop() || ''
+
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          try {
+            const parsed = JSON.parse(line.slice(6))
+            if (parsed.done) {
+              onDone()
+              return
+            }
+            if (parsed.type === 'question' && parsed.question) {
+              onQuestion(parsed.question)
+            }
+          } catch {
+            // skip
+          }
+        }
+      }
+    }
   },
 
   async getDaily(): Promise<QuizDetail> {
