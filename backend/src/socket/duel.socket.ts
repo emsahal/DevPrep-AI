@@ -126,6 +126,17 @@ export function setupDuelSocket(io: Server) {
         })
         socket.emit('duel:searching', { mode, topic, elapsed: 0 })
 
+        // Persist notification so opponent sees it even if not connected
+        const challengerInfo = await getUserInfo(userId)
+        const notif = await notificationService.create(
+          opponentId,
+          'duel_challenge',
+          'Duel Challenge!',
+          `${challengerInfo.name} wants to duel you in ${mode} — ${topic}`,
+          { matchRequestId: request.id, fromUserId: userId, mode, topic },
+        )
+        emitToUser(duelNs, opponentId, 'notification:new', notif)
+
         setTimeout(async () => {
           const req = await prisma.matchRequest.findUnique({ where: { id: request.id } })
           if (req?.status === 'pending') {
@@ -150,6 +161,17 @@ export function setupDuelSocket(io: Server) {
           expiresAt: request.expiresAt,
         })
         socket.emit('duel:challenge_sent', { matchRequestId: request.id, toUserId })
+
+        // Persist a notification so the challenged user sees it even if offline
+        const challengerInfo = await getUserInfo(userId)
+        const notif = await notificationService.create(
+          toUserId,
+          'duel_challenge',
+          'You\'ve been challenged!',
+          `${challengerInfo.name} challenged you to a ${mode} duel on ${topic}`,
+          { matchRequestId: request.id, fromUserId: userId, mode, topic },
+        )
+        emitToUser(duelNs, toUserId, 'notification:new', notif)
 
         setTimeout(async () => {
           const req = await prisma.matchRequest.findUnique({ where: { id: request.id } })

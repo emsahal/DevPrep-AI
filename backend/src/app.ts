@@ -17,15 +17,35 @@ import { setupDuelSocket } from './socket/duel.socket'
 const app = express()
 const server = http.createServer(app)
 
+// Build a function-based origin checker for robustness
+const allowedOriginsSet = new Set(config.cors.allowedOrigins)
+const corsOriginFn = (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+  // Allow requests with no origin (e.g. curl, Postman, server-to-server)
+  if (!origin) return callback(null, true)
+  if (allowedOriginsSet.has(origin)) return callback(null, true)
+  logger.warn(`CORS blocked origin: ${origin}`)
+  callback(new Error(`Origin ${origin} not allowed by CORS policy`))
+}
+
+const corsOptions = {
+  origin: corsOriginFn,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 204,
+}
+
 const io = new Server(server, {
   cors: {
-    origin: true,
+    origin: Array.from(allowedOriginsSet),
     credentials: true,
+    methods: ['GET', 'POST'],
   },
   transports: ['polling', 'websocket'],
   connectTimeout: 30000,
   pingTimeout: 25000,
   pingInterval: 10000,
+  allowEIO3: true,
 })
 
 setupDuelSocket(io)
@@ -55,13 +75,11 @@ const swaggerSpec = swaggerJsdoc({
   apis: ['./src/routes/*.ts', './src/controllers/*.ts'],
 })
 
+// CORS must be applied BEFORE helmet so its headers aren't stripped on error responses
+// Pre-flight OPTIONS handled explicitly so browsers get immediate CORS approval
+app.use(cors(corsOptions))
+app.options('*', cors(corsOptions))
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }))
-app.use(cors({
-  origin: true,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}))
 app.use(morgan(config.isDev ? 'dev' : 'combined'))
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true, limit: '10mb' }))

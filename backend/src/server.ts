@@ -4,6 +4,7 @@ import logger from './utils/logger'
 import prisma from './utils/prisma'
 import { gamificationService } from './services/gamification.service'
 import { startWeeklyLeaderboardReset } from './jobs/weeklyLeaderboardReset'
+import { startKeepAlive } from './jobs/keepAlive'
 
 async function main() {
   try {
@@ -12,6 +13,7 @@ async function main() {
 
     await gamificationService.ensureBadgeDefinitions()
     startWeeklyLeaderboardReset()
+    startKeepAlive()
 
     server.listen(config.port, () => {
       logger.info(`Server running on port ${config.port} in ${config.nodeEnv} mode`)
