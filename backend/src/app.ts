@@ -1,8 +1,10 @@
 import express from 'express'
+import http from 'http'
 import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
+import { Server } from 'socket.io'
 import swaggerJsdoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 import { config } from './config'
@@ -10,8 +12,19 @@ import routes from './routes'
 import { errorHandler, notFoundHandler } from './middleware/errorHandler'
 import { rateLimiter } from './middleware/rateLimiter'
 import logger from './utils/logger'
+import { setupDuelSocket } from './socket/duel.socket'
 
 const app = express()
+const server = http.createServer(app)
+
+const io = new Server(server, {
+  cors: {
+    origin: config.cors.frontendUrl,
+    credentials: true,
+  },
+})
+
+setupDuelSocket(io)
 
 app.set('trust proxy', 1)
 
@@ -65,4 +78,4 @@ app.use('/api', routes)
 app.use(notFoundHandler)
 app.use(errorHandler)
 
-export default app
+export { app, server, io }

@@ -1,4 +1,4 @@
-import app from './app'
+import { server } from './app'
 import { config } from './config'
 import logger from './utils/logger'
 import prisma from './utils/prisma'
@@ -13,7 +13,7 @@ async function main() {
     await gamificationService.ensureBadgeDefinitions()
     startWeeklyLeaderboardReset()
 
-    app.listen(config.port, () => {
+    server.listen(config.port, () => {
       logger.info(`Server running on port ${config.port} in ${config.nodeEnv} mode`)
       logger.info(`API Docs: http://localhost:${config.port}/api-docs`)
     })

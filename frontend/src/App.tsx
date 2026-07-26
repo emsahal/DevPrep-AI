@@ -21,6 +21,10 @@ import { SearchPage } from '@/pages/SearchPage'
 import { BookmarksPage } from '@/pages/BookmarksPage'
 import { InterviewPrepPage } from '@/pages/InterviewPrepPage'
 import { LeaderboardPage } from '@/pages/LeaderboardPage'
+import { DuelPage } from '@/pages/DuelPage'
+import { DuelBattlePage } from '@/pages/DuelBattlePage'
+import { DuelResultsPage } from '@/pages/DuelResultsPage'
+import { NotificationsPage } from '@/pages/NotificationsPage'
 import { InterviewPrepTopicPage } from '@/pages/InterviewPrepTopicPage'
 import { ProfilePage } from '@/pages/ProfilePage'
 import { SettingsPage } from '@/pages/SettingsPage'
@@ -76,6 +80,10 @@ export default function App() {
               <Route path="/interview-prep/:slug" element={<InterviewPrepTopicPage />} />
               <Route path="/bookmarks" element={<ProtectedRoute><BookmarksPage /></ProtectedRoute>} />
               <Route path="/leaderboard" element={<LeaderboardPage />} />
+              <Route path="/duel" element={<ProtectedRoute><DuelPage /></ProtectedRoute>} />
+              <Route path="/duel/battle/:id" element={<ProtectedRoute><DuelBattlePage /></ProtectedRoute>} />
+              <Route path="/duel/results/:id" element={<ProtectedRoute><DuelResultsPage /></ProtectedRoute>} />
+              <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
             </Route>

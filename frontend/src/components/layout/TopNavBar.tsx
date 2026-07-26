@@ -3,6 +3,7 @@ import { useAuthStore } from '@/store/authStore'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { gamificationService } from '@/services/gamificationService'
+import { NotificationDropdown } from '@/features/notifications/NotificationDropdown'
 import logo from '@/assets/logo.png'
 
 const MOBILE_TABS = [
@@ -87,12 +88,7 @@ export function TopNavBar() {
                   Lvl {gamificationStats.level}
                 </Link>
               )}
-              {/* Notifications */}
-              <button className="relative p-2 rounded-xl transition-colors hover:bg-surface-container-low"
-                      style={{ color: 'var(--color-on-surface-variant)' }}>
-                <span className="material-symbols-outlined text-[22px]">notifications</span>
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full" style={{ background: 'var(--color-primary)' }} />
-              </button>
+              <NotificationDropdown />
               {/* Avatar */}
               <Link to="/profile">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm cursor-pointer ring-2 ring-offset-2 transition-all hover:ring-primary"

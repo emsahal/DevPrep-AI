@@ -28,6 +28,11 @@ model User {
   flashcardProgress FlashcardProgress[]
   stats          UserStats?
   badges         UserBadge[]
+  sentRequests   MatchRequest[]     @relation("MatchRequestFrom")
+  receivedRequests MatchRequest[]   @relation("MatchRequestTo")
+  duelsAsPlayer1  Duel[]            @relation("DuelPlayer1")
+  duelsAsPlayer2  Duel[]            @relation("DuelPlayer2")
+  notifications   Notification[]
 }
 
 model Session {
@@ -328,4 +333,65 @@ model PointTransaction {
 
   @@index([userId, createdAt])
   @@index([createdAt])
+}
+
+model MatchRequest {
+  id         String   @id @default(uuid())
+  fromUserId String
+  toUserId   String?
+  mode       String
+  topic      String
+  status     String   @default("pending") // pending | accepted | declined | expired | cancelled
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime
+  respondedAt DateTime?
+
+  fromUser User  @relation("MatchRequestFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser   User? @relation("MatchRequestTo", fields: [toUserId], references: [id], onDelete: Cascade)
+  duel     Duel?
+
+  @@index([fromUserId])
+  @@index([toUserId])
+  @@index([status, mode, topic])
+}
+
+model Duel {
+  id             String   @id @default(uuid())
+  matchRequestId String   @unique
+  mode           String
+  topic          String
+  player1Id      String
+  player2Id      String
+  content        Json
+  answers        Json?
+  score1         Int?
+  score2         Int?
+  winnerId       String?
+  status         String   @default("in_progress") // in_progress | completed | forfeited | disconnected
+  startedAt      DateTime @default(now())
+  endedAt        DateTime?
+  createdAt      DateTime @default(now())
+
+  matchRequest MatchRequest @relation(fields: [matchRequestId], references: [id], onDelete: Cascade)
+  player1      User         @relation("DuelPlayer1", fields: [player1Id], references: [id], onDelete: Cascade)
+  player2      User         @relation("DuelPlayer2", fields: [player2Id], references: [id], onDelete: Cascade)
+
+  @@index([player1Id])
+  @@index([player2Id])
+  @@index([status])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  type      String
+  title     String
+  body      String
+  data      Json?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead, createdAt])
 }

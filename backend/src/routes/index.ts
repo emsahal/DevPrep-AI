@@ -13,6 +13,8 @@ import searchRoutes from './search.routes'
 import bookmarkRoutes from './bookmark.routes'
 import interviewPrepRoutes from './interview-prep.routes'
 import gamificationRoutes from './gamification.routes'
+import duelRoutes from './duel.routes'
+import notificationRoutes from './notification.routes'
 
 const router = Router()
 
@@ -30,5 +32,7 @@ router.use('/search', searchRoutes)
 router.use('/bookmarks', bookmarkRoutes)
 router.use('/interview-prep', interviewPrepRoutes)
 router.use('/gamification', gamificationRoutes)
+router.use('/duels', duelRoutes)
+router.use('/notifications', notificationRoutes)
 
 export default router

@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { to: '/revision',       icon: 'event_repeat',     label: 'Revision'   },
   { to: '/interview-prep', icon: 'quiz',              label: 'Interview'   },
   { to: '/leaderboard',    icon: 'leaderboard',      label: 'Leaderboard'},
+  { to: '/duel',           icon: 'sports_esports',   label: 'Duels'      },
   { to: '/bookmarks',      icon: 'bookmark',         label: 'Bookmarks'  },
 ]
 
