@@ -42,6 +42,12 @@ export const config = {
 
   cors: {
     frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',
+    allowedOrigins: [
+      process.env.FRONTEND_URL || 'http://localhost:5173',
+      'https://devpreps.tech',
+      'http://localhost:5173',
+      'http://localhost:4173',
+    ].filter(Boolean),
   },
 
   upload: {

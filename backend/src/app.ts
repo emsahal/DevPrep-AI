@@ -17,12 +17,20 @@ import { setupDuelSocket } from './socket/duel.socket'
 const app = express()
 const server = http.createServer(app)
 
-const io = new Server(server, {
-  cors: {
-    origin: config.cors.frontendUrl,
-    credentials: true,
+const corsOptions = {
+  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+    if (!origin || config.cors.allowedOrigins.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(null, false)
+    }
   },
-})
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}
+
+const io = new Server(server, { cors: corsOptions })
 
 setupDuelSocket(io)
 
@@ -52,12 +60,7 @@ const swaggerSpec = swaggerJsdoc({
 })
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }))
-app.use(cors({
-  origin: config.cors.frontendUrl,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}))
+app.use(cors(corsOptions))
 app.use(morgan(config.isDev ? 'dev' : 'combined'))
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true, limit: '10mb' }))
