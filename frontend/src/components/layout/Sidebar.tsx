@@ -13,7 +13,7 @@ const NAV_ITEMS = [
   { to: '/revision',       icon: 'event_repeat',     label: 'Revision'   },
   { to: '/interview-prep', icon: 'quiz',              label: 'Interview'   },
   { to: '/leaderboard',    icon: 'leaderboard',      label: 'Leaderboard'},
-  { to: '/duel',           icon: 'sports_esports',   label: 'Duels'      },
+  { to: '/duel',           icon: 'sports_esports',   label: 'Duels',       tag: 'Soon' },
   { to: '/bookmarks',      icon: 'bookmark',         label: 'Bookmarks'  },
 ]
 
@@ -27,7 +27,7 @@ export function Sidebar() {
 
       {/* Nav Links */}
       <nav className="flex-1 overflow-y-auto no-scrollbar px-3 pt-4 space-y-0.5">
-        {NAV_ITEMS.map(({ to, icon, label }) => {
+        {NAV_ITEMS.map(({ to, icon, label, tag }) => {
           const active = location.pathname === to || (to !== '/' && location.pathname.startsWith(to))
           return (
             <Link
@@ -43,7 +43,13 @@ export function Sidebar() {
                     style={{ fontVariationSettings: active ? "'FILL' 1" : "'FILL' 0" }}>
                 {icon}
               </span>
-              <span style={{ fontFamily: 'var(--font-sans)' }}>{label}</span>
+              <span className="flex-1" style={{ fontFamily: 'var(--font-sans)' }}>{label}</span>
+              {tag && (
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md"
+                      style={{ background: 'var(--color-primary-container)', color: 'var(--color-on-primary-container)' }}>
+                  {tag}
+                </span>
+              )}
             </Link>
           )
         })}
