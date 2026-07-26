@@ -43,6 +43,7 @@ export interface QuizDetail {
   passingScore: number
   isDaily: boolean
   topic: { id: string; title: string; slug: string }
+  isPlaceholder?: boolean
   questions: QuizQuestion[]
 }
 
