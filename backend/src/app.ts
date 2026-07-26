@@ -16,9 +16,12 @@ import { setupDuelSocket } from './socket/duel.socket'
 const app = express()
 const server = http.createServer(app)
 
-// Manual CORS: sets the header unconditionally.
-// The `cors` package sometimes fails on Render due to proxy/env issues.
-app.use((req, res, next) => {
+/**
+ * CORS interceptor attached DIRECTLY to the HTTP server.
+ * Runs for EVERY request — including socket.io transport paths
+ * (which Express never sees). Must be registered before socket.io.
+ */
+function setCorsHeaders(req: http.IncomingMessage, res: http.ServerResponse) {
   const origin = req.headers.origin
   if (origin) {
     res.setHeader('Access-Control-Allow-Origin', origin)
@@ -26,22 +29,33 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Credentials', 'true')
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+}
+
+// Intercept every incoming HTTP request to set CORS headers.
+// This is a raw listener on the Node.js http.Server, so it fires
+// BEFORE socket.io's own request handler.
+server.on('request', (req, res) => {
+  // Set CORS headers for every request unconditionally
+  setCorsHeaders(req, res)
+
+  // Handle preflight requests immediately
   if (req.method === 'OPTIONS') {
-    return res.sendStatus(204)
+    res.writeHead(204)
+    res.end()
   }
-  next()
+})
+
+// Also intercept the upgrade event for WebSocket connections
+server.on('upgrade', (req, socket, head) => {
+  setCorsHeaders(req, socket as unknown as http.ServerResponse)
 })
 
 const io = new Server(server, {
   cors: {
-    origin: (origin: string | undefined, cb: (err: Error | null, allow?: boolean) => void) => {
-      cb(null, true)
-    },
+    origin: true,
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
   },
-  transports: ['polling'],
+  transports: ['polling', 'websocket'],
   connectTimeout: 30000,
   pingTimeout: 25000,
   pingInterval: 10000,
@@ -72,6 +86,13 @@ const swaggerSpec = swaggerJsdoc({
     security: [{ bearerAuth: [] }],
   },
   apis: ['./src/routes/*.ts', './src/controllers/*.ts'],
+})
+
+// Express-level CORS (redundant but harmless — reinforces headers for API routes)
+app.use((req, res, next) => {
+  setCorsHeaders(req, res)
+  if (req.method === 'OPTIONS') return res.sendStatus(204)
+  next()
 })
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }))
