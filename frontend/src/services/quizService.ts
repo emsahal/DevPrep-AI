@@ -108,11 +108,12 @@ export const quizService = {
   async streamQuizQuestions(
     id: string,
     onQuestion: (question: QuizQuestion) => void,
-    onDone: () => void
+    onDone: () => void,
+    force = false
   ): Promise<void> {
     const token = localStorage.getItem('accessToken')
 
-    const response = await fetch(`${apiBaseUrl}/quizzes/${id}/stream`, {
+    const response = await fetch(`${apiBaseUrl}/quizzes/${id}/stream${force ? '?force=true' : ''}`, {
       method: 'GET',
       headers: {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -178,6 +179,14 @@ export const quizService = {
 
   async createAIQuiz(input: { topicId?: string; customTopic?: string; questionCount: number; difficulty: string; quizType: string }): Promise<QuizDetail> {
     const { data } = await api.post('/quizzes/ai-generate', input)
+    return data
+  },
+
+  async addCustomQuestion(
+    quizId: string,
+    input: { text: string; options: string[]; correctAnswer: number; explanation?: string }
+  ): Promise<QuizQuestion> {
+    const { data } = await api.post(`/quizzes/${quizId}/questions`, input)
     return data
   },
 }

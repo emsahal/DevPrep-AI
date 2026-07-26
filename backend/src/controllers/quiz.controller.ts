@@ -106,8 +106,9 @@ export class QuizController {
       res.setHeader('Connection', 'keep-alive')
       res.setHeader('X-Accel-Buffering', 'no')
 
+      const force = req.query.force === 'true'
       // Check if it's placeholder/templated or empty
-      const isPlaceholder = quiz.questions.length === 0 || 
+      const isPlaceholder = force || quiz.questions.length === 0 || 
         (quiz.questions[0] && (quiz.questions[0].text.includes('mainly about?') || quiz.questions[0].text.includes('In simple words')));
 
       if (!isPlaceholder) {
@@ -132,9 +133,11 @@ These questions must be realistic, challenging, and suitable for technical inter
 CRITICAL INSTRUCTIONS:
 1. NO PLACEHOLDERS: Do not use template questions. Every question must be distinct and explore specific technical mechanics.
 2. REAL-WORLD CODE: Include code snippets or mock output scenarios in at least 5 questions.
-3. TOPIC DEPTH: Cover deep, practical concepts (syntax, execution steps, performance characteristics, memory, common edge cases, errors).
-4. QUALITY OPTIONS: Ensure options are realistic distractors.
-5. EXPLANATIONS: Provide clear, technical, step-by-step explanations of why the correct option is right.
+3. MULTI-LINE CODE BLOCKS: Any code snippet, code block, or execution code must be enclosed in standard triple-backtick markdown blocks with the correct language identifier (e.g. \`\`\`javascript or \`\`\`python).
+4. CODE INDENTATION: Code within blocks must use proper indentation (4 spaces per block level) and be formatted across multiple lines for readability. Do NOT write code in a single line.
+5. TOPIC DEPTH: Cover deep, practical concepts (syntax, execution steps, performance characteristics, memory, common edge cases, errors).
+6. QUALITY OPTIONS: Ensure options are realistic distractors.
+7. EXPLANATIONS: Provide clear, technical, step-by-step explanations of why the correct option is right.
 
 ${difficultyInstruction}
 
@@ -294,6 +297,41 @@ Format:
         ? await quizService.generateCustomAIQuiz(String(customTopic), count, difficulty, quizType)
         : await quizService.generateAIQuiz(topicId, count, difficulty)
       res.json(quiz)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async addCustomQuestion(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params
+      const { text, options, correctAnswer, explanation } = req.body
+
+      if (!text || !options || options.length !== 4 || typeof correctAnswer !== 'number') {
+        return res.status(400).json({ message: 'Invalid question payload. options array must have exactly 4 items and correctAnswer must be a number index (0-3).' })
+      }
+
+      const quiz = await prisma.quiz.findUnique({
+        where: { id },
+        include: { questions: true }
+      })
+      if (!quiz) return res.status(404).json({ message: 'Quiz not found' })
+
+      const newQuestion = await prisma.question.create({
+        data: {
+          quizId: id,
+          text,
+          options,
+          correctAnswer,
+          explanation: explanation || null,
+          order: quiz.questions.length + 1
+        }
+      })
+
+      const { invalidateCache } = await import('@/utils/redis')
+      await invalidateCache(`quiz:${id}`)
+
+      res.status(201).json(newQuestion)
     } catch (error) {
       next(error)
     }

@@ -79,10 +79,12 @@ These questions must be realistic, challenging, and suitable for technical inter
 
 CRITICAL INSTRUCTIONS:
 1. NO PLACEHOLDERS: Do not use template questions. Every question must be distinct and explore specific technical mechanics of "${quiz.topic.title}".
-2. REAL-WORLD CODE: Include code snippets or mock output scenarios in at least 5 questions (e.g. predicting output, explaining behavior, finding syntax/logical bugs).
-3. TOPIC DEPTH: Cover deep, practical concepts (syntax, execution steps, performance characteristics, memory, common edge cases, errors).
-4. QUALITY OPTIONS: Ensure options are realistic distractors.
-5. EXPLANATIONS: Provide clear, technical, step-by-step explanations of why the correct option is right.
+2. REAL-WORLD CODE: Include code snippets or mock output scenarios in at least 5 questions.
+3. MULTI-LINE CODE BLOCKS: Any code snippet, code block, or execution code must be enclosed in standard triple-backtick markdown blocks with the correct language identifier (e.g. \`\`\`javascript or \`\`\`python).
+4. CODE INDENTATION: Code within blocks must use proper indentation (4 spaces per block level) and be formatted across multiple lines for readability. Do NOT write code in a single line.
+5. TOPIC DEPTH: Cover deep, practical concepts (syntax, execution steps, performance characteristics, memory, common edge cases, errors).
+6. QUALITY OPTIONS: Ensure options are realistic distractors.
+7. EXPLANATIONS: Provide clear, technical, step-by-step explanations of why the correct option is right.
 
 ${difficultyInstruction}
 

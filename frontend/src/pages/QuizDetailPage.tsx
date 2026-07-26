@@ -63,6 +63,36 @@ export function QuizDetailPage() {
   const [current, setCurrent] = useState(0)
   const q = questions[current]
 
+  const handleRegenerate = () => {
+    if (!id) return
+    setCurrent(0)
+    setSelected(null)
+    setAnswers([])
+    setSelectedAnswers([])
+    setDone(false)
+    setQuestions([])
+    setIsStreaming(true)
+    setStreamError(null)
+
+    quizService.streamQuizQuestions(
+      id,
+      (newQuestion) => {
+        setQuestions((prev) => {
+          if (prev.some((q) => q.id === newQuestion.id)) return prev
+          return [...prev, newQuestion]
+        })
+      },
+      () => {
+        setIsStreaming(false)
+      },
+      true // force = true
+    ).catch((err) => {
+      console.error('Quiz streaming failed:', err)
+      setStreamError('Failed to generate AI questions. Please reload.')
+      setIsStreaming(false)
+    })
+  }
+
   const confirm = () => {
     if (selected === null || !q) return
     const correct = selected === q.correctAnswer
@@ -168,6 +198,13 @@ export function QuizDetailPage() {
           >
             Retry Quiz
           </button>
+          <button
+            onClick={handleRegenerate}
+            className="px-6 py-2.5 rounded-xl font-bold text-sm transition-all hover:opacity-90 ml-3 bg-surface-container hover:bg-surface-container-high"
+            style={{ color: 'var(--color-on-surface)', border: '1px solid var(--color-border-muted)' }}
+          >
+            Regenerate Fresh Questions
+          </button>
         </div>
       </div>
     )
@@ -195,6 +232,13 @@ export function QuizDetailPage() {
             <span style={{ color: 'var(--color-primary)', fontWeight: 600 }}>
               {Math.round((current / questions.length) * 100)}% complete
             </span>
+            <button
+              onClick={handleRegenerate}
+              title="Regenerate MCQs"
+              className="p-1 rounded-lg transition-all hover:bg-surface-container-highest flex items-center justify-center text-outline hover:text-primary ml-1"
+            >
+              <span className="material-symbols-outlined text-[16px]">sync</span>
+            </button>
           </span>
         </div>
         <div className="h-2 rounded-full" style={{ background: 'var(--color-surface-container-high)' }}>
@@ -213,7 +257,7 @@ export function QuizDetailPage() {
             components={{
               h1({ children }) { return <h1 className="text-xl font-bold mb-4">{children}</h1> },
               h2({ children }) { return <h2 className="text-lg font-bold mb-3">{children}</h2> },
-              p({ children }) { return <p className="mb-4 text-base font-semibold leading-relaxed text-left">{children}</p> },
+              p({ children }) { return <p className="mb-4 text-base font-medium leading-relaxed text-left">{children}</p> },
               strong({ children }) { return <strong style={{ color: 'var(--color-primary)', fontWeight: 700 }}>{children}</strong> },
               code({ className, children, ...props }) {
                 const isInline = !className

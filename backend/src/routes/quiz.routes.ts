@@ -11,6 +11,7 @@ router.get('/attempts', authenticate, quizController.getAttempts.bind(quizContro
 router.get('/test-nvidia', quizController.testNvidia.bind(quizController))
 router.get('/:id/stream', optionalAuth, quizController.streamById.bind(quizController))
 router.get('/:id', optionalAuth, quizController.getById.bind(quizController))
+router.post('/:id/questions', authenticate, quizController.addCustomQuestion.bind(quizController))
 router.post('/:id/submit', authenticate, quizController.submitAttempt.bind(quizController))
 
 export default router
