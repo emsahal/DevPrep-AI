@@ -42,6 +42,7 @@ export function AITutorPage() {
   const [input, setInput] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
   const [streamingContent, setStreamingContent] = useState('')
+  const [sessionId, setSessionId] = useState<string | undefined>(undefined)
   const streamingRef = useRef('')
   const bottomRef = useRef<HTMLDivElement>(null)
 
@@ -61,22 +62,23 @@ export function AITutorPage() {
       text,
       'chat',
       '',
-      undefined,
+      sessionId,
       (chunk) => {
         streamingRef.current += chunk
         setStreamingContent(streamingRef.current)
       },
-      (_sessionId) => {
+      (newSessionId) => {
         // Use ref value to ensure we have the complete content
         const finalContent = streamingRef.current
         setMessages(prev => [...prev, { role: 'assistant', text: finalContent }])
+        setSessionId(newSessionId)
         // Clear streaming state AFTER message is added to messages
         setIsStreaming(false)
         setStreamingContent('')
         streamingRef.current = ''
       }
     )
-  }, [])
+  }, [isStreaming, sessionId])
 
   const SUGGESTIONS = ['Explain JavaScript closures', 'What is a closure vs a class?', 'How does the event loop work?', 'Review my code for bugs']
 
