@@ -202,6 +202,52 @@ Format:
     }
   }
 
+  async testNvidia(req: Request, res: Response, next: NextFunction) {
+    try {
+      const apiKey = process.env.NVIDIA_API_KEY || ''
+      const url = 'https://integrate.api.nvidia.com/v1/chat/completions'
+      
+      const payload = {
+        model: 'openai/gpt-oss-20b',
+        messages: [
+          {
+            role: 'user',
+            content: 'Hello, respond with: "Nvidia API test successful!"'
+          }
+        ],
+        temperature: 1,
+        max_tokens: 1024,
+      }
+
+      console.log('Testing Nvidia API with key:', apiKey ? apiKey.substring(0, 15) + '...' : 'MISSING')
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+
+      const status = response.status
+      const statusText = response.statusText
+      const body = await response.text()
+
+      res.json({
+        status,
+        statusText,
+        body
+      })
+    } catch (err: any) {
+      res.json({
+        error: err.message,
+        stack: err.stack
+      })
+    }
+  }
+
   async getDaily(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const quiz = await quizService.getDailyQuiz()
