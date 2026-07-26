@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { getDuelSocket } from '@/services/socketService'
+import { duelService } from '@/services/duelService'
 import { useDuelStore } from '@/store/duelStore'
 import { useToast } from '@/providers/ToastProvider'
 import { CodingEditor } from '@/features/duel/components/CodingEditor'
@@ -32,7 +32,6 @@ export function DuelBattlePage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { toast } = useToast()
-  const socket = getDuelSocket()
   const { opponentProgress, setDuelResult, setOpponentProgress } = useDuelStore()
 
   const [content, setContent] = useState<GameContent | null>(null)
@@ -45,45 +44,87 @@ export function DuelBattlePage() {
   const [timeLeft, setTimeLeft] = useState(0)
   const [finished, setFinished] = useState(false)
 
+  // Load duel data and start polling for opponent progress / results
   useEffect(() => {
-    socket.emit('duel:join', { duelId: id })
+    if (!id) return
 
-    socket.on('duel:battle_content', (data: { content: GameContent; timeLimit: number; startedAt: string; opponent?: { name: string } }) => {
-      setContent(data.content)
-      setOpponentName(data.opponent?.name || 'Opponent')
-      setTimeLeft(data.timeLimit)
-    })
+    let isMounted = true
 
-    socket.on('duel:opponent_progress', (data: { questionsAnswered: number; totalQuestions: number; score: number }) => {
-      setOpponentProgress({ questionsAnswered: data.questionsAnswered, totalQuestions: data.totalQuestions })
-      if (data.score !== undefined) setTheirScore(data.score)
-    })
+    const loadDuel = async () => {
+      try {
+        const data = await duelService.getDuel(id)
+        if (!isMounted) return
 
-    socket.on('duel:result', (data) => {
-      setDuelResult(data)
-      navigate(`/duel/results/${data.duelId}`, { replace: true })
-    })
+        setContent(data.content)
+        setOpponentName(data.opponent?.name || 'Opponent')
 
-    socket.on('duel:error', (data) => {
-      toast({ type: 'error', title: 'Duel error', message: data.message })
-    })
+        // Compute remaining time based on when the duel started and the content's time limit
+        const elapsedSeconds = Math.floor((Date.now() - new Date(data.startedAt).getTime()) / 1000)
+        const timeLimit = data.content?.timeLimit || 180
+        setTimeLeft(Math.max(timeLimit - elapsedSeconds, 0))
+
+        if (data.opponentProgress) {
+          setOpponentProgress({
+            questionsAnswered: data.opponentProgress.questionsAnswered,
+            totalQuestions: data.content?.questions?.length || 1,
+          })
+        }
+
+        // If duel is already finished, go to results
+        if (data.status === 'finished') {
+          const result = await duelService.finishDuel(id)
+          setDuelResult(result)
+          navigate(`/duel/results/${id}`, { replace: true })
+        }
+      } catch (err: any) {
+        toast({ type: 'error', title: 'Error loading battle', message: err.response?.data?.message || err.message })
+      }
+    }
+
+    loadDuel()
+
+    // Poll every 3 seconds
+    const pollInterval = setInterval(async () => {
+      try {
+        const data = await duelService.getDuel(id)
+        if (!isMounted) return
+
+        if (data.opponentProgress) {
+          setOpponentProgress({
+            questionsAnswered: data.opponentProgress.questionsAnswered,
+            totalQuestions: data.content?.questions?.length || 1,
+          })
+        }
+
+        if (data.status === 'finished') {
+          clearInterval(pollInterval)
+          const result = await duelService.finishDuel(id)
+          setDuelResult(result)
+          navigate(`/duel/results/${id}`, { replace: true })
+        }
+      } catch (err) {
+        // silently fail polling errors
+      }
+    }, 3000)
 
     return () => {
-      socket.off('duel:battle_content')
-      socket.off('duel:opponent_progress')
-      socket.off('duel:result')
-      socket.off('duel:error')
+      isMounted = false
+      clearInterval(pollInterval)
     }
-  }, [id, socket, navigate, setDuelResult, setOpponentProgress, toast])
+  }, [id, navigate, setDuelResult, setOpponentProgress, toast])
 
-  const submitAnswer = useCallback((questionId: string, answer: string) => {
-    socket.emit('duel:submit_answer', { duelId: id, questionId, answer, timestamp: Date.now() })
+  const submitAnswer = useCallback(async (questionId: string, answer: string) => {
     const q = content?.questions?.find(q => q.id === questionId)
     if (q && answer === q.correctAnswer) {
       setMyScore(s => s + 1)
     }
     setAnswers(a => ({ ...a, [questionId]: answer }))
-  }, [socket, id, content])
+    try {
+      await duelService.submitAnswer(id!, questionId, answer)
+    } catch (err: any) {
+      toast({ type: 'error', title: 'Submission failed', message: err.message })
+    }
+  }, [id, content, toast])
 
   const handleSelect = (ans: string) => {
     if (!content || selectedAnswer || content.type === 'coding') return
@@ -100,9 +141,15 @@ export function DuelBattlePage() {
     }, 800)
   }
 
-  const handleFinishEarly = () => {
+  const handleFinishEarly = async () => {
     setFinished(true)
-    socket.emit('duel:finished_early', { duelId: id })
+    try {
+      const result = await duelService.finishDuel(id!)
+      setDuelResult(result)
+      navigate(`/duel/results/${id}`, { replace: true })
+    } catch (err: any) {
+      toast({ type: 'error', title: 'Failed to complete battle', message: err.message })
+    }
   }
 
   // Timer
@@ -139,7 +186,7 @@ export function DuelBattlePage() {
         opponentName={opponentName}
         opponentProgress={opponentProgress}
         onFinish={handleFinishEarly}
-        socket={socket}
+        onSubmitAnswer={submitAnswer}
         duelId={id}
       />
     )
@@ -212,7 +259,7 @@ export function DuelBattlePage() {
 }
 
 function CodingBattleView({
-  challenge, timeLeft, myScore, theirScore, opponentName, opponentProgress, onFinish, socket, duelId,
+  challenge, timeLeft, myScore, theirScore, opponentName, opponentProgress, onFinish, onSubmitAnswer,
 }: {
   challenge: CodingChallenge
   timeLeft: number
@@ -221,8 +268,7 @@ function CodingBattleView({
   opponentName: string
   opponentProgress: { questionsAnswered: number; totalQuestions: number } | null
   onFinish: () => void
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  socket: any
+  onSubmitAnswer: (questionId: string, answer: string) => Promise<void>
   duelId: string | undefined
 }) {
   const [code, setCode] = useState(challenge.starterCode)
@@ -234,7 +280,10 @@ function CodingBattleView({
     try {
       const res = await fetch('/api/duels/run-code', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        },
         body: JSON.stringify({
           language: challenge.language,
           code,
@@ -244,12 +293,10 @@ function CodingBattleView({
       const data = await res.json()
       setOutput(data.output || data.error || 'No output')
       if (data.passed !== undefined) {
-        socket.emit('duel:submit_answer', {
-          duelId,
-          questionId: challenge.id,
-          answer: JSON.stringify({ code, passed: data.passed, total: data.total }),
-          timestamp: Date.now(),
-        })
+        await onSubmitAnswer(
+          challenge.id,
+          JSON.stringify({ code, passed: data.passed, total: data.total })
+        )
       }
     } catch {
       setOutput('Error running code')

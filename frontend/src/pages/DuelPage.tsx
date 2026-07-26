@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getDuelSocket } from '@/services/socketService'
 import { duelService } from '@/services/duelService'
 import { useDuelStore } from '@/store/duelStore'
 import { useAuthStore } from '@/store/authStore'
@@ -32,83 +31,63 @@ export function DuelPage() {
   const [selectedMode, setSelectedMode] = useState('')
   const [selectedTopic, setSelectedTopic] = useState('any')
   const [available, setAvailable] = useState(false)
-  const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([])
-  const searchTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const [activeUsers, setActiveUsers] = useState<OnlineUser[]>([])
+  const [currentRequest, setCurrentRequest] = useState<any | null>(null)
+  const searchPollTimer = useRef<ReturnType<typeof setInterval> | undefined>(undefined)
   const { incomingRequest, setIncomingRequest, setActiveDuel, setSearching: storeSearching } = useDuelStore()
 
-  const socket = getDuelSocket()
+  const currentUser = useAuthStore(s => s.user)
 
+  // Poll for active users list and pending challenges targeting us
   useEffect(() => {
-    socket.on('duel:online_users', (users: OnlineUser[]) => {
-      setOnlineUsers(users)
-    })
-    socket.on('duel:searching', () => setStep('searching'))
-    socket.on('duel:request_received', (data) => {
-      setIncomingRequest(data)
-      setStep('incoming')
-    })
-    socket.on('duel:match_found', (data) => {
-      if (searchTimer.current) clearTimeout(searchTimer.current)
-      setActiveDuel(data)
-      navigate(`/duel/battle/${data.duelId}`)
-    })
-    socket.on('duel:request_declined', (data) => {
-      if (searchTimer.current) clearTimeout(searchTimer.current)
-      if (data.reason === 'expired') {
-        toast({ type: 'info', title: 'No opponent found', message: 'Nobody was available. Try again.' })
+    let isMounted = true
+
+    const fetchUsers = async () => {
+      try {
+        const users = await duelService.getActiveUsers()
+        if (isMounted) setActiveUsers(users)
+      } catch {
+        // silently fail users fetch
       }
-      setStep('mode')
-      setIncomingRequest(null)
-    })
-    socket.on('duel:challenge_sent', () => {
-      toast({ type: 'success', title: 'Challenge sent!', message: 'Waiting for them to accept...' })
-    })
-    socket.on('duel:error', (data) => {
-      toast({ type: 'error', title: 'Error', message: data.message })
-      setStep('mode')
-    })
+    }
+
+    const fetchPendingChallenges = async () => {
+      if (step === 'searching' || step === 'incoming') return
+      try {
+        const pending = await duelService.getPendingRequests()
+        if (pending && pending.length > 0 && isMounted) {
+          const firstChallenge = pending[0]
+          setIncomingRequest(firstChallenge)
+          setStep('incoming')
+        }
+      } catch {
+        // silently fail challenges fetch
+      }
+    }
+
+    fetchUsers()
+    fetchPendingChallenges()
+
+    const usersInterval = setInterval(fetchUsers, 4000)
+    const challengesInterval = setInterval(fetchPendingChallenges, 3000)
 
     return () => {
-      socket.off('duel:online_users')
-      socket.off('duel:searching')
-      socket.off('duel:request_received')
-      socket.off('duel:match_found')
-      socket.off('duel:request_declined')
-      socket.off('duel:challenge_sent')
-      socket.off('duel:error')
+      isMounted = false
+      clearInterval(usersInterval)
+      clearInterval(challengesInterval)
     }
-  }, [socket, navigate, setIncomingRequest, setActiveDuel, toast])
-
-  const pollForOpponent = () => {
-    searchTimer.current = setTimeout(() => {
-      socket.emit('duel:request_match', { mode: selectedMode, topic: selectedTopic })
-      pollForOpponent()
-    }, 5000)
-  }
-
-  const startSearch = () => {
-    storeSearching(selectedMode, selectedTopic)
-    socket.emit('duel:set_available', { mode: selectedMode, topic: selectedTopic })
-    socket.emit('duel:request_match', { mode: selectedMode, topic: selectedTopic })
-    setStep('searching')
-    pollForOpponent()
-  }
-
-  const cancelSearch = () => {
-    if (searchTimer.current) clearTimeout(searchTimer.current)
-    socket.emit('duel:set_unavailable', { mode: selectedMode, topic: selectedTopic })
-    setStep('mode')
-  }
+  }, [step, setIncomingRequest])
 
   const acceptRequest = async () => {
     if (incomingRequest) {
       try {
-        // REST primary — persists accept to DB and triggers match creation
-        await duelService.acceptRequest(incomingRequest.matchRequestId)
-        // Socket event as secondary for real-time opponent notification
-        socket.emit('duel:accept', { matchRequestId: incomingRequest.matchRequestId })
+        const duel = await duelService.acceptRequest(incomingRequest.matchRequestId) as any
+        setActiveDuel(duel)
+        navigate(`/duel/battle/${duel.id || duel.duelId}`)
       } catch {
-        toast({ type: 'error', title: 'Failed to accept', message: 'Please try again.' })
+        toast({ type: 'error', title: 'Failed to accept', message: 'The challenge might have expired.' })
+        setIncomingRequest(null)
+        setStep('mode')
       }
     }
   }
@@ -117,9 +96,8 @@ export function DuelPage() {
     if (incomingRequest) {
       try {
         await duelService.declineRequest(incomingRequest.matchRequestId)
-        socket.emit('duel:decline', { matchRequestId: incomingRequest.matchRequestId })
       } catch {
-        // Silently clear UI even on error
+        // silently fail
       }
       setIncomingRequest(null)
       setStep('mode')
@@ -132,29 +110,91 @@ export function DuelPage() {
       return
     }
     try {
-      // REST primary — works even if socket is disconnected, persists to DB, sends notification
-      await duelService.requestMatch(user.userId, selectedMode, selectedTopic)
-      // Socket secondary — for immediate real-time feedback on both sides
-      socket.emit('duel:challenge', { toUserId: user.userId, mode: selectedMode, topic: selectedTopic })
+      const request = await duelService.requestMatch(user.userId, selectedMode, selectedTopic)
+      setCurrentRequest(request)
+      setStep('searching')
       toast({ type: 'success', title: 'Challenge sent!', message: `Waiting for ${user.name} to accept...` })
-    } catch {
-      toast({ type: 'error', title: 'Challenge failed', message: 'Could not reach the server. Try again.' })
+
+      // Poll status of this specific challenge request
+      if (searchPollTimer.current) clearInterval(searchPollTimer.current)
+      searchPollTimer.current = setInterval(async () => {
+        try {
+          const statusData = await duelService.getRequestStatus(request.id)
+          if (statusData.status === 'accepted' && statusData.duel) {
+            clearInterval(searchPollTimer.current)
+            setActiveDuel(statusData.duel)
+            navigate(`/duel/battle/${statusData.duel.id}`)
+          } else if (statusData.status === 'declined' || statusData.status === 'expired') {
+            clearInterval(searchPollTimer.current)
+            toast({ type: 'info', title: 'Challenge declined or expired' })
+            setStep('mode')
+          }
+        } catch {
+          // silently fail status poll
+        }
+      }, 2000)
+    } catch (err: any) {
+      toast({ type: 'error', title: 'Challenge failed', message: err.response?.data?.message || err.message })
     }
   }
 
+  const startSearch = async () => {
+    storeSearching(selectedMode, selectedTopic)
+    setStep('searching')
+    try {
+      const request = await duelService.requestMatch(null, selectedMode, selectedTopic) as any
+      setCurrentRequest(request)
+
+      // If matched instantly, redirect to battle
+      if (request.status === 'accepted' && request.duelId) {
+        navigate(`/duel/battle/${request.duelId}`)
+        return
+      }
+
+      // Otherwise poll for status of matchmaking request
+      if (searchPollTimer.current) clearInterval(searchPollTimer.current)
+      searchPollTimer.current = setInterval(async () => {
+        try {
+          const statusData = await duelService.getRequestStatus(request.id)
+          if (statusData.status === 'accepted' && statusData.duel) {
+            clearInterval(searchPollTimer.current)
+            setActiveDuel(statusData.duel)
+            navigate(`/duel/battle/${statusData.duel.id}`)
+          } else if (statusData.status === 'expired' || statusData.status === 'cancelled') {
+            clearInterval(searchPollTimer.current)
+            toast({ type: 'info', title: 'Search timed out', message: 'No opponent was found.' })
+            setStep('mode')
+          }
+        } catch {
+          // silently fail status poll
+        }
+      }, 2000)
+
+    } catch (err: any) {
+      toast({ type: 'error', title: 'Search failed', message: err.response?.data?.message || err.message })
+      setStep('mode')
+    }
+  }
+
+  const cancelSearch = async () => {
+    if (searchPollTimer.current) clearInterval(searchPollTimer.current)
+    if (currentRequest) {
+      try {
+        await duelService.cancelRequest(currentRequest.id)
+      } catch {
+        // silently fail
+      }
+    }
+    setStep('mode')
+  }
+
   const toggleAvailable = () => {
-    if (available) {
-      socket.emit('duel:set_unavailable', { mode: selectedMode, topic: selectedTopic })
-    } else if (selectedMode) {
-      socket.emit('duel:set_available', { mode: selectedMode, topic: selectedTopic })
-    } else {
+    if (!selectedMode) {
       toast({ type: 'warning', title: 'Select a mode first' })
       return
     }
     setAvailable(!available)
   }
-
-  const currentUser = useAuthStore(s => s.user)
 
   return (
     <div className="px-6 py-8 max-w-4xl mx-auto">
@@ -163,7 +203,7 @@ export function DuelPage() {
           Study Duel
         </h1>
         <p className="text-sm" style={{ color: 'var(--color-on-surface-variant)' }}>
-          Challenge other learners in real-time battles
+          Challenge other learners in fast-paced study battles
         </p>
       </div>
 
@@ -264,7 +304,7 @@ export function DuelPage() {
             <div className="bento-card p-8 text-center ring-1" style={{ borderColor: 'var(--color-primary)' }}>
               <span className="material-symbols-outlined text-5xl mb-3" style={{ color: 'var(--color-primary)' }}>sports_esports</span>
               <p className="font-bold text-lg" style={{ color: 'var(--color-on-surface)' }}>
-                {incomingRequest.fromUser.name} wants to duel!
+                {incomingRequest.fromUser?.name || 'Someone'} wants to duel!
               </p>
               <p className="text-sm mt-1" style={{ color: 'var(--color-on-surface-variant)' }}>
                 {incomingRequest.mode} · {incomingRequest.topic}
@@ -289,15 +329,15 @@ export function DuelPage() {
         <div className="space-y-3">
           <h2 className="font-bold text-sm uppercase tracking-widest flex items-center gap-2" style={{ color: 'var(--color-outline)' }}>
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            Online ({onlineUsers.length})
+            Users ({activeUsers.length})
           </h2>
-          {onlineUsers.length === 0 ? (
+          {activeUsers.length === 0 ? (
             <div className="bento-card p-6 text-center">
-              <p className="text-xs" style={{ color: 'var(--color-on-surface-variant)' }}>No one else is online right now</p>
+              <p className="text-xs" style={{ color: 'var(--color-on-surface-variant)' }}>No users available right now</p>
             </div>
           ) : (
             <div className="space-y-2 max-h-[500px] overflow-y-auto no-scrollbar">
-              {onlineUsers.map(u => (
+              {activeUsers.map(u => (
                 <div key={u.userId} className="bento-card p-3 flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0"
@@ -306,17 +346,12 @@ export function DuelPage() {
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-semibold truncate" style={{ color: 'var(--color-on-surface)' }}>{u.name}</p>
-                      {u.mode && (
-                        <p className="text-[10px] truncate" style={{ color: 'var(--color-on-surface-variant)' }}>
-                          {u.mode}{u.topic ? ` · ${u.topic}` : ''}
-                        </p>
-                      )}
                     </div>
                   </div>
                   {u.userId !== currentUser?.id && (
                     <button
                       onClick={() => challengeUser(u)}
-                      className="px-3 py-1 rounded-lg text-xs font-bold flex-shrink-0 transition-opacity hover:opacity-90"
+                      className="px-3 py-1.5 rounded-lg text-xs font-bold transition-opacity hover:opacity-90"
                       style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}
                     >
                       Challenge
