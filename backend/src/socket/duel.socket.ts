@@ -8,11 +8,20 @@ import { notificationService } from '@/services/notification.service'
 import logger from '@/utils/logger'
 import type { DuelGameContent } from '@/services/duel/duel-engine.interface'
 
+interface OnlineUser {
+  userId: string
+  name: string
+  avatar: string | null
+  mode?: string
+  topic?: string
+}
+
 interface AuthSocket extends Socket {
   userId?: string
 }
 
 const userSockets = new Map<string, Set<string>>()
+const onlineUsers = new Map<string, OnlineUser>()
 
 function getUserSocketIds(userId: string): string[] {
   return Array.from(userSockets.get(userId) || [])
@@ -32,6 +41,17 @@ async function getUserInfo(userId: string) {
   return user || { id: userId, name: 'Unknown', avatar: null }
 }
 
+function broadcastOnlineUsers(ns: Namespace) {
+  const list = Array.from(onlineUsers.values()).map(u => ({
+    userId: u.userId,
+    name: u.name,
+    avatar: u.avatar,
+    mode: u.mode || null,
+    topic: u.topic || null,
+  }))
+  ns.emit('duel:online_users', list)
+}
+
 export function setupDuelSocket(io: Server) {
   const duelNs = io.of('/duels')
 
@@ -48,15 +68,29 @@ export function setupDuelSocket(io: Server) {
     }
   })
 
-  duelNs.on('connection', (socket: AuthSocket) => {
+  duelNs.on('connection', async (socket: AuthSocket) => {
     const userId = socket.userId!
     logger.info(`Duel WS connected: user=${userId} socket=${socket.id}`)
 
     if (!userSockets.has(userId)) userSockets.set(userId, new Set())
     userSockets.get(userId)!.add(socket.id)
 
+    // Mark as online
+    if (!onlineUsers.has(userId)) {
+      const info = await getUserInfo(userId)
+      onlineUsers.set(userId, { userId: info.id, name: info.name, avatar: info.avatar })
+    }
+    broadcastOnlineUsers(duelNs)
+
     socket.on('duel:set_available', async ({ mode, topic }) => {
       await matchmakingService.setAvailable(userId, mode, topic)
+      const existing = onlineUsers.get(userId)
+      if (existing) {
+        existing.mode = mode
+        existing.topic = topic
+        onlineUsers.set(userId, existing)
+        broadcastOnlineUsers(duelNs)
+      }
     })
 
     socket.on('duel:set_unavailable', async ({ mode, topic }) => {
@@ -64,6 +98,13 @@ export function setupDuelSocket(io: Server) {
         await matchmakingService.setUnavailable(userId, mode, topic)
       } else {
         await matchmakingService.removeFromAll(userId)
+      }
+      const existing = onlineUsers.get(userId)
+      if (existing) {
+        existing.mode = undefined
+        existing.topic = undefined
+        onlineUsers.set(userId, existing)
+        broadcastOnlineUsers(duelNs)
       }
     })
 
@@ -98,16 +139,35 @@ export function setupDuelSocket(io: Server) {
       }
     })
 
+    socket.on('duel:challenge', async ({ toUserId, mode, topic }) => {
+      try {
+        const request = await duelService.requestMatch(userId, toUserId, mode, topic)
+        emitToUser(duelNs, toUserId, 'duel:request_received', {
+          matchRequestId: request.id,
+          fromUser: request.fromUser,
+          mode: request.mode,
+          topic: request.topic,
+          expiresAt: request.expiresAt,
+        })
+        socket.emit('duel:challenge_sent', { matchRequestId: request.id, toUserId })
+
+        setTimeout(async () => {
+          const req = await prisma.matchRequest.findUnique({ where: { id: request.id } })
+          if (req?.status === 'pending') {
+            await duelService.expireRequest(request.id)
+            emitToUser(duelNs, userId, 'duel:request_declined', { matchRequestId: request.id, reason: 'expired' })
+            emitToUser(duelNs, toUserId, 'duel:request_declined', { matchRequestId: request.id, reason: 'expired' })
+          }
+        }, 20_000)
+      } catch (error: unknown) {
+        socket.emit('duel:error', { message: error instanceof Error ? error.message : 'Challenge failed' })
+      }
+    })
+
     socket.on('duel:accept', async ({ matchRequestId }) => {
       try {
         const duel = await duelService.acceptRequest(matchRequestId, userId)
 
-        const notif = await notificationService.create(
-          duel.player1Id, 'duel_accepted', 'Duel Accepted!',
-          `Your ${duel.mode} battle is starting!`,
-          { duelId: duel.id },
-        )
-        emitToUser(duelNs, duel.player1Id, 'notification:new', notif)
         emitToUser(duelNs, duel.player1Id, 'duel:match_found', {
           duelId: duel.id,
           opponent: await getUserInfo(duel.player2Id),
@@ -122,16 +182,41 @@ export function setupDuelSocket(io: Server) {
         })
 
         const content = duel.content as unknown as DuelGameContent
-        socket.emit('duel:starting', {
+
+        emitToUser(duelNs, duel.player1Id, 'duel:battle_content', {
           duelId: duel.id,
-          mode: duel.mode,
-          topic: duel.topic,
+          content,
+          timeLimit: content.timeLimit || 180,
+          startedAt: duel.startedAt,
+        })
+        emitToUser(duelNs, duel.player2Id, 'duel:battle_content', {
+          duelId: duel.id,
           content,
           timeLimit: content.timeLimit || 180,
           startedAt: duel.startedAt,
         })
       } catch (error: unknown) {
         socket.emit('duel:error', { message: error instanceof Error ? error.message : 'Failed to accept' })
+      }
+    })
+
+    socket.on('duel:join', async ({ duelId }) => {
+      try {
+        const duel = await prisma.duel.findUnique({ where: { id: duelId } })
+        if (!duel || duel.status !== 'in_progress') {
+          return socket.emit('duel:error', { message: 'Duel not found or already finished' })
+        }
+        const content = duel.content as unknown as DuelGameContent
+        const opponentId = duel.player1Id === userId ? duel.player2Id : duel.player1Id
+        socket.emit('duel:battle_content', {
+          duelId: duel.id,
+          content,
+          timeLimit: content.timeLimit || 180,
+          startedAt: duel.startedAt,
+          opponent: await getUserInfo(opponentId),
+        })
+      } catch (error: unknown) {
+        socket.emit('duel:error', { message: error instanceof Error ? error.message : 'Failed to join duel' })
       }
     })
 
@@ -152,7 +237,8 @@ export function setupDuelSocket(io: Server) {
 
         const answers = (duel.answers as Record<string, unknown[]>) || {}
         const playerAnswers = answers[userId] || []
-        const totalQs = ((duel.content as unknown as DuelGameContent)?.questions?.length) || 0
+        const content = duel.content as unknown as DuelGameContent
+        const totalQs = content?.questions?.length || 0
         const opponentId = duel.player1Id === userId ? duel.player2Id : duel.player1Id
 
         emitToUser(duelNs, opponentId, 'duel:opponent_progress', {
@@ -202,9 +288,11 @@ export function setupDuelSocket(io: Server) {
         sockets.delete(socket.id)
         if (sockets.size === 0) {
           userSockets.delete(userId)
+          onlineUsers.delete(userId)
           await matchmakingService.removeFromAll(userId)
         }
       }
+      broadcastOnlineUsers(duelNs)
     })
   })
 }

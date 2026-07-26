@@ -9,5 +9,6 @@ router.post('/request/:id/accept', authenticate, duelController.acceptRequest.bi
 router.post('/request/:id/decline', authenticate, duelController.declineRequest.bind(duelController))
 router.post('/request/:id/cancel', authenticate, duelController.cancelRequest.bind(duelController))
 router.get('/history', authenticate, duelController.getHistory.bind(duelController))
+router.post('/run-code', authenticate, duelController.runCode.bind(duelController))
 
 export default router

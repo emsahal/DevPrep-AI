@@ -1,8 +1,9 @@
 import prisma from '@/utils/prisma'
 import { redis } from '@/utils/redis'
 import { AppError } from '@/middleware/errorHandler'
-import { quizBattleEngine, QuizBattleEngine } from './engines/quiz-battle.engine'
-import { flashcardSprintEngine, FlashcardSprintEngine } from './engines/flashcard-sprint.engine'
+import { quizBattleEngine } from './engines/quiz-battle.engine'
+import { flashcardSprintEngine } from './engines/flashcard-sprint.engine'
+import { codingBattleEngine } from './engines/coding-battle.engine'
 import { matchmakingService } from './matchmaking.service'
 import type { DuelEngine, DuelGameContent, PlayerSubmission } from './duel-engine.interface'
 
@@ -11,6 +12,7 @@ const ACTIVE_DUEL_PREFIX = 'duel:active:'
 const engines: Record<string, DuelEngine> = {
   quiz: quizBattleEngine,
   flashcard: flashcardSprintEngine,
+  coding: codingBattleEngine,
 }
 
 export class DuelService {

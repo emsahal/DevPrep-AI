@@ -1,6 +1,14 @@
 export interface DuelGameContent {
-  type: 'quiz' | 'flashcard'
-  questions: unknown[]
+  type: 'quiz' | 'flashcard' | 'coding'
+  questions?: unknown[]
+  challenge?: {
+    id: string
+    title: string
+    description: string
+    starterCode: string
+    language: string
+    testCases: { input: string; expected: string }[]
+  }
   timeLimit: number
 }
 
