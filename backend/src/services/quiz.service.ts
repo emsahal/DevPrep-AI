@@ -108,7 +108,7 @@ export class QuizService {
   async submitAttempt(userId: string, quizId: string, answers: Array<{ questionId: string; selectedAnswer: number }>) {
     const quiz = await prisma.quiz.findUnique({
       where: { id: quizId },
-      include: { questions: true },
+      include: { questions: true, topic: true },
     })
 
     if (!quiz) throw new AppError(404, 'Quiz not found')
@@ -132,7 +132,7 @@ export class QuizService {
         isCorrect,
         explanation: question.explanation,
       }
-    }).filter(Boolean)
+    }).filter(Boolean) as any[]
 
     const totalQuestions = quiz.questions.length
     const percentage = Math.round((score / totalQuestions) * 100)
@@ -147,6 +147,36 @@ export class QuizService {
         completedAt: new Date(),
       },
     })
+
+    if (quiz.topicId) {
+      const existingProgress = await prisma.userProgress.findUnique({
+        where: { userId_topicId: { userId, topicId: quiz.topicId } },
+      })
+
+      const hasRead = existingProgress?.hasRead ?? false
+      const hasPassedQuiz = percentage >= 75
+      const completed = hasRead && hasPassedQuiz
+
+      await prisma.userProgress.upsert({
+        where: { userId_topicId: { userId, topicId: quiz.topicId } },
+        update: {
+          score: Math.max(existingProgress?.score || 0, percentage),
+          completed: existingProgress?.completed || completed,
+        },
+        create: {
+          userId,
+          topicId: quiz.topicId,
+          score: percentage,
+          completed,
+          hasRead: false,
+        },
+      })
+
+      if (completed && !existingProgress?.completed) {
+        const { gamificationService } = await import('./gamification.service')
+        await gamificationService.handleTopicCompleted(userId, quiz.topicId, quiz.topic.difficulty)
+      }
+    }
 
     return {
       id: attempt.id,

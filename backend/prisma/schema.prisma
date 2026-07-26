@@ -234,6 +234,7 @@ model UserProgress {
   userId    String
   topicId   String
   completed Boolean  @default(false)
+  hasRead   Boolean  @default(false)
   score     Int?
   timeSpent Int?
   createdAt DateTime @default(now())

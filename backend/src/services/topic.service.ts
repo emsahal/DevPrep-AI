@@ -57,9 +57,34 @@ export class TopicService {
 
     let userProgress = false
     if (userId) {
-      const progress = await prisma.userProgress.findUnique({
+      const existingProgress = await prisma.userProgress.findUnique({
         where: { userId_topicId: { userId, topicId: topic.id } },
       })
+
+      const hasRead = true
+      const hasPassedQuiz = (existingProgress?.score ?? 0) >= 75
+      const completed = hasPassedQuiz
+
+      const progress = await prisma.userProgress.upsert({
+        where: { userId_topicId: { userId, topicId: topic.id } },
+        update: {
+          hasRead,
+          completed: existingProgress?.completed || completed,
+        },
+        create: {
+          userId,
+          topicId: topic.id,
+          hasRead,
+          completed,
+          score: 0,
+        },
+      })
+
+      if (completed && !existingProgress?.completed) {
+        const { gamificationService } = await import('./gamification.service')
+        await gamificationService.handleTopicCompleted(userId, topic.id, topic.difficulty)
+      }
+
       userProgress = progress?.completed ?? false
     }
 
@@ -157,10 +182,20 @@ export class TopicService {
     const topic = await prisma.topic.findUnique({ where: { id: topicId } })
     if (!topic) return null
 
+    const existingProgress = await prisma.userProgress.findUnique({
+      where: { userId_topicId: { userId, topicId } },
+    })
+
+    const hasRead = existingProgress?.hasRead ?? false
+    const hasPassedQuiz = (existingProgress?.score ?? 0) >= 75
+
+    // Enforce business rules: can only complete if requirements are met
+    const targetCompleted = completed ? (hasRead && hasPassedQuiz) : false
+
     const progress = await prisma.userProgress.upsert({
       where: { userId_topicId: { userId, topicId } },
-      update: { completed },
-      create: { userId, topicId, completed },
+      update: { completed: targetCompleted },
+      create: { userId, topicId, completed: targetCompleted, hasRead: false, score: 0 },
     })
 
     return progress
