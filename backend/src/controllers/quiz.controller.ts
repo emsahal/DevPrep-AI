@@ -152,6 +152,7 @@ Format:
 
       const generatedQuestions: any[] = []
       const parser = new QuestionStreamParser((question) => {
+        if (generatedQuestions.length >= 15) return
         const formatted = {
           id: `ai-${generatedQuestions.length}`,
           text: question.text,
@@ -176,7 +177,7 @@ Format:
         prisma.$transaction(async (tx) => {
           await tx.question.deleteMany({ where: { quizId: id } })
           await tx.question.createMany({
-            data: generatedQuestions.map((q, idx) => ({
+            data: generatedQuestions.slice(0, 15).map((q, idx) => ({
               quizId: id,
               text: q.text,
               options: q.options,
