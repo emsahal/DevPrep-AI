@@ -34,11 +34,17 @@ app.use((req, res, next) => {
 
 const io = new Server(server, {
   cors: {
-    origin: true,
+    origin: (origin: string | undefined, cb: (err: Error | null, allow?: boolean) => void) => {
+      cb(null, true)
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   },
+  transports: ['polling'],
+  connectTimeout: 30000,
+  pingTimeout: 25000,
+  pingInterval: 10000,
 })
 
 setupDuelSocket(io)

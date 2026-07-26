@@ -9,10 +9,12 @@ export function getDuelSocket(): Socket {
     const token = localStorage.getItem('accessToken')
     socket = io(`${baseUrl}/duels`, {
       auth: { token },
-      transports: ['websocket', 'polling'],
+      transports: ['polling'],
       reconnection: true,
-      reconnectionAttempts: 5,
+      reconnectionAttempts: 10,
       reconnectionDelay: 2000,
+      reconnectionDelayMax: 10000,
+      timeout: 20000,
     })
   }
   return socket
