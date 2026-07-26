@@ -175,14 +175,14 @@ export class QuizService {
         where: { userId_topicId: { userId, topicId: quiz.topicId } },
       })
 
-      const hasRead = existingProgress?.hasRead ?? false
       const hasPassedQuiz = percentage >= 75
-      const completed = hasRead && hasPassedQuiz
+      const completed = hasPassedQuiz
 
       await prisma.userProgress.upsert({
         where: { userId_topicId: { userId, topicId: quiz.topicId } },
         update: {
           score: Math.max(existingProgress?.score || 0, percentage),
+          hasRead: existingProgress?.hasRead || hasPassedQuiz,
           completed: existingProgress?.completed || completed,
         },
         create: {
@@ -190,7 +190,7 @@ export class QuizService {
           topicId: quiz.topicId,
           score: percentage,
           completed,
-          hasRead: false,
+          hasRead: hasPassedQuiz,
         },
       })
 
