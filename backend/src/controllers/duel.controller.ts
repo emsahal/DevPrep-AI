@@ -1,8 +1,8 @@
 import { type Response, type NextFunction } from 'express'
+import { Server } from 'socket.io'
 import { duelService } from '@/services/duel/duel.service'
 import { codeExecutionService } from '@/services/code-execution.service'
 import { notificationService } from '@/services/notification.service'
-import { io } from '@/app'
 import type { AuthRequest } from '@/middleware/auth'
 import prisma from '@/utils/prisma'
 
@@ -13,18 +13,19 @@ export class DuelController {
       if (!mode || !topic) return res.status(400).json({ message: 'mode and topic are required' })
       const request = await duelService.requestMatch(req.userId!, toUserId || null, mode, topic)
 
-      // Emit real-time socket event to the opponent if they are connected
+      const io = req.app.get('io') as Server
       const duelNs = io.of('/duels')
-      duelNs.emit(`duel:request_received:${request.toUserId}`, {
-        matchRequestId: request.id,
-        fromUser: request.fromUser,
-        mode: request.mode,
-        topic: request.topic,
-        expiresAt: request.expiresAt,
-      })
 
-      // Always persist a DB notification so offline users see it on next login
+      // Emit real-time socket event and persist a DB notification to the opponent if it's a specific challenge
       if (toUserId) {
+        duelNs.emit(`duel:request_received:${toUserId}`, {
+          matchRequestId: request.id,
+          fromUser: request.fromUser,
+          mode: request.mode,
+          topic: request.topic,
+          expiresAt: request.expiresAt,
+        })
+
         const challenger = await prisma.user.findUnique({
           where: { id: req.userId! },
           select: { name: true },

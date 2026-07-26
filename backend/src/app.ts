@@ -33,6 +33,7 @@ const io = new Server(server, {
 })
 
 setupDuelSocket(io)
+app.set('io', io)
 
 app.set('trust proxy', 1)
 
