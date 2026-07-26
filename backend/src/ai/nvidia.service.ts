@@ -30,7 +30,7 @@ export class NvidiaAIService {
   constructor() {
     this.apiKey = process.env.NVIDIA_API_KEY || ''
     this.baseUrl = (process.env.NVIDIA_API_BASE_URL || 'https://integrate.api.nvidia.com/v1').replace(/\/$/, '')
-    this.defaultModel = process.env.NVIDIA_MODEL || 'meta/llama-3.1-405b-instruct'
+    this.defaultModel = process.env.NVIDIA_MODEL || 'openai/gpt-oss-20b'
     logger.info(`[NvidiaAI] Initialized with model=${this.defaultModel}`)
   }
 

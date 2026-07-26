@@ -26,7 +26,7 @@ export const config = {
 
   nvidia: {
     apiKey: process.env.NVIDIA_API_KEY || '',
-    model: process.env.NVIDIA_MODEL || 'meta/llama-3.1-405b-instruct',
+    model: process.env.NVIDIA_MODEL || 'openai/gpt-oss-20b',
     baseUrl: process.env.NVIDIA_API_BASE_URL || 'https://integrate.api.nvidia.com/v1',
   },
 
