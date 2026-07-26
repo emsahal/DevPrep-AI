@@ -20,13 +20,13 @@ export function DuelBattlePage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const socket = getDuelSocket()
-  const { activeDuel, opponentProgress, setDuelResult, setOpponentProgress } = useDuelStore()
+  const { opponentProgress, setDuelResult, setOpponentProgress } = useDuelStore()
 
   const [content, setContent] = useState<GameContent | null>(null)
   const [playerName, setPlayerName] = useState('Opponent')
   const [currentIndex, setCurrentIndex] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
-  const [answers, setAnswers] = useState<Record<string, string>>({})
+  const [, setAnswers] = useState<Record<string, string>>({})
   const [myScore, setMyScore] = useState(0)
   const [theirScore, setTheirScore] = useState(0)
   const [timeLeft, setTimeLeft] = useState(0)
@@ -112,9 +112,6 @@ export function DuelBattlePage() {
   }
 
   const q = content.questions[currentIndex]
-  const isCorrect = selectedAnswer && q && selectedAnswer === q.correctAnswer
-  const isWrong = selectedAnswer && q && selectedAnswer !== q.correctAnswer
-
   return (
     <div className="px-6 py-8 max-w-3xl mx-auto animate-fade-up">
       {/* Header bar */}

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { notificationService, Notification } from '@/services/notificationService'
+import { notificationService } from '@/services/notificationService'
+import type { Notification } from '@/services/notificationService'
 
 export function NotificationDropdown() {
   const navigate = useNavigate()

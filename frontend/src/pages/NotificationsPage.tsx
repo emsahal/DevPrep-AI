@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import { notificationService, Notification } from '@/services/notificationService'
+import { notificationService } from '@/services/notificationService'
+import type { Notification } from '@/services/notificationService'
 
 export function NotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([])
-  const [page, setPage] = useState(1)
+  const [page] = useState(1)
 
   useEffect(() => {
     load()
