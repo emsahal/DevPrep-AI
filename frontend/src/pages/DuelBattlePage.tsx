@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { duelService } from '@/services/duelService'
 import { useDuelStore } from '@/store/duelStore'
+import { useAuthStore } from '@/store/authStore'
 import { useToast } from '@/providers/ToastProvider'
 import { CodingEditor } from '@/features/duel/components/CodingEditor'
 
@@ -33,6 +34,7 @@ export function DuelBattlePage() {
   const navigate = useNavigate()
   const { toast } = useToast()
   const { opponentProgress, setDuelResult, setOpponentProgress } = useDuelStore()
+  const currentUser = useAuthStore(s => s.user)
 
   const [content, setContent] = useState<GameContent | null>(null)
   const [opponentName, setOpponentName] = useState('')
@@ -63,6 +65,10 @@ export function DuelBattlePage() {
         const timeLimit = data.content?.timeLimit || 180
         setTimeLeft(Math.max(timeLimit - elapsedSeconds, 0))
 
+        const isPlayer1 = data.player1Id === currentUser?.id
+        setMyScore(isPlayer1 ? (data.score1 || 0) : (data.score2 || 0))
+        setTheirScore(isPlayer1 ? (data.score2 || 0) : (data.score1 || 0))
+
         if (data.opponentProgress) {
           setOpponentProgress({
             questionsAnswered: data.opponentProgress.questionsAnswered,
@@ -73,7 +79,7 @@ export function DuelBattlePage() {
         // If duel is already finished, go to results
         if (data.status === 'finished') {
           const result = await duelService.finishDuel(id)
-          setDuelResult(result)
+          setDuelResult(result as any)
           navigate(`/duel/results/${id}`, { replace: true })
         }
       } catch (err: any) {
@@ -89,6 +95,10 @@ export function DuelBattlePage() {
         const data = await duelService.getDuel(id)
         if (!isMounted) return
 
+        const isPlayer1 = data.player1Id === currentUser?.id
+        setMyScore(isPlayer1 ? (data.score1 || 0) : (data.score2 || 0))
+        setTheirScore(isPlayer1 ? (data.score2 || 0) : (data.score1 || 0))
+
         if (data.opponentProgress) {
           setOpponentProgress({
             questionsAnswered: data.opponentProgress.questionsAnswered,
@@ -99,7 +109,7 @@ export function DuelBattlePage() {
         if (data.status === 'finished') {
           clearInterval(pollInterval)
           const result = await duelService.finishDuel(id)
-          setDuelResult(result)
+          setDuelResult(result as any)
           navigate(`/duel/results/${id}`, { replace: true })
         }
       } catch (err) {
@@ -111,7 +121,7 @@ export function DuelBattlePage() {
       isMounted = false
       clearInterval(pollInterval)
     }
-  }, [id, navigate, setDuelResult, setOpponentProgress, toast])
+  }, [id, navigate, setDuelResult, setOpponentProgress, toast, currentUser])
 
   const submitAnswer = useCallback(async (questionId: string, answer: string) => {
     const q = content?.questions?.find(q => q.id === questionId)
@@ -145,7 +155,7 @@ export function DuelBattlePage() {
     setFinished(true)
     try {
       const result = await duelService.finishDuel(id!)
-      setDuelResult(result)
+      setDuelResult(result as any)
       navigate(`/duel/results/${id}`, { replace: true })
     } catch (err: any) {
       toast({ type: 'error', title: 'Failed to complete battle', message: err.message })

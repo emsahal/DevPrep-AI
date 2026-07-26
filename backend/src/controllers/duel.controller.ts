@@ -202,6 +202,8 @@ export class DuelController {
         winnerId: duel.winnerId,
         score1: duel.score1,
         score2: duel.score2,
+        player1Id: duel.player1Id,
+        player2Id: duel.player2Id,
         opponent,
         myProgress: {
           questionsAnswered: myAnswers.length,
