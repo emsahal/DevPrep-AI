@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getDuelSocket } from '@/services/socketService'
+import { duelService } from '@/services/duelService'
 import { useDuelStore } from '@/store/duelStore'
 import { useAuthStore } from '@/store/authStore'
 import { useToast } from '@/providers/ToastProvider'
@@ -99,31 +100,46 @@ export function DuelPage() {
     setStep('mode')
   }
 
-  const acceptRequest = () => {
+  const acceptRequest = async () => {
     if (incomingRequest) {
-      socket.emit('duel:accept', { matchRequestId: incomingRequest.matchRequestId })
+      try {
+        // REST primary — persists accept to DB and triggers match creation
+        await duelService.acceptRequest(incomingRequest.matchRequestId)
+        // Socket event as secondary for real-time opponent notification
+        socket.emit('duel:accept', { matchRequestId: incomingRequest.matchRequestId })
+      } catch {
+        toast({ type: 'error', title: 'Failed to accept', message: 'Please try again.' })
+      }
     }
   }
 
-  const declineRequest = () => {
+  const declineRequest = async () => {
     if (incomingRequest) {
-      socket.emit('duel:decline', { matchRequestId: incomingRequest.matchRequestId })
+      try {
+        await duelService.declineRequest(incomingRequest.matchRequestId)
+        socket.emit('duel:decline', { matchRequestId: incomingRequest.matchRequestId })
+      } catch {
+        // Silently clear UI even on error
+      }
       setIncomingRequest(null)
       setStep('mode')
     }
   }
 
-  const challengeUser = (user: OnlineUser) => {
+  const challengeUser = async (user: OnlineUser) => {
     if (!selectedMode) {
       toast({ type: 'warning', title: 'Select a mode first' })
       return
     }
-    socket.emit('duel:challenge', {
-      toUserId: user.userId,
-      mode: selectedMode,
-      topic: selectedTopic,
-    })
-    toast({ type: 'info', title: `Challenging ${user.name}...` })
+    try {
+      // REST primary — works even if socket is disconnected, persists to DB, sends notification
+      await duelService.requestMatch(user.userId, selectedMode, selectedTopic)
+      // Socket secondary — for immediate real-time feedback on both sides
+      socket.emit('duel:challenge', { toUserId: user.userId, mode: selectedMode, topic: selectedTopic })
+      toast({ type: 'success', title: 'Challenge sent!', message: `Waiting for ${user.name} to accept...` })
+    } catch {
+      toast({ type: 'error', title: 'Challenge failed', message: 'Could not reach the server. Try again.' })
+    }
   }
 
   const toggleAvailable = () => {
