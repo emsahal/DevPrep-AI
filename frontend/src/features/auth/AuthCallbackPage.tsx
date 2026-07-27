@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { authService } from '@/services/authService'
 import { useAuthStore } from '@/store/authStore'
@@ -8,8 +8,12 @@ export function AuthCallbackPage() {
   const navigate = useNavigate()
   const { setUser, setIsAuthenticated } = useAuthStore()
   const [error, setError] = useState('')
+  const processed = useRef(false)
 
   useEffect(() => {
+    if (processed.current) return
+    processed.current = true
+
     const finishAuth = async () => {
       const params = new URLSearchParams(window.location.hash.replace(/^#/, ''))
       const accessToken = params.get('accessToken')
@@ -28,10 +32,10 @@ export function AuthCallbackPage() {
 
       localStorage.setItem('accessToken', accessToken)
       localStorage.setItem('refreshToken', refreshToken)
-      window.history.replaceState(null, '', '/auth/callback')
 
       try {
         const user = await authService.getProfile()
+        window.history.replaceState(null, '', '/auth/callback')
         setUser(user)
         setIsAuthenticated(true)
         navigate('/dashboard', { replace: true })
