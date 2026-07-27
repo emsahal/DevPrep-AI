@@ -10,7 +10,8 @@ import { authService } from '@/services/authService'
 import { useAuthStore } from '@/store/authStore'
 import { SocialAuthButton } from './SocialAuthButton'
 import backImage from '@/assets/back.jpg'
-import { Bolt, Brain, Loader2, Map, Sparkles, Terminal } from 'lucide-react'
+import { Bolt, Brain, Loader2, Map, Sparkles } from 'lucide-react'
+import logo from '@/assets/logo.png'
 
 const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(100),
@@ -63,10 +64,10 @@ export function RegisterPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-bg-base via-transparent to-transparent" />
 
         <div className="relative z-10">
-          <div className="mb-unit-6 flex items-center gap-unit-2">
-            <Terminal className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold tracking-tight">DevPrep AI</span>
-          </div>
+          <Link to="/" className="mb-unit-6 flex items-center gap-unit-2">
+            <img src={logo} alt="DevPrep AI logo" className="h-8 w-8 object-contain" />
+            <span className="text-xl font-bold tracking-tight">DevPrep<span className="text-primary">AI</span></span>
+          </Link>
           <h1 className="mb-unit-5 max-w-md text-3xl font-bold leading-tight tracking-tight xl:text-4xl">
             Engineer your <span className="gradient-text">future</span> with AI precision.
           </h1>

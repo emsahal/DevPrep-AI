@@ -11,6 +11,7 @@ import { useAuthStore } from '@/store/authStore'
 import { SocialAuthButton } from './SocialAuthButton'
 import backImage from '@/assets/back.jpg'
 import { Bolt, GraduationCap, Loader2, Terminal } from 'lucide-react'
+import logo from '@/assets/logo.png'
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -73,12 +74,10 @@ export function LoginPage() {
 
       <section className="relative flex h-screen w-full flex-col justify-center overflow-hidden bg-surface-container-lowest px-gutter py-unit-6 md:px-unit-10 lg:w-1/2 xl:px-20">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(600px_circle_at_70%_20%,rgba(139,92,246,0.12),transparent_42%),radial-gradient(500px_circle_at_10%_90%,rgba(76,215,246,0.06),transparent_35%)]" />
-        <div className="relative z-10 mb-unit-6 flex items-center gap-unit-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-on-primary shadow-lg shadow-primary/10">
-            <Bolt className="h-4 w-4" />
-          </div>
-          <h1 className="text-xl font-bold tracking-tight">DevPrep AI</h1>
-        </div>
+        <Link to="/" className="relative z-10 mb-unit-6 flex items-center gap-unit-2">
+          <img src={logo} alt="DevPrep AI logo" className="h-8 w-8 object-contain" />
+          <h1 className="text-xl font-bold tracking-tight">DevPrep<span className="text-primary">AI</span></h1>
+        </Link>
 
         <div className="relative z-10 mx-auto w-full max-w-sm lg:mx-0">
           <header className="mb-unit-5">
