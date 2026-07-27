@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { quizService, type QuizQuestion } from '@/services/quizService'
@@ -19,14 +19,6 @@ export function QuizDetailPage() {
 
   const [aiExplanation, setAiExplanation] = useState('')
   const [isAiExplaining, setIsAiExplaining] = useState(false)
-  const [aiExplained, setAiExplained] = useState(false)
-
-  const [showAiChat, setShowAiChat] = useState(false)
-  const [aiChatQuery, setAiChatQuery] = useState('')
-  const [aiChatResponse, setAiChatResponse] = useState('')
-  const [isAiChatLoading, setIsAiChatLoading] = useState(false)
-
-  const aiChatEndRef = useRef<HTMLDivElement>(null)
 
   const { data: quiz, isLoading: isMetadataLoading } = useQuery({
     queryKey: ['quiz', id],
@@ -77,49 +69,43 @@ export function QuizDetailPage() {
     setSelected(null)
     setAnswered(false)
     setAiExplanation('')
-    setAiExplained(false)
-    setShowAiChat(false)
-    setAiChatQuery('')
-    setAiChatResponse('')
-    setIsAiChatLoading(false)
+
   }
 
   const handleSelect = (i: number) => {
-    if (answered || isAiExplaining || isAiChatLoading) return
+    if (answered || isAiExplaining) return
     setSelected(i)
     setAnswered(true)
   }
 
+  const handleAiExplain = () => {
+    if (selected === null || !q || isAiExplaining) return
+    setIsAiExplaining(true)
+    setAiExplanation('')
+
+    quizService.aiExplain(
+      id!,
+      {
+        questionText: q.text,
+        options: q.options,
+        correctAnswer: q.correctAnswer,
+        selectedAnswer: selected,
+      },
+      (chunk) => {
+        setAiExplanation((prev) => prev + chunk)
+      },
+      () => {
+        setIsAiExplaining(false)
+      }
+    ).catch((err) => {
+      console.error('AI explain failed:', err)
+      setIsAiExplaining(false)
+      setAiExplanation('Failed to get AI explanation. Please try again.')
+    })
+  }
+
   const handleNext = () => {
     if (selected === null || !q) return
-
-    if (!aiExplained) {
-      setIsAiExplaining(true)
-      setAiExplanation('')
-
-      quizService.aiExplain(
-        id!,
-        {
-          questionText: q.text,
-          options: q.options,
-          correctAnswer: q.correctAnswer,
-          selectedAnswer: selected,
-        },
-        (chunk) => {
-          setAiExplanation((prev) => prev + chunk)
-        },
-        () => {
-          setIsAiExplaining(false)
-          setAiExplained(true)
-        }
-      ).catch((err) => {
-        console.error('AI explain failed:', err)
-        setIsAiExplaining(false)
-        setAiExplained(true)
-        setAiExplanation('Failed to get AI explanation. Please try again.')
-      })
-      return
-    }
 
     const correct = selected === q.correctAnswer
     const nextSelectedAnswers = [...selectedAnswers, { questionId: q.id, selectedAnswer: selected }]
@@ -133,33 +119,6 @@ export function QuizDetailPage() {
       setCurrent((c) => c + 1)
       resetCurrentQuestion()
     }
-  }
-
-  const handleAskAi = () => {
-    if (!aiChatQuery.trim() || !q) return
-    setIsAiChatLoading(true)
-    setAiChatResponse('')
-
-    quizService.aiExplain(
-      id!,
-      {
-        questionText: q.text,
-        options: q.options,
-        correctAnswer: q.correctAnswer,
-        selectedAnswer: selected ?? q.correctAnswer,
-        userQuery: aiChatQuery.trim(),
-      },
-      (chunk) => {
-        setAiChatResponse((prev) => prev + chunk)
-      },
-      () => {
-        setIsAiChatLoading(false)
-      }
-    ).catch((err) => {
-      console.error('AI chat failed:', err)
-      setIsAiChatLoading(false)
-      setAiChatResponse('Failed to get response. Please try again.')
-    })
   }
 
   const handleRegenerate = () => {
@@ -503,115 +462,36 @@ export function QuizDetailPage() {
         </div>
       )}
 
-      {/* Ask AI Chat */}
-      {showAiChat && (
-        <div className="bento-card p-6 mb-5 animate-fade-up">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px]" style={{ color: 'var(--color-primary)' }}>
-                chat
-              </span>
-              <span className="text-sm font-bold" style={{ color: 'var(--color-on-surface)' }}>
-                Ask AI
-              </span>
-            </div>
-            <button
-              onClick={() => { setShowAiChat(false); setAiChatQuery(''); setAiChatResponse('') }}
-              className="p-1 rounded-lg hover:bg-surface-container-higher transition-all"
-              style={{ color: 'var(--color-outline)' }}
-            >
-              <span className="material-symbols-outlined text-[18px]">close</span>
-            </button>
-          </div>
-
-          <div className="flex gap-2 mb-3">
-            <input
-              type="text"
-              value={aiChatQuery}
-              onChange={(e) => setAiChatQuery(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter' && !isAiChatLoading) handleAskAi() }}
-              placeholder="Ask anything about this question..."
-              className="flex-1 px-4 py-2.5 rounded-xl text-sm outline-none transition-all"
-              style={{
-                background: 'var(--color-surface-container)',
-                color: 'var(--color-on-surface)',
-                border: '1px solid var(--color-border-muted)',
-              }}
-              disabled={isAiChatLoading}
-            />
-            <button
-              onClick={handleAskAi}
-              disabled={!aiChatQuery.trim() || isAiChatLoading}
-              className="px-4 py-2.5 rounded-xl font-bold text-sm transition-all hover:opacity-90 disabled:opacity-40 flex items-center gap-1"
-              style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}
-            >
-              {isAiChatLoading ? (
-                <span className="material-symbols-outlined text-[16px] animate-spin">progress_activity</span>
-              ) : (
-                <span className="material-symbols-outlined text-[16px]">send</span>
-              )}
-            </button>
-          </div>
-
-          {aiChatResponse && (
-            <div className="p-4 rounded-xl text-sm leading-relaxed" style={{ background: 'var(--color-surface-container)', color: 'var(--color-on-surface)' }}>
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  code({ className, children, ...props }) {
-                    const isInline = !className
-                    if (isInline) return <code className="px-1 py-0.5 rounded text-sm font-code" style={{ background: 'var(--color-surface-container-high)', fontSize: '13px' }} {...props}>{children}</code>
-                    return (
-                      <div className="rounded-xl overflow-hidden my-3 text-sm" style={{ border: '1px solid var(--color-border-muted)' }}>
-                        <pre className="p-4 m-0 overflow-x-auto font-code text-left" style={{ background: 'var(--color-surface-container-high)', fontSize: '13px', lineHeight: '1.6' }}>
-                          <code className={className} {...props}>{children}</code>
-                        </pre>
-                      </div>
-                    )
-                  },
-                  p({ children }) { return <p className="mb-3 last:mb-0">{children}</p> },
-                }}
-              >
-                {aiChatResponse}
-              </ReactMarkdown>
-            </div>
-          )}
-          <div ref={aiChatEndRef} />
-        </div>
-      )}
-
       {/* Action Buttons */}
       <div className="flex gap-3">
-        {answered && !isAiExplaining && (
+        {answered && (
           <button
-            onClick={() => setShowAiChat((p) => !p)}
-            className="px-4 py-3 rounded-xl font-bold text-sm transition-all hover:opacity-90 bg-surface-container hover:bg-surface-container-high flex items-center gap-1.5"
-            style={{ color: 'var(--color-on-surface)', border: '1px solid var(--color-border-muted)' }}
+            onClick={handleAiExplain}
+            disabled={isAiExplaining}
+            className="px-4 py-3 rounded-xl font-bold text-sm transition-all hover:opacity-90 disabled:opacity-40 flex items-center justify-center gap-1.5"
+            style={{ color: 'var(--color-primary)', border: '1px solid var(--color-primary)', background: 'transparent' }}
           >
-            <span className="material-symbols-outlined text-[18px]">category</span>
-            Ask AI
+            {isAiExplaining ? (
+              <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
+            ) : (
+              <span className="material-symbols-outlined text-[18px]">psychology</span>
+            )}
+            {isAiExplaining ? 'Thinking...' : 'AI Explain'}
           </button>
         )}
 
         <button
           onClick={handleNext}
-          disabled={!answered || isAiExplaining}
+          disabled={!answered}
           className="flex-1 py-3 rounded-xl font-bold text-sm transition-all hover:opacity-90 disabled:opacity-40 flex items-center justify-center gap-2"
           style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}
         >
           {!answered ? (
             'Select an answer first'
-          ) : isAiExplaining ? (
-            <>
-              <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
-              AI is explaining...
-            </>
-          ) : aiExplained ? (
-            current + 1 === questions.length ? 'Finish Quiz' : 'Continue'
           ) : (
             <>
-              Explain with AI
-              <span className="material-symbols-outlined text-[18px]">psychology</span>
+              {current + 1 === questions.length ? 'Finish Quiz' : 'Next Question'}
+              <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
             </>
           )}
         </button>

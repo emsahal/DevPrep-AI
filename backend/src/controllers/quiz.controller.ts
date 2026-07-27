@@ -223,39 +223,19 @@ Format:
       res.setHeader('Connection', 'keep-alive')
       res.setHeader('X-Accel-Buffering', 'no')
 
-      const prompt = userQuery
-        ? `The user is practicing this multiple-choice question and has a follow-up question:
+      const hasCode = /```|\bcode\b|function|class|const |let |var |def |import /.test(questionText)
+
+      const prompt = `You are an expert interviewer. A student answered a MCQ.
 
 Question: "${questionText}"
-
 Options:
 ${options.map((o: string, i: number) => `  ${String.fromCharCode(65 + i)}. ${o}`).join('\n')}
+Student chose: ${String.fromCharCode(65 + selectedAnswer)} ("${selectedOptionText}") — ${isCorrect ? 'CORRECT' : 'WRONG'}
+Correct: ${String.fromCharCode(65 + correctAnswer)} ("${correctOptionText}")
 
-The user selected option ${String.fromCharCode(65 + selectedAnswer)} ("${selectedOptionText}") which is ${isCorrect ? 'CORRECT' : 'WRONG'}.
-The correct answer is option ${String.fromCharCode(65 + correctAnswer)} ("${correctOptionText}").
-
-The user now asks: "${userQuery}"
-
-Answer their question in a helpful, educational manner. Be concise but thorough.`
-        : `You are an expert software engineering interviewer. A student just answered a multiple-choice question.
-
-Question: "${questionText}"
-
-Options:
-${options.map((o: string, i: number) => `  ${String.fromCharCode(65 + i)}. ${o}`).join('\n')}
-
-The student selected option ${String.fromCharCode(65 + selectedAnswer)} ("${selectedOptionText}").
-The correct answer is option ${String.fromCharCode(65 + correctAnswer)} ("${correctOptionText}").
-
-The student's answer is ${isCorrect ? 'CORRECT' : 'WRONG'}.
-
-${
-  isCorrect
-    ? 'Explain in detail WHY the correct answer is right. Cover the key concepts, mention common pitfalls, and reinforce the learning.'
-    : 'Explain why the correct answer is right AND why the student\'s choice is wrong. Be constructive and educational. Cover the key concepts and clarify any misconceptions.'
-}
-
-Format your response in clear paragraphs. Use markdown for code snippets if needed. Be encouraging and educational.`
+${isCorrect ? 'Explain why the correct answer is right in 3-4 lines.' : 'Explain why the student is wrong and why the correct answer is right in 4-5 lines.'}
+${hasCode ? 'Include a brief code example or dry-run if helpful. Keep it short.' : 'No code needed.'}
+Be extremely concise. Max 5 lines. No fluff.`
 
       await nvidiaAI.generateStream(
         [{ role: 'user', content: prompt }],
