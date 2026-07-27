@@ -233,9 +233,14 @@ ${options.map((o: string, i: number) => `  ${String.fromCharCode(65 + i)}. ${o}`
 Student chose: ${String.fromCharCode(65 + selectedAnswer)} ("${selectedOptionText}") — ${isCorrect ? 'CORRECT' : 'WRONG'}
 Correct: ${String.fromCharCode(65 + correctAnswer)} ("${correctOptionText}")
 
-${isCorrect ? 'Explain why the correct answer is right in 3-4 lines.' : 'Explain why the student is wrong and why the correct answer is right in 4-5 lines.'}
+${isCorrect ? 'Explain why the correct answer is right in 3-4 concise lines.' : 'Explain why the student is wrong and why the correct answer is right in 4-5 concise lines.'}
 ${hasCode ? 'Include a brief code example or dry-run if helpful. Keep it short.' : 'No code needed.'}
-Be extremely concise. Max 5 lines. No fluff.`
+
+FORMATTING RULES (strictly follow):
+- Start each sentence with a capital letter.
+- Use **bold** for important terms (concepts, keywords, option labels like A, B, C, D).
+- Use line breaks between distinct points.
+- Be extremely concise. Max 5 lines. No fluff.`
 
       await nvidiaAI.generateStream(
         [{ role: 'user', content: prompt }],

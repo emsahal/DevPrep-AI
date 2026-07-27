@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { quizService, type QuizQuestion } from '@/services/quizService'
 import { generateQuizPdf } from '@/utils/generateQuizPdf'
+import { QuizResultsCard } from '@/components/ui/QuizResultsCard'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
@@ -200,71 +201,34 @@ export function QuizDetailPage() {
 
   if (done) {
     return (
-      <div className="px-6 py-8 max-w-2xl mx-auto text-center animate-fade-up">
-        <div className="bento-card p-10">
-          <div
-            className="w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-5"
-            style={{
-              background: score >= questions.length / 2 ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)',
-            }}
-          >
-            <span
-              className="material-symbols-outlined text-5xl"
-              style={{
-                color: score >= questions.length / 2 ? 'var(--color-success)' : 'var(--color-error)',
-                fontVariationSettings: "'FILL' 1",
-              }}
-            >
-              {score >= questions.length / 2 ? 'emoji_events' : 'sentiment_dissatisfied'}
-            </span>
-          </div>
-          <h2 className="text-3xl font-extrabold mb-2" style={{ color: 'var(--color-on-surface)' }}>
-            {score}/{questions.length} Correct
-          </h2>
-          <p className="text-sm mb-6" style={{ color: 'var(--color-on-surface-variant)' }}>
-            {score === questions.length
-              ? "Perfect score! You've mastered this topic."
-              : 'Good effort! Review the topics and try again.'}
-          </p>
-          <button
-            onClick={() => {
-              setCurrent(0)
-              resetCurrentQuestion()
-              setAnswers([])
-              setSelectedAnswers([])
-              setDone(false)
-            }}
-            className="px-6 py-2.5 rounded-xl font-bold text-sm transition-all hover:opacity-90"
-            style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}
-          >
-            Retry Quiz
-          </button>
-          <button
-            onClick={handleRegenerate}
-            className="px-6 py-2.5 rounded-xl font-bold text-sm transition-all hover:opacity-90 ml-3 bg-surface-container hover:bg-surface-container-high"
-            style={{ color: 'var(--color-on-surface)', border: '1px solid var(--color-border-muted)' }}
-          >
-            Regenerate Fresh Questions
-          </button>
-          <button
-            onClick={async () => {
-              await generateQuizPdf({
-                title: quiz.title,
-                description: quiz.description,
-                topicName: quiz.topic?.title,
-                questions,
-                selectedAnswers,
-                score,
-                totalQuestions: questions.length,
-              })
-            }}
-            className="px-6 py-2.5 rounded-xl font-bold text-sm transition-all hover:opacity-90 mt-3 flex items-center justify-center gap-2 mx-auto"
-            style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}
-          >
-            <span className="material-symbols-outlined text-[18px]">download</span>
-            Download PDF
-          </button>
-        </div>
+      <div className="px-4 py-6 md:px-6 md:py-8 max-w-4xl mx-auto animate-fade-up">
+        <QuizResultsCard
+          title={quiz.title}
+          topicName={quiz.topic?.title}
+          questions={questions}
+          selectedAnswers={selectedAnswers}
+          score={score}
+          totalQuestions={questions.length}
+          onRetry={() => {
+            setCurrent(0)
+            resetCurrentQuestion()
+            setAnswers([])
+            setSelectedAnswers([])
+            setDone(false)
+          }}
+          onRegenerate={handleRegenerate}
+          onDownload={async () => {
+            await generateQuizPdf({
+              title: quiz.title,
+              description: quiz.description,
+              topicName: quiz.topic?.title,
+              questions,
+              selectedAnswers,
+              score,
+              totalQuestions: questions.length,
+            })
+          }}
+        />
       </div>
     )
   }
