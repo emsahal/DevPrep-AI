@@ -182,6 +182,60 @@ export const quizService = {
     return data
   },
 
+  async aiExplain(
+    quizId: string,
+    payload: { questionText: string; options: string[]; correctAnswer: number; selectedAnswer: number; userQuery?: string },
+    onChunk: (content: string) => void,
+    onDone: () => void
+  ): Promise<void> {
+    const token = localStorage.getItem('accessToken')
+
+    const response = await fetch(`${apiBaseUrl}/quizzes/${quizId}/ai-explain`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(payload),
+    })
+
+    if (!response.ok) {
+      throw new Error(`AI explain failed: ${response.status} ${response.statusText}`)
+    }
+
+    const reader = response.body?.getReader()
+    if (!reader) return
+
+    const decoder = new TextDecoder()
+    let buffer = ''
+
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+
+      buffer += decoder.decode(value, { stream: true })
+      const lines = buffer.split('\n')
+      buffer = lines.pop() || ''
+
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          try {
+            const parsed = JSON.parse(line.slice(6))
+            if (parsed.done) {
+              onDone()
+              return
+            }
+            if (parsed.content) {
+              onChunk(parsed.content)
+            }
+          } catch {
+            // skip
+          }
+        }
+      }
+    }
+  },
+
   async addCustomQuestion(
     quizId: string,
     input: { text: string; options: string[]; correctAnswer: number; explanation?: string }

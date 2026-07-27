@@ -206,6 +206,74 @@ Format:
     }
   }
 
+  async aiExplain(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const { questionText, options, correctAnswer, selectedAnswer, userQuery } = req.body
+
+      if (!questionText || !options || typeof correctAnswer !== 'number' || typeof selectedAnswer !== 'number') {
+        return res.status(400).json({ message: 'Missing required fields: questionText, options, correctAnswer, selectedAnswer' })
+      }
+
+      const isCorrect = selectedAnswer === correctAnswer
+      const selectedOptionText = options[selectedAnswer] || 'Unknown'
+      const correctOptionText = options[correctAnswer] || 'Unknown'
+
+      res.setHeader('Content-Type', 'text/event-stream')
+      res.setHeader('Cache-Control', 'no-cache')
+      res.setHeader('Connection', 'keep-alive')
+      res.setHeader('X-Accel-Buffering', 'no')
+
+      const prompt = userQuery
+        ? `The user is practicing this multiple-choice question and has a follow-up question:
+
+Question: "${questionText}"
+
+Options:
+${options.map((o: string, i: number) => `  ${String.fromCharCode(65 + i)}. ${o}`).join('\n')}
+
+The user selected option ${String.fromCharCode(65 + selectedAnswer)} ("${selectedOptionText}") which is ${isCorrect ? 'CORRECT' : 'WRONG'}.
+The correct answer is option ${String.fromCharCode(65 + correctAnswer)} ("${correctOptionText}").
+
+The user now asks: "${userQuery}"
+
+Answer their question in a helpful, educational manner. Be concise but thorough.`
+        : `You are an expert software engineering interviewer. A student just answered a multiple-choice question.
+
+Question: "${questionText}"
+
+Options:
+${options.map((o: string, i: number) => `  ${String.fromCharCode(65 + i)}. ${o}`).join('\n')}
+
+The student selected option ${String.fromCharCode(65 + selectedAnswer)} ("${selectedOptionText}").
+The correct answer is option ${String.fromCharCode(65 + correctAnswer)} ("${correctOptionText}").
+
+The student's answer is ${isCorrect ? 'CORRECT' : 'WRONG'}.
+
+${
+  isCorrect
+    ? 'Explain in detail WHY the correct answer is right. Cover the key concepts, mention common pitfalls, and reinforce the learning.'
+    : 'Explain why the correct answer is right AND why the student\'s choice is wrong. Be constructive and educational. Cover the key concepts and clarify any misconceptions.'
+}
+
+Format your response in clear paragraphs. Use markdown for code snippets if needed. Be encouraging and educational.`
+
+      await nvidiaAI.generateStream(
+        [{ role: 'user', content: prompt }],
+        (chunk) => {
+          res.write(`data: ${JSON.stringify({ content: chunk })}\n\n`)
+        },
+        { temperature: 0.7, maxTokens: 2048 }
+      )
+
+      res.write(`data: ${JSON.stringify({ done: true })}\n\n`)
+      res.end()
+    } catch (error) {
+      if (!res.headersSent) {
+        next(error)
+      }
+    }
+  }
+
   async testNvidia(req: Request, res: Response, next: NextFunction) {
     try {
       const apiKey = process.env.NVIDIA_API_KEY || ''
