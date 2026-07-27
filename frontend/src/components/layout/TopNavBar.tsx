@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
@@ -16,8 +16,9 @@ const MOBILE_TABS = [
 
 export function TopNavBar() {
   const location = useLocation()
+  const navigate = useNavigate()
   const { isAuthenticated, user } = useAuthStore()
-  const [searchOpen, setSearchOpen] = useState(false)
+  const [query, setQuery] = useState('')
 
   const { data: gamificationStats } = useQuery({
     queryKey: ['gamification', 'stats'],
@@ -46,32 +47,30 @@ export function TopNavBar() {
           </span>
         </Link>
 
-        {/* Search (desktop) */}
-        <div className="hidden md:flex items-center flex-1 max-w-sm mx-8 rounded-xl px-3 py-2 gap-2 ai-glow-focus transition-all"
+        {/* Search */}
+        <div className="flex items-center flex-1 max-w-sm mx-8 rounded-xl px-3 py-2 gap-2 ai-glow-focus transition-all"
              style={{ background: 'var(--color-surface-container-low)', border: '1px solid var(--color-border-muted)' }}>
           <span className="material-symbols-outlined text-[18px]" style={{ color: 'var(--color-outline)' }}>search</span>
           <input
             type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && query.trim()) {
+                navigate(`/library?q=${encodeURIComponent(query.trim())}`)
+              }
+            }}
             placeholder="Search topics, roadmaps…"
             className="bg-transparent border-none outline-none w-full text-sm"
             style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-on-surface)' }}
           />
-          <kbd className="text-[10px] px-1 rounded border" style={{ color: 'var(--color-outline)', borderColor: 'var(--color-border-muted)', fontFamily: 'var(--font-mono)' }}>
+          <kbd className="hidden sm:inline text-[10px] px-1 rounded border" style={{ color: 'var(--color-outline)', borderColor: 'var(--color-border-muted)', fontFamily: 'var(--font-mono)' }}>
             ⌘K
           </kbd>
         </div>
 
         {/* Right actions */}
         <div className="flex items-center gap-2">
-          {/* Search toggle mobile */}
-          <button
-            className="md:hidden material-symbols-outlined text-[22px] transition-colors hover:text-primary"
-            style={{ color: 'var(--color-on-surface-variant)' }}
-            onClick={() => setSearchOpen(v => !v)}
-          >
-            search
-          </button>
-
           {isAuthenticated ? (
             <>
               {/* Dashboard */}
@@ -120,20 +119,6 @@ export function TopNavBar() {
           )}
         </div>
       </header>
-
-      {/* Mobile search bar (collapsible) */}
-      {searchOpen && (
-        <div className="fixed top-16 left-0 w-full z-50 px-4 py-3 md:hidden"
-             style={{ background: 'var(--color-surface-container-low)', borderBottom: '1px solid var(--color-border-subtle)' }}>
-          <div className="flex items-center gap-2 rounded-xl px-3 py-2"
-               style={{ background: 'var(--color-surface-container)', border: '1px solid var(--color-border-muted)' }}>
-            <span className="material-symbols-outlined text-[18px]" style={{ color: 'var(--color-outline)' }}>search</span>
-            <input autoFocus type="text" placeholder="Search topics, roadmaps…"
-                   className="bg-transparent border-none outline-none flex-1 text-sm"
-                   style={{ color: 'var(--color-on-surface)' }} />
-          </div>
-        </div>
-      )}
 
       {/* Mobile bottom nav */}
       <nav className="fixed bottom-0 left-0 w-full z-50 flex lg:hidden"
