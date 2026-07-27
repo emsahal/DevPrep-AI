@@ -54,24 +54,7 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* ═══════ 2. Stats Bar ═══════ */}
-      <section className="px-6 py-16 max-w-5xl mx-auto w-full">
-        <div className="bento-card grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0" style={{ borderColor: 'var(--color-border-subtle)' }}>
-          {[
-            { value: '50K+', label: 'Active Developers' },
-            { value: '40+', label: 'Technologies' },
-            { value: '500+', label: 'Hours of Content' },
-            { value: '92%', label: 'Interview Success' },
-          ].map((s, i) => (
-            <div key={s.label} className={`p-8 text-center animate-fade-up ${i >= 2 ? 'md:border-t-0' : ''}`} style={{ animationDelay: `${i * 100}ms` }}>
-              <div className="text-3xl font-extrabold mb-1" style={{ color: 'var(--color-primary)' }}>{s.value}</div>
-              <div className="text-sm" style={{ color: 'var(--color-on-surface-variant)' }}>{s.label}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ═══════ 3. Features ═══════ */}
+      {/* ═══════ 2. Features ═══════ */}
       <section className="px-6 py-20 max-w-6xl mx-auto w-full">
         <h2 className="text-2xl font-bold text-center mb-4 animate-fade-up" style={{ color: 'var(--color-on-surface)' }}>
           Everything you need to prepare
@@ -100,7 +83,153 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* ═══════ 4. How It Works ═══════ */}
+      {/* ═══════ 3. Why DevPrep AI — side-by-side comparison ═══════ */}
+      <section className="px-6 py-20 max-w-5xl mx-auto w-full">
+        <h2 className="text-2xl font-bold text-center mb-4 animate-fade-up" style={{ color: 'var(--color-on-surface)' }}>
+          Why DevPrep AI?
+        </h2>
+        <p className="text-sm text-center mb-12 max-w-lg mx-auto animate-fade-up animation-delay-50" style={{ color: 'var(--color-on-surface-variant)' }}>
+          See how AI-powered preparation stacks up against the old way.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bento-card p-7 animate-fade-up border" style={{ borderColor: 'var(--color-border-muted)' }}>
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(255,82,82,0.15)' }}>
+                <span className="material-symbols-outlined text-xl" style={{ color: 'var(--color-error)', fontVariationSettings: "'FILL' 1" }}>close</span>
+              </div>
+              <h3 className="font-semibold" style={{ color: 'var(--color-on-surface)' }}>Traditional Prep</h3>
+            </div>
+            <ul className="space-y-3">
+              {[
+                'Scattered resources across dozens of sites',
+                'No feedback on your code quality',
+                'Static study plans that ignore your gaps',
+                'Hours wasted searching for explanations',
+                'No way to simulate real interview pressure',
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2.5 text-sm" style={{ color: 'var(--color-on-surface-variant)' }}>
+                  <span className="material-symbols-outlined text-[16px] mt-0.5" style={{ color: 'var(--color-error)', fontVariationSettings: "'FILL' 1" }}>close_small</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="bento-card p-7 animate-fade-up ai-glow-border" style={{ animationDelay: '100ms' }}>
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(108,59,215,0.15)' }}>
+                <span className="material-symbols-outlined text-xl" style={{ color: 'var(--color-primary)', fontVariationSettings: "'FILL' 1" }}>check</span>
+              </div>
+              <h3 className="font-semibold" style={{ color: 'var(--color-on-surface)' }}>DevPrep AI</h3>
+            </div>
+            <ul className="space-y-3">
+              {[
+                'All-in-one platform: roadmaps, labs, quizzes',
+                'Real-time AI code reviews & feedback',
+                'Adaptive plans that target your weak spots',
+                'Instant AI explanations for any question',
+                'Mock interviews with company-specific questions',
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2.5 text-sm" style={{ color: 'var(--color-on-surface-variant)' }}>
+                  <span className="material-symbols-outlined text-[16px] mt-0.5" style={{ color: 'var(--color-success)', fontVariationSettings: "'FILL' 1" }}>check_small</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ 4. Start in Minutes — side-by-side layout ═══════ */}
+      <section className="px-6 py-20 max-w-5xl mx-auto w-full">
+        <h2 className="text-2xl font-bold text-center mb-4 animate-fade-up" style={{ color: 'var(--color-on-surface)' }}>
+          Start in minutes
+        </h2>
+        <p className="text-sm text-center mb-12 max-w-lg mx-auto animate-fade-up animation-delay-50" style={{ color: 'var(--color-on-surface-variant)' }}>
+          Everything you need, right when you open your dashboard.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="bento-card p-7 md:col-span-2 animate-fade-up flex flex-col items-start ai-glow-border">
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ background: 'rgba(108,59,215,0.15)' }}>
+              <span className="material-symbols-outlined text-2xl" style={{ color: 'var(--color-primary)', fontVariationSettings: "'FILL' 1" }}>dashboard_customize</span>
+            </div>
+            <h3 className="font-semibold text-lg mb-3" style={{ color: 'var(--color-on-surface)' }}>Your personalized dashboard</h3>
+            <p className="text-sm mb-5" style={{ color: 'var(--color-on-surface-variant)' }}>
+              At a glance: your current streak, upcoming milestones, recommended roadmaps, recent quiz scores,
+              and AI tutor suggestions — all tailored to your target role.
+            </p>
+            <div className="w-full grid grid-cols-2 gap-3">
+              <div className="rounded-xl p-4 text-center" style={{ background: 'var(--color-surface-container)' }}>
+                <div className="text-xl font-extrabold" style={{ color: 'var(--color-primary)' }}>87%</div>
+                <div className="text-xs mt-0.5" style={{ color: 'var(--color-on-surface-variant)' }}>Avg. quiz score</div>
+              </div>
+              <div className="rounded-xl p-4 text-center" style={{ background: 'var(--color-surface-container)' }}>
+                <div className="text-xl font-extrabold" style={{ color: 'var(--color-success)' }}>12</div>
+                <div className="text-xs mt-0.5" style={{ color: 'var(--color-on-surface-variant)' }}>Day streak</div>
+              </div>
+              <div className="rounded-xl p-4 text-center" style={{ background: 'var(--color-surface-container)' }}>
+                <div className="text-xl font-extrabold" style={{ color: 'var(--color-warning)' }}>4</div>
+                <div className="text-xs mt-0.5" style={{ color: 'var(--color-on-surface-variant)' }}>Roadmaps</div>
+              </div>
+              <div className="rounded-xl p-4 text-center" style={{ background: 'var(--color-surface-container)' }}>
+                <div className="text-xl font-extrabold" style={{ color: 'var(--color-tertiary)' }}>23</div>
+                <div className="text-xs mt-0.5" style={{ color: 'var(--color-on-surface-variant)' }}>Code labs</div>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-4 animate-fade-up" style={{ animationDelay: '120ms' }}>
+            <div className="bento-card p-5 flex-1 flex flex-col items-start">
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-3" style={{ background: 'rgba(3,218,197,0.15)' }}>
+                <span className="material-symbols-outlined text-lg" style={{ color: 'var(--color-success)', fontVariationSettings: "'FILL' 1" }}>trending_up</span>
+              </div>
+              <h4 className="font-semibold text-sm mb-1" style={{ color: 'var(--color-on-surface)' }}>Track progress</h4>
+              <p className="text-xs" style={{ color: 'var(--color-on-surface-variant)' }}>Skill benchmarks, XP, and weekly growth charts keep you motivated.</p>
+            </div>
+            <div className="bento-card p-5 flex-1 flex flex-col items-start">
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-3" style={{ background: 'rgba(255,214,0,0.15)' }}>
+                <span className="material-symbols-outlined text-lg" style={{ color: 'var(--color-warning)', fontVariationSettings: "'FILL' 1" }}>psychology</span>
+              </div>
+              <h4 className="font-semibold text-sm mb-1" style={{ color: 'var(--color-on-surface)' }}>AI at your side</h4>
+              <p className="text-xs" style={{ color: 'var(--color-on-surface-variant)' }}>Ask anything, get instant answers with code examples and explanations.</p>
+            </div>
+            <div className="bento-card p-5 flex-1 flex flex-col items-start">
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-3" style={{ background: 'rgba(187,134,252,0.15)' }}>
+                <span className="material-symbols-outlined text-lg" style={{ color: 'var(--color-tertiary)', fontVariationSettings: "'FILL' 1" }}>group</span>
+              </div>
+              <h4 className="font-semibold text-sm mb-1" style={{ color: 'var(--color-on-surface)' }}>Join the community</h4>
+              <p className="text-xs" style={{ color: 'var(--color-on-surface-variant)' }}>Compare scores, share tips, and climb the leaderboard with 50K+ peers.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ 5. For Everyone ═══════ */}
+      <section className="px-6 py-20 max-w-6xl mx-auto w-full">
+        <h2 className="text-2xl font-bold text-center mb-4 animate-fade-up" style={{ color: 'var(--color-on-surface)' }}>
+          Built for every stage of your career
+        </h2>
+        <p className="text-sm text-center mb-12 max-w-lg mx-auto animate-fade-up animation-delay-50" style={{ color: 'var(--color-on-surface-variant)' }}>
+          Whether you're writing your first for-loop or preparing for Staff Engineer — DevPrep AI meets you where you are.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+          {[
+            { icon: 'school',        color: 'var(--color-primary)',   title: 'Students',          desc: 'Build a strong CS foundation with guided curricula and instant AI tutoring for homework and interview prep.' },
+            { icon: 'rocket_launch', color: 'var(--color-success)',   title: 'Bootcamp Grads',    desc: 'Fill the gaps bootcamps leave behind. Master DS&A, system design, and ace the technical screen.' },
+            { icon: 'code',          color: 'var(--color-warning)',   title: 'Experienced Engineers', desc: 'Level up for senior roles. System design deep-dives, advanced algorithms, and staff-level mock interviews.' },
+            { icon: 'switch_access', color: 'var(--color-tertiary)',  title: 'Career Switchers',  desc: 'Transition into tech with a structured path. No fluff — just the skills employers actually ask about.' },
+          ].map((p, i) => (
+            <div key={p.title} className="bento-card p-6 animate-fade-up" style={{ animationDelay: `${i * 80}ms` }}>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+                   style={{ background: `${p.color}15` }}>
+                <span className="material-symbols-outlined text-xl" style={{ color: p.color, fontVariationSettings: "'FILL' 1" }}>{p.icon}</span>
+              </div>
+              <h3 className="font-semibold mb-2" style={{ color: 'var(--color-on-surface)' }}>{p.title}</h3>
+              <p className="text-sm" style={{ color: 'var(--color-on-surface-variant)' }}>{p.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══════ 6. How It Works ═══════ */}
       <section className="px-6 py-20 max-w-5xl mx-auto w-full">
         <h2 className="text-2xl font-bold text-center mb-4 animate-fade-up" style={{ color: 'var(--color-on-surface)' }}>
           How it works
@@ -135,7 +264,7 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* ═══════ 5. Testimonials ═══════ */}
+      {/* ═══════ 7. Testimonials ═══════ */}
       <section className="px-6 py-20 max-w-6xl mx-auto w-full">
         <h2 className="text-2xl font-bold text-center mb-4 animate-fade-up" style={{ color: 'var(--color-on-surface)' }}>
           Loved by engineers
@@ -173,7 +302,7 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* ═══════ 6. FAQ ═══════ */}
+      {/* ═══════ 8. FAQ ═══════ */}
       <section className="px-6 py-20 max-w-3xl mx-auto w-full">
         <h2 className="text-2xl font-bold text-center mb-4 animate-fade-up" style={{ color: 'var(--color-on-surface)' }}>
           Frequently asked questions
@@ -210,7 +339,7 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* ═══════ 7. Final CTA ═══════ */}
+      {/* ═══════ 9. Final CTA ═══════ */}
       <section className="px-6 py-24 max-w-4xl mx-auto w-full text-center">
         <div className="bento-card ai-glow-border p-14 animate-fade-up relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl opacity-15 pointer-events-none"

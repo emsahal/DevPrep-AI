@@ -1,48 +1,61 @@
 import { Link } from 'react-router-dom'
-import { GraduationCap } from 'lucide-react'
 
 export function Footer() {
   return (
-    <footer className="border-t bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <GraduationCap className="h-6 w-6 text-primary" />
-              <span className="text-lg font-bold">InterviewPrep</span>
+    <footer style={{ borderTop: '1px solid var(--color-border-subtle)', background: 'var(--color-bg-base)' }}>
+      <div className="mx-auto max-w-7xl px-6 py-14">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="col-span-2 md:col-span-1">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold"
+                   style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
+                D
+              </div>
+              <span className="font-bold text-base" style={{ color: 'var(--color-on-surface)' }}>
+                DevPrep<span style={{ color: 'var(--color-primary)' }}>AI</span>
+              </span>
             </div>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--color-on-surface-variant)' }}>
               AI-powered platform for software engineering interview preparation.
             </p>
           </div>
           <div>
-            <h3 className="text-sm font-semibold">Learning</h3>
-            <ul className="mt-3 space-y-2">
-              <li><Link to="/learning-paths" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Learning Paths</Link></li>
-              <li><Link to="/library" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Technology Library</Link></li>
-              <li><Link to="/ai-tutor" className="text-sm text-muted-foreground hover:text-foreground transition-colors">AI Tutor</Link></li>
-              <li><Link to="/revision" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Revision</Link></li>
+            <h3 className="text-xs font-semibold tracking-wider uppercase mb-4" style={{ color: 'var(--color-outline)' }}>Learning</h3>
+            <ul className="space-y-2.5">
+              {['Learning Paths', 'Technology Library', 'AI Tutor', 'Revision'].map((l) => (
+                <li key={l}>
+                  <Link to="#" className="text-sm transition-colors hover:opacity-80"
+                        style={{ color: 'var(--color-on-surface-variant)' }}>{l}</Link>
+                </li>
+              ))}
             </ul>
           </div>
           <div>
-            <h3 className="text-sm font-semibold">Practice</h3>
-            <ul className="mt-3 space-y-2">
-              <li><Link to="/quizzes" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Quizzes</Link></li>
-              <li><Link to="/flashcards" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Flashcards</Link></li>
-              <li><Link to="/code-analyzer" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Code Analyzer</Link></li>
+            <h3 className="text-xs font-semibold tracking-wider uppercase mb-4" style={{ color: 'var(--color-outline)' }}>Practice</h3>
+            <ul className="space-y-2.5">
+              {['Quizzes', 'Flashcards', 'Code Analyzer', 'Mock Interviews'].map((l) => (
+                <li key={l}>
+                  <Link to="#" className="text-sm transition-colors hover:opacity-80"
+                        style={{ color: 'var(--color-on-surface-variant)' }}>{l}</Link>
+                </li>
+              ))}
             </ul>
           </div>
           <div>
-            <h3 className="text-sm font-semibold">Account</h3>
-            <ul className="mt-3 space-y-2">
-              <li><Link to="/profile" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Profile</Link></li>
-              <li><Link to="/bookmarks" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Bookmarks</Link></li>
-              <li><Link to="/settings" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Settings</Link></li>
+            <h3 className="text-xs font-semibold tracking-wider uppercase mb-4" style={{ color: 'var(--color-outline)' }}>Account</h3>
+            <ul className="space-y-2.5">
+              {['Profile', 'Bookmarks', 'Settings', 'Leaderboard'].map((l) => (
+                <li key={l}>
+                  <Link to="#" className="text-sm transition-colors hover:opacity-80"
+                        style={{ color: 'var(--color-on-surface-variant)' }}>{l}</Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
-        <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} InterviewPrep. All rights reserved.
+        <div className="mt-10 pt-6 text-center text-xs"
+             style={{ borderTop: '1px solid var(--color-border-subtle)', color: 'var(--color-outline)' }}>
+          &copy; {new Date().getFullYear()} DevPrep AI. All rights reserved.
         </div>
       </div>
     </footer>
