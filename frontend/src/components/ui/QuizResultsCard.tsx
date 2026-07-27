@@ -12,7 +12,7 @@ interface QuizResultsCardProps {
   totalQuestions: number
   onRetry: () => void
   onRegenerate: () => void
-  onDownload: () => void
+  onDownload?: () => void
 }
 
 function toFileName(text: string, idx: number): string {
@@ -35,7 +35,7 @@ const styles = {
   failLine: '#F3C6C6',
 }
 
-export function QuizResultsCard({ title, topicName, questions, selectedAnswers, score, totalQuestions, onRetry, onRegenerate, onDownload }: QuizResultsCardProps) {
+export function QuizResultsCard({ title, topicName, questions, selectedAnswers, score, totalQuestions, onRetry, onRegenerate }: QuizResultsCardProps) {
   const selectedMap = useMemo(() => new Map(selectedAnswers.map((a) => [a.questionId, a.selectedAnswer])), [selectedAnswers])
   const percentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0
   const passed = percentage >= 70
@@ -105,18 +105,7 @@ export function QuizResultsCard({ title, topicName, questions, selectedAnswers, 
             <span style={{ fontSize: 14 }}>⟳</span>
             Regenerate
           </button>
-          <button
-            onClick={onDownload}
-            title="Download PDF"
-            style={{ background: styles.ink, border: 'none', borderRadius: 6, padding: '5px 12px', cursor: 'pointer', color: '#fff', display: 'flex', alignItems: 'center', gap: 5, fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 600 }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-            PDF
-          </button>
+
         </div>
       </div>
 
