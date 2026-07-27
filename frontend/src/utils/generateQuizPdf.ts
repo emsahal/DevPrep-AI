@@ -11,265 +11,272 @@ interface QuizPdfData {
   totalQuestions: number
 }
 
-async function loadImageAsBase64(url: string): Promise<string> {
-  const response = await fetch(url)
-  const blob = await response.blob()
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onloadend = () => resolve(reader.result as string)
-    reader.onerror = reject
-    reader.readAsDataURL(blob)
-  })
+function toFileName(text: string, idx: number): string {
+  const words = text.replace(/[^a-zA-Z0-9\s]/g, '').split(/\s+/).filter(Boolean).slice(0, 4)
+  return `q${String(idx + 1).padStart(2, '0')}-${words.join('-').toLowerCase() || 'question'}.spec.js`
 }
 
 export async function generateQuizPdf(data: QuizPdfData) {
   const { title, topicName, questions, selectedAnswers, score, totalQuestions } = data
 
   const doc = new jsPDF('p', 'mm', 'a4')
-  const pageWidth = doc.internal.pageSize.getWidth()
-  const pageHeight = doc.internal.pageSize.getHeight()
-  const margin = 20
-  const contentWidth = pageWidth - margin * 2
+  const pw = doc.internal.pageSize.getWidth()
+  const ph = doc.internal.pageSize.getHeight()
+  const m = 18
+  const cw = pw - m * 2
 
-  const primaryR = 109; const primaryG = 59; const primaryB = 215
-  const primaryLightR = 208; const primaryLightG = 188; const primaryLightB = 255
-  const primaryDarkR = 52; const primaryDarkG = 0; const primaryDarkB = 128
-  const successR = 16; const successG = 185; const successB = 129
-  const errorR = 239; const errorG = 68; const errorB = 68
-  const textDarkR = 30; const textDarkG = 30; const textDarkB = 30
-  const textMutedR = 100; const textMutedG = 100; const textMutedB = 110
+  const ink: [number, number, number] = [11, 18, 32]
+  const paper: [number, number, number] = [247, 246, 242]
+  const line: [number, number, number] = [228, 225, 216]
+  const muted: [number, number, number] = [87, 96, 106]
+  const pass: [number, number, number] = [26, 127, 55]
+  const passBg: [number, number, number] = [218, 251, 225]
+  const fail: [number, number, number] = [207, 34, 46]
+  const failBg: [number, number, number] = [255, 235, 233]
+  const fileHdr: [number, number, number] = [241, 239, 233]
 
   const selectedMap = new Map(selectedAnswers.map((a) => [a.questionId, a.selectedAnswer]))
 
-  let logoData: string | null = null
-  try {
-    const logoModule = await import('@/assets/logo.png')
-    logoData = await loadImageAsBase64(logoModule.default)
-  } catch {
-    // logo optional
-  }
-
-  function drawOption(optText: string, idx: number, correctIdx: number, selectedIdx: number | undefined, y: number): number {
-    const isCorrect = idx === correctIdx
-    const isSelected = idx === selectedIdx
-    const prefix = String.fromCharCode(65 + idx)
-
-    const optX = margin + 14
-    const optWidth = contentWidth - 18
-    const lineHeight = 4.2
-
-    const cleaned = optText.replace(/\\n/g, '\n').replace(/<[^>]*>/g, '')
-    doc.setFontSize(9)
-    doc.setFont('helvetica', isCorrect || isSelected ? 'bold' : 'normal')
-    const lines = doc.splitTextToSize(cleaned, optWidth - 20)
-    const blockHeight = Math.max(lines.length * lineHeight + 6, 9)
-
-    let fillR: number | null = null; let fillG: number | null = null; let fillB: number | null = null
-    let fgR = textDarkR; let fgG = textDarkG; let fgB = textDarkB
-    let marker = ''
-
-    if (isSelected && isCorrect) {
-      fillR = successR; fillG = successG; fillB = successB; fgR = successR; fgG = successG; fgB = successB; marker = '  ✓'
-    } else if (isSelected && !isCorrect) {
-      fillR = errorR; fillG = errorG; fillB = errorB; fgR = errorR; fgG = errorG; fgB = errorB; marker = '  ✗'
-    } else if (isCorrect) {
-      fillR = 230; fillG = 250; fillB = 240; fgR = successR; fgG = successG; fgB = successB; marker = '  ✓'
-    }
-
-    if (fillR !== null) {
-      doc.setFillColor(fillR, fillG!, fillB!)
-      doc.setDrawColor(fillR, fillG!, fillB!)
-      doc.roundedRect(optX - 4, y - 4, optWidth, blockHeight, 3, 3, 'F')
-    }
-
-    doc.setTextColor(fgR, fgG, fgB)
-    const label = `${prefix}. ${cleaned}${marker}`
-    const textLines = doc.splitTextToSize(label, optWidth - 10)
-    doc.text(textLines, optX + 2, y + 1)
-
-    return y + blockHeight + 2
-  }
-
-  // ── Page Background ──
-  doc.setFillColor(252, 252, 254)
-  doc.rect(0, 0, pageWidth, pageHeight, 'F')
-
-  // ── HEADER ──
-  const headerHeight = 52
-  doc.setFillColor(primaryR, primaryG, primaryB)
-  doc.rect(0, 0, pageWidth, headerHeight, 'F')
-
-  doc.setFillColor(primaryDarkR, primaryDarkG, primaryDarkB)
-  doc.circle(pageWidth - 30, 10, 25, 'F')
-  doc.circle(pageWidth - 10, 40, 15, 'F')
-
-  if (logoData) {
-    try { doc.addImage(logoData, 'PNG', margin, 10, 24, 24) } catch {}
-  }
-  doc.setTextColor(primaryLightR, primaryLightG, primaryLightB)
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(16)
-  doc.text('DevPrep AI', margin + (logoData ? 30 : 0), 20)
-
-  doc.setFont('helvetica', 'normal')
-  doc.setFontSize(8)
-  doc.setTextColor(200, 190, 230)
-  doc.text('Master Your Technical Interview', margin + (logoData ? 30 : 0), 27)
-
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(11)
-  doc.setTextColor(255, 255, 255)
-  const titleWidth = doc.getTextWidth(title)
-  doc.text(title, pageWidth - margin - titleWidth, 20)
-
-  doc.setFont('helvetica', 'normal')
-  doc.setFontSize(8)
-  doc.setTextColor(200, 190, 230)
-  const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })
-  doc.text(`Generated: ${dateStr}`, pageWidth - margin - doc.getTextWidth(`Generated: ${dateStr}`), 28)
-
-  // ── TOPIC BADGE ──
-  if (topicName) {
-    const badgeY = headerHeight + 8
-    doc.setFillColor(240, 235, 255)
-    doc.roundedRect(margin, badgeY, contentWidth, 10, 4, 4, 'F')
-    doc.setTextColor(primaryR, primaryG, primaryB)
-    doc.setFont('helvetica', 'bold')
-    doc.setFontSize(8)
-    doc.text(`Topic: ${topicName}`, margin + 6, badgeY + 7)
-  }
-
-  // ── SCORE CARD ──
+  const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
   const percentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0
   const passed = percentage >= 70
-  const scoreY = (topicName ? headerHeight + 24 : headerHeight + 14)
 
-  doc.setFillColor(passed ? 240 : 255, passed ? 252 : 248, passed ? 248 : 246)
-  doc.setDrawColor(passed ? successR : errorR, passed ? successG : errorG, passed ? successB : errorB)
-  doc.roundedRect(margin, scoreY, contentWidth, 36, 6, 6, 'FD')
+  // ── helpers ──
+  function roundRect(x: number, y: number, w: number, h: number, r: number, style: 'F' | 'S' | 'FD' = 'F') {
+    doc.roundedRect(x, y, w, h, r, r, style)
+  }
 
-  doc.setFillColor(passed ? successR : errorR, passed ? successG : errorG, passed ? successB : errorB)
-  doc.circle(margin + 24, scoreY + 18, 12, 'F')
+  // ── page bg ──
+  doc.setFillColor(...paper)
+  doc.rect(0, 0, pw, ph, 'F')
+
+  // ── HEADER ──
+  doc.setFillColor(...ink)
+  doc.rect(0, 0, pw, 44, 'F')
+
+  doc.setFont('courier', 'normal')
+  doc.setFontSize(9)
+  doc.setTextColor(139, 150, 171)
+  doc.text('DEVPREP AI · MASTERY QUIZ', m, 14)
+
+  doc.setFont('courier', 'bold')
+  doc.setFontSize(18)
   doc.setTextColor(255, 255, 255)
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(14)
-  const pctStr = `${percentage}%`
-  const pctW = doc.getTextWidth(pctStr)
-  doc.text(pctStr, margin + 24 - pctW / 2, scoreY + 22)
+  doc.text(title, m, 27)
 
-  doc.setTextColor(textDarkR, textDarkG, textDarkB)
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(20)
-  const scoreText = `${score} / ${totalQuestions} correct`
-  const sw = doc.getTextWidth(scoreText)
-  doc.text(scoreText, pageWidth / 2 - sw / 2, scoreY + 16)
+  doc.setFont('courier', 'normal')
+  doc.setFontSize(8.5)
+  doc.setTextColor(154, 165, 184)
+  const breadcrumb = `main → results / ${title.replace(/\s+/g, '-').toLowerCase().slice(0, 30)}.quiz · ${dateStr}`
+  doc.text(breadcrumb, m, 36)
 
-  doc.setFont('helvetica', 'normal')
+  // green dot
+  doc.setFillColor(...pass)
+  doc.circle(m + 72, 10, 3, 'F')
+
+  // ── SCORE CARD ──
+  const scY = 52
+  roundRect(m, scY, cw, 48, 5, 'F')
+  doc.setDrawColor(...line)
+  roundRect(m, scY, cw, 48, 5, 'S')
+
+  doc.setFont('courier', 'bold')
+  doc.setFontSize(18)
+  doc.setTextColor(...pass)
+  doc.text(`+${score} passed`, m + 10, scY + 17)
+  doc.setTextColor(...line)
+  doc.text('/', m + 10 + doc.getTextWidth(`+${score} passed`), scY + 17)
+  doc.setTextColor(...fail)
+  doc.text(`−${totalQuestions - score} failed`, m + 10 + doc.getTextWidth(`+${score} passed/`), scY + 17)
+
+  // status chip
+  const chipLabel = passed ? 'Passed' : 'Failed'
+  const chipW = doc.getTextWidth(chipLabel) + 18
+  const chipX = pw - m - chipW
+  doc.setFillColor(passed ? passBg[0] : failBg[0], passed ? passBg[1] : failBg[1], passed ? passBg[2] : failBg[2])
+  doc.setDrawColor(passed ? pass[0] : fail[0], passed ? pass[1] : fail[1], passed ? pass[2] : fail[2])
+  roundRect(chipX, scY + 8, chipW, 16, 5, 'FD')
+  doc.setFont('courier', 'bold')
   doc.setFontSize(9)
-  doc.setTextColor(textMutedR, textMutedG, textMutedB)
-  const statusText = passed ? 'Congratulations! You passed the quiz.' : 'Keep practicing! Review the explanations below.'
-  const statusW = doc.getTextWidth(statusText)
-  doc.text(statusText, pageWidth / 2 - statusW / 2, scoreY + 28)
+  doc.setTextColor(passed ? pass[0] : fail[0], passed ? pass[1] : fail[1], passed ? pass[2] : fail[2])
+  doc.text(`${chipLabel} · ${percentage}%`, chipX + 9, scY + 19)
 
-  const resultLabel = passed ? 'PASSED' : 'FAILED'
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(9)
-  doc.setTextColor(passed ? successR : errorR, passed ? successG : errorG, passed ? successB : errorB)
-  const rw = doc.getTextWidth(resultLabel) + 16
-  doc.setDrawColor(passed ? successR : errorR, passed ? successG : errorG, passed ? successB : errorB)
-  doc.setFillColor(255, 255, 255)
-  doc.roundedRect(pageWidth - margin - rw, scoreY + 9, rw, 18, 9, 9, 'FD')
-  doc.text(resultLabel, pageWidth - margin - rw + (rw - doc.getTextWidth(resultLabel)) / 2, scoreY + 22)
+  // progress bar
+  const barY = scY + 30
+  const barW = cw - 20
+  doc.setFillColor(...line)
+  roundRect(m + 10, barY, barW, 7, 4, 'F')
+  if (percentage > 0) {
+    doc.setFillColor(...pass)
+    doc.rect(m + 10, barY, barW * (percentage / 100), 7, 'F')
+  }
+  if (percentage < 100) {
+    doc.setFillColor(...fail)
+    doc.rect(m + 10 + barW * (percentage / 100), barY, barW * ((100 - percentage) / 100), 7, 'F')
+  }
+
+  // meta
+  doc.setFont('courier', 'normal')
+  doc.setFontSize(8)
+  doc.setTextColor(...muted)
+  const metaParts = []
+  if (topicName) metaParts.push(`topic: ${topicName}`)
+  metaParts.push(`questions: ${totalQuestions}`, `threshold: 70%`, `result: ${passed ? 'passed' : 'below threshold'}`)
+  const metaText = metaParts.join('   ·   ')
+  doc.text(metaText, m + 10, scY + 44)
 
   // ── QUESTIONS ──
-  let yPos = scoreY + 52
-  const bottomLimit = pageHeight - 20
+  let yPos = scY + 62
+  const bottomLimit = ph - 18
 
   questions.forEach((q, idx) => {
-    const selectedAnswer = selectedMap.get(q.id)
-    const cleanedText = q.text.replace(/\\n/g, '\n').replace(/<[^>]*>/g, '').replace(/#{1,6}\s/g, '').replace(/\*{1,2}/g, '').replace(/`{1,3}/g, '')
+    const selectedAns = selectedMap.get(q.id)
+    const fileName = toFileName(q.text, idx)
 
-    if (yPos > bottomLimit - 40) {
+    // Page break estimate (card header + question + 4 options + explanation)
+    if (yPos > bottomLimit - 50) {
       doc.addPage()
-      yPos = 20
+      doc.setFillColor(...paper)
+      doc.rect(0, 0, pw, ph, 'F')
+      yPos = 16
     }
 
-    doc.setFillColor(primaryR, primaryG, primaryB)
-    doc.circle(margin + 5, yPos, 5, 'F')
-    doc.setTextColor(255, 255, 255)
-    doc.setFont('helvetica', 'bold')
-    doc.setFontSize(9)
-    const qNum = `${idx + 1}`
-    doc.text(qNum, margin + 5 - doc.getTextWidth(qNum) / 2, yPos + 3)
+    // ── diff card ──
+    const cardX = m
+    const cardW = cw
+    let cardY = yPos
 
-    doc.setFont('helvetica', 'bold')
-    doc.setFontSize(10)
-    doc.setTextColor(textDarkR, textDarkG, textDarkB)
-    const qLines = doc.splitTextToSize(cleanedText, contentWidth - 24)
-    doc.text(qLines, margin + 16, yPos + 1)
-    yPos += qLines.length * 4.5 + 6
+    // file header
+    doc.setFillColor(...fileHdr)
+    roundRect(cardX, cardY, cardW, 10, 4, 'F')
+    doc.setDrawColor(...line)
+    roundRect(cardX, cardY, cardW, 10, 4, 'S')
+    doc.setFont('courier', 'bold')
+    doc.setFontSize(8.5)
+    doc.setTextColor(139, 150, 171)
+    doc.text(`Q${String(idx + 1).padStart(2, '0')}`, cardX + 10, cardY + 7)
+    doc.setTextColor(...ink)
+    doc.text(fileName, cardX + 22, cardY + 7)
+    cardY += 10
 
+    // remove bottom border of header + main border
+    doc.setDrawColor(...line)
+    doc.line(cardX, cardY, cardX + cardW, cardY)
+
+    // question text
+    const cleanedQ = q.text.replace(/\\n/g, '\n').replace(/<[^>]*>/g, '').replace(/#{1,6}\s/g, '').replace(/\*{1,2}/g, '').replace(/`{1,3}/g, '')
+    doc.setFont('courier', 'bold')
+    doc.setFontSize(9.5)
+    doc.setTextColor(...ink)
+    const qLines = doc.splitTextToSize(cleanedQ, cardW - 20)
+    doc.text(qLines, cardX + 10, cardY + 7)
+    const qH = qLines.length * 3.8 + 6
+    cardY += qH + 4
+
+    // options
     q.options.forEach((opt, i) => {
-      if (yPos > bottomLimit - 30) {
-        doc.addPage()
-        yPos = 20
+      const isSelected = i === selectedAns
+      const isOptCorrect = i === q.correctAnswer
+      const optPrefix = isSelected && isOptCorrect ? '+'
+        : isSelected && !isOptCorrect ? '−'
+        : '·'
+      const isHighlighted = isSelected || (isOptCorrect && selectedAns !== undefined && !isSelected)
+      const bg: [number, number, number] | null = isSelected && isOptCorrect ? passBg
+        : isSelected && !isOptCorrect ? failBg
+        : isOptCorrect && selectedAns !== undefined ? passBg
+        : null
+      const borderColor: [number, number, number] = isSelected && isOptCorrect ? pass
+        : isSelected && !isOptCorrect ? fail
+        : isOptCorrect && selectedAns !== undefined ? pass
+        : [255, 255, 255] as [number, number, number]
+
+      const optCleaned = opt.replace(/\\n/g, '\n').replace(/<[^>]*>/g, '')
+      doc.setFont('courier', isHighlighted ? 'bold' : 'normal')
+      doc.setFontSize(8.5)
+      const label = `${optPrefix}  ${String.fromCharCode(65 + i)}  ${optCleaned}`
+      const oLines = doc.splitTextToSize(label, cardW - 24)
+      const oH = Math.max(oLines.length * 3.5 + 4, 8)
+
+      if (bg) {
+        doc.setFillColor(...bg)
+        doc.rect(cardX + 1, cardY, cardW - 2, oH + 2, 'F')
       }
-      yPos = drawOption(opt, i, q.correctAnswer, selectedAnswer, yPos)
+      doc.setDrawColor(...borderColor)
+      doc.setLineWidth(1.5)
+      doc.line(cardX + 1, cardY, cardX + 1, cardY + oH + 2)
+      doc.setLineWidth(0.1)
+
+      if (isHighlighted) {
+        if (isSelected && !isOptCorrect) { doc.setTextColor(...fail) }
+        else { doc.setTextColor(...pass) }
+      } else {
+        doc.setTextColor(59, 68, 83)
+      }
+      doc.text(oLines, cardX + 14, cardY + 5)
+      cardY += oH + 2
     })
 
+    cardY += 2
+
+    // explanation
     if (q.explanation) {
-      if (yPos > bottomLimit - 30) {
-        doc.addPage()
-        yPos = 20
-      }
-
       const expText = q.explanation.replace(/\\n/g, '\n').replace(/<[^>]*>/g, '').replace(/\*{1,2}/g, '').replace(/`{1,3}/g, '')
+      const expH = Math.max(doc.splitTextToSize(expText, cardW - 28).length * 3.2 + 16, 20)
 
-      doc.setFontSize(8.5)
-      doc.setFont('helvetica', 'bold')
-      doc.setTextColor(primaryR, primaryG, primaryB)
-      doc.text('EXPLANATION', margin + 6, yPos + 4)
-
-      doc.setFont('helvetica', 'normal')
-      doc.setFontSize(8)
-      doc.setTextColor(textMutedR, textMutedG, textMutedB)
-
-      const expLines = doc.splitTextToSize(expText, contentWidth - 16)
-      const expH = Math.max(expLines.length * 3.2 + 14, 18)
-
-      doc.setFillColor(246, 244, 252)
-      doc.setDrawColor(primaryR, primaryG, primaryB)
-      doc.roundedRect(margin, yPos, contentWidth, expH, 4, 4, 'FD')
-
-      doc.text(expLines, margin + 6, yPos + 12)
-      yPos += expH + 8
-    }
-
-    if (idx < questions.length - 1) {
-      if (yPos > bottomLimit - 10) {
+      if (cardY + expH > bottomLimit) {
         doc.addPage()
-        yPos = 20
+        doc.setFillColor(...paper)
+        doc.rect(0, 0, pw, ph, 'F')
+        cardY = 16
       }
-      doc.setDrawColor(230, 230, 235)
-      doc.line(margin, yPos, pageWidth - margin, yPos)
-      yPos += 8
+
+      doc.setFillColor(250, 250, 247)
+      doc.setDrawColor(...line)
+      roundRect(cardX + 6, cardY, cardW - 12, expH, 4, 'FD')
+
+      // avatar + header
+      doc.setFillColor(...ink)
+      roundRect(cardX + 14, cardY + 4, 14, 14, 3, 'F')
+      doc.setTextColor(255, 255, 255)
+      doc.setFont('courier', 'bold')
+      doc.setFontSize(6.5)
+      doc.text('DP', cardX + 14 + (14 - doc.getTextWidth('DP')) / 2, cardY + 13)
+
+      doc.setFont('courier', 'normal')
+      doc.setFontSize(8)
+      doc.setTextColor(...muted)
+      doc.text('DevPrep AI commented', cardX + 34, cardY + 13)
+
+      // explanation body
+      doc.setFont('courier', 'normal')
+      doc.setFontSize(8)
+      doc.setTextColor(59, 68, 83)
+      const expLines = doc.splitTextToSize(expText, cardW - 32)
+      doc.text(expLines, cardX + 14, cardY + 24)
+      cardY += expH + 10
     }
+
+    cardY += 4
+
+    // draw card border
+    doc.setDrawColor(...line)
+    roundRect(cardX, yPos, cardW, cardY - yPos, 4, 'S')
+
+    yPos = cardY + 4
   })
 
   // ── FOOTER ──
   const totalPages = doc.getNumberOfPages()
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i)
-    doc.setDrawColor(230, 230, 235)
-    doc.line(margin, pageHeight - 14, pageWidth - margin, pageHeight - 14)
-
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(7)
-    doc.setTextColor(textMutedR, textMutedG, textMutedB)
-    doc.text(`Page ${i} of ${totalPages}`, margin, pageHeight - 6)
-
-    doc.setTextColor(160, 150, 180)
-    doc.text('Generated by DevPrep AI', pageWidth - margin - doc.getTextWidth('Generated by DevPrep AI'), pageHeight - 6)
+    doc.setDrawColor(...line)
+    doc.line(m, ph - 14, pw - m, ph - 14)
+    doc.setFont('courier', 'normal')
+    doc.setFontSize(7.5)
+    doc.setTextColor(154, 165, 184)
+    doc.text(`devprep-ai / ${title.replace(/\s+/g, '-').toLowerCase().slice(0, 30)}`, m, ph - 6)
+    const genW = doc.getTextWidth('generated by DevPrep AI')
+    doc.text('generated by DevPrep AI', pw - m - genW, ph - 6)
   }
 
   const filename = `devprep-quiz-${title.replace(/\s+/g, '-').toLowerCase().slice(0, 30)}.pdf`
