@@ -148,21 +148,6 @@
 
   /* Fix highlight.js dark background to match our surface */
   .hljs { background: var(--color-surface-container-lowest) !important; }
-
-  /* React Flow dark theme overrides */
-  .home-flow .react-flow__background { background: var(--color-bg-base) !important; }
-  .home-flow .react-flow__controls-button {
-    background: var(--color-surface-container) !important;
-    border: 1px solid var(--color-border-subtle) !important;
-    color: var(--color-on-surface) !important;
-    fill: var(--color-on-surface) !important;
-  }
-  .home-flow .react-flow__controls-button:hover {
-    background: var(--color-surface-container-high) !important;
-  }
-  .home-flow .react-flow__minimap { border-radius: 12px !important; }
-  .home-flow .react-flow__attribution { display: none !important; }
-  .home-flow .react-flow__handle { border: 2px solid var(--color-bg-base) !important; }
 }
 
 /* ─── Utility Classes ──────────────────────────────────────── */
