@@ -21,16 +21,21 @@ export class DSACheckService {
   ): Promise<DSACheckResult> {
     const systemPrompt = `You are a DSA coding interview evaluator. Your job is to check if a user's solution correctly solves the given problem.
 
-Return ONLY valid JSON in this exact format:
+RULES:
+- If correct: issues=[], suggestions=[], give brief positive feedback (1 sentence).
+- If incorrect: list specific issues and suggestions.
+- Score 0-100. Correct/optimal = 90-100. Minor issues = 70-89. Wrong = 0-69.
+
+Return ONLY valid JSON:
 {
   "isCorrect": true/false,
-  "feedback": "Brief overall assessment of the solution",
-  "issues": ["Issue 1", "Issue 2", ...],
-  "suggestions": ["Suggestion 1", "Suggestion 2", ...],
-  "timeComplexity": "O(...) analysis",
-  "spaceComplexity": "O(...) analysis",
-  "expectedApproach": "Brief description of the expected optimal approach",
-  "score": 0-100
+  "feedback": "1-2 sentence assessment",
+  "issues": [],
+  "suggestions": [],
+  "timeComplexity": "O(...)",
+  "spaceComplexity": "O(...)",
+  "expectedApproach": "Describe the optimal method",
+  "score": 85
 }`
 
     const userPrompt = `Problem: ${questionTitle}

@@ -1,5 +1,9 @@
 import { useState, useMemo, useCallback } from 'react'
 import { useMutation } from '@tanstack/react-query'
+import CodeMirror from '@uiw/react-codemirror'
+import { cpp } from '@codemirror/lang-cpp'
+import { javascript } from '@codemirror/lang-javascript'
+import { oneDark } from '@codemirror/theme-one-dark'
 import { allQuestions, LEVELS } from '@/data/dsa-questions'
 import { dsaCheckService } from '@/services/dsaCheckService'
 
@@ -95,10 +99,9 @@ export function CodeAnalyzerPage() {
   const result = checkMutation.data
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] overflow-hidden">
+<div className="flex flex-col min-h-0">
       <div className="flex flex-1 min-h-0">
-        {/* Main Content */}
-        <div className="flex-1 flex flex-col min-w-0" style={{ background: 'var(--color-surface-container-lowest)', overflow: 'auto' }}>
+        <div className="flex-1 flex flex-col min-w-0" style={{ background: 'var(--color-surface-container-lowest)' }}>
 
           {/* ========== LEVELS VIEW ========== */}
           {view === 'levels' && (
@@ -361,19 +364,22 @@ export function CodeAnalyzerPage() {
                     </div>
                   </div>
                   <div style={{ display: 'flex', fontFamily: 'var(--font-mono)', fontSize: 13, lineHeight: 1.6, minHeight: 250 }}>
-                    <div style={{ padding: '10px 8px', textAlign: 'right', minWidth: 36, color: 'var(--color-border-muted)', background: 'var(--color-surface-container-low)', borderRight: '1px solid var(--color-border-subtle)', userSelect: 'none' }}>
-                      {code.split('\n').map((_, i) => <div key={i}>{i + 1}</div>)}
-                    </div>
-                    <textarea
+                    <CodeMirror
                       value={code}
-                      onChange={e => setCode(e.target.value)}
-                      style={{
-                        flex: 1, padding: '10px 14px', border: 'none', outline: 'none', resize: 'none',
-                        background: 'transparent', color: 'var(--color-on-surface)',
-                        fontFamily: 'inherit', fontSize: 'inherit', lineHeight: 'inherit',
-                        whiteSpace: 'pre', overflowWrap: 'normal', overflowX: 'auto',
+                      onChange={setCode}
+                      extensions={[language === 'cpp' ? cpp() : javascript()]}
+                      theme={oneDark}
+                      height="auto"
+                      minHeight="250px"
+                      style={{ flex: 1, fontSize: 13 }}
+                      basicSetup={{
+                        lineNumbers: true,
+                        bracketMatching: true,
+                        closeBrackets: true,
+                        indentOnInput: true,
+                        tabSize: 2,
+                        highlightActiveLine: true,
                       }}
-                      spellCheck={false}
                     />
                   </div>
                 </div>
@@ -397,14 +403,14 @@ export function CodeAnalyzerPage() {
                     <div style={{
                       width: 56, height: 56, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
                       fontSize: 20, fontWeight: 700,
-                      background: result.score >= 80 ? 'rgba(34,197,94,0.15)' : result.score >= 50 ? 'rgba(234,179,8,0.15)' : 'rgba(239,68,68,0.15)',
-                      color: result.score >= 80 ? '#4ADE80' : result.score >= 50 ? '#EAB308' : '#F87171',
+                      background: result.isCorrect ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)',
+                      color: result.isCorrect ? '#4ADE80' : '#F87171',
                     }}>
                       {result.score}
                     </div>
                     <div>
                       <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--color-on-surface)' }}>
-                        {result.isCorrect ? '✅ Correct Solution' : '❌ Needs Improvement'}
+                        {result.isCorrect ? 'Correct Solution' : 'Needs Improvement'}
                       </div>
                       <div style={{ fontSize: 12, color: 'var(--color-outline)' }}>AI Evaluation Score</div>
                     </div>
@@ -417,7 +423,7 @@ export function CodeAnalyzerPage() {
                     <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-on-surface)', marginBottom: 4 }}>Feedback</div>
                     <p style={{ fontSize: 13, color: 'var(--color-on-surface-variant)', lineHeight: 1.6, margin: 0 }}>{result.feedback}</p>
                   </div>
-                  {result.issues.length > 0 && (
+                  {!result.isCorrect && result.issues.length > 0 && (
                     <div>
                       <div style={{ fontSize: 12, fontWeight: 600, color: '#F87171', marginBottom: 4 }}>Issues</div>
                       <ul style={{ margin: 0, paddingLeft: 14, fontSize: 12, color: 'var(--color-on-surface-variant)', lineHeight: 1.7 }}>
@@ -425,7 +431,7 @@ export function CodeAnalyzerPage() {
                       </ul>
                     </div>
                   )}
-                  {result.suggestions.length > 0 && (
+                  {!result.isCorrect && result.suggestions.length > 0 && (
                     <div>
                       <div style={{ fontSize: 12, fontWeight: 600, color: '#4ADE80', marginBottom: 4 }}>Suggestions</div>
                       <ul style={{ margin: 0, paddingLeft: 14, fontSize: 12, color: 'var(--color-on-surface-variant)', lineHeight: 1.7 }}>
