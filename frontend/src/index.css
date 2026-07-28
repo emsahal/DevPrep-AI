@@ -143,6 +143,7 @@
     line-height: var(--text-body-md--line-height);
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    cursor: default;
   }
 
   /* Fix highlight.js dark background to match our surface */
