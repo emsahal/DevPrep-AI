@@ -4,6 +4,7 @@ import { profileService } from '@/services/profileService'
 import { dashboardService } from '@/services/dashboardService'
 import { gamificationService } from '@/services/gamificationService'
 import { BadgesGrid } from '@/features/gamification/components/BadgesGrid'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 export function ProfilePage() {
   const { user: storeUser } = useAuthStore()
@@ -28,10 +29,13 @@ export function ProfilePage() {
   return (
     <div className="px-6 py-8 max-w-4xl mx-auto">
       <div className="bento-card ai-glow-border p-8 mb-8 flex flex-col sm:flex-row items-center sm:items-start gap-6 animate-fade-up">
-        <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-extrabold flex-shrink-0"
-             style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
-          {user?.name?.charAt(0) ?? 'U'}
-        </div>
+        <Avatar className="w-20 h-20 flex-shrink-0 ring-2 ring-offset-2">
+          <AvatarImage src={user?.avatar} />
+          <AvatarFallback className="text-3xl font-extrabold"
+                         style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
+            {user?.name?.charAt(0) ?? 'U'}
+          </AvatarFallback>
+        </Avatar>
         <div className="flex-1 text-center sm:text-left">
           <h1 className="text-2xl font-extrabold mb-1" style={{ color: 'var(--color-on-surface)', fontFamily: 'var(--font-sans)' }}>
             {user?.name ?? 'Developer'}

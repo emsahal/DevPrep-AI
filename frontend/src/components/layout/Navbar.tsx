@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/store/authStore'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   BookOpen,
   Brain,
@@ -57,6 +57,7 @@ export function Navbar() {
             <div className="flex items-center gap-3">
               <Link to="/profile">
                 <Avatar className="h-8 w-8 cursor-pointer">
+                  <AvatarImage src={user?.avatar} />
                   <AvatarFallback>{user?.name?.charAt(0) || 'U'}</AvatarFallback>
                 </Avatar>
               </Link>

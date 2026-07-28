@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { gamificationService } from '@/services/gamificationService'
 import { NotificationDropdown } from '@/features/notifications/NotificationDropdown'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import logo from '@/assets/logo.png'
 const MOBILE_TABS = [
   { to: '/dashboard',      icon: 'dashboard',   label: 'Home'      },
@@ -97,10 +98,12 @@ export function TopNavBar() {
               <NotificationDropdown />
               {/* Avatar */}
               <Link to="/profile">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm cursor-pointer ring-2 ring-offset-2 transition-all hover:ring-primary"
-                     style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
-                  {user?.name?.charAt(0) ?? 'U'}
-                </div>
+                <Avatar className="h-8 w-8 cursor-pointer ring-2 ring-offset-2 transition-all hover:ring-primary">
+                  <AvatarImage src={user?.avatar} />
+                  <AvatarFallback style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)', fontSize: '0.875rem', fontWeight: 700 }}>
+                    {user?.name?.charAt(0) ?? 'U'}
+                  </AvatarFallback>
+                </Avatar>
               </Link>
             </>
           ) : (
