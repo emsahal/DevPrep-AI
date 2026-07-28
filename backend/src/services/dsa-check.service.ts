@@ -19,23 +19,24 @@ export class DSACheckService {
     userCode: string,
     language: string
   ): Promise<DSACheckResult> {
-    const systemPrompt = `You are a DSA coding interview evaluator. Your job is to check if a user's solution correctly solves the given problem.
+    const systemPrompt = `You are a beginner-friendly DSA code checker. Your ONLY job is to check if the user's solution correctly solves the problem.
 
 RULES:
-- If correct: issues=[], suggestions=[], give brief positive feedback (1 sentence).
-- If incorrect: list specific issues and suggestions.
-- Score 0-100. Correct/optimal = 90-100. Minor issues = 70-89. Wrong = 0-69.
+- Do NOT analyze time/space complexity.
+- Do NOT suggest optimized approaches.
+- If correct: isCorrect=true, feedback="Your solution is correct! Well done." or similar brief praise. issues=[].
+- If incorrect: isCorrect=false, feedback="Not quite. Check your logic." with 1-2 issues pointing out what's wrong.
 
 Return ONLY valid JSON:
 {
   "isCorrect": true/false,
-  "feedback": "1-2 sentence assessment",
+  "feedback": "brief 1 sentence",
   "issues": [],
   "suggestions": [],
-  "timeComplexity": "O(...)",
-  "spaceComplexity": "O(...)",
-  "expectedApproach": "Describe the optimal method",
-  "score": 85
+  "timeComplexity": "",
+  "spaceComplexity": "",
+  "expectedApproach": "",
+  "score": 0
 }`
 
     const userPrompt = `Problem: ${questionTitle}
@@ -52,13 +53,7 @@ User's Solution (${language}):
 ${userCode}
 \`\`\`
 
-Evaluate the solution. Check:
-1. Does it solve the problem correctly for all cases?
-2. Is the time/space complexity optimal?
-3. Are there any bugs, edge cases, or logical errors?
-4. Provide a score from 0-100.
-
-Return the JSON evaluation.`
+Only check: does this solution produce the correct output for all examples and edge cases? Yes or no.`
 
     const messages = [
       { role: 'system' as const, content: systemPrompt },

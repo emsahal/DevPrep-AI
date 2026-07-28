@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import CodeMirror from '@uiw/react-codemirror'
 import { cpp } from '@codemirror/lang-cpp'
@@ -38,6 +38,13 @@ export function CodeAnalyzerPage() {
   const [code, setCode] = useState('')
   const [language, setLanguage] = useState<'cpp' | 'javascript'>('cpp')
   const [showEditor, setShowEditor] = useState(false)
+  const [solvedQuestions, setSolvedQuestions] = useState<Set<string>>(() => {
+    try { return new Set(JSON.parse(localStorage.getItem('solvedQuestions') || '[]')) } catch { return new Set<string>() }
+  })
+
+  useEffect(() => {
+    localStorage.setItem('solvedQuestions', JSON.stringify([...solvedQuestions]))
+  }, [solvedQuestions])
 
   const question = useMemo(() => {
     if (!selectedId) return null
@@ -93,6 +100,12 @@ export function CodeAnalyzerPage() {
       questionProblem: question.problem,
       questionExamples: question.examples,
       code,
+    }, {
+      onSuccess: (data) => {
+        if (data.isCorrect && question) {
+          setSolvedQuestions(prev => new Set(prev).add(question.id))
+        }
+      },
     })
   }
 
@@ -113,6 +126,7 @@ export function CodeAnalyzerPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                 {LEVELS.map((level, i) => {
                   const levelQ = allQuestions.filter(q => q.level === level.level)
+                  const solvedCount = levelQ.filter(q => solvedQuestions.has(q.id)).length
                   const colors = levelColors[i]
                   return (
                     <div
@@ -140,7 +154,9 @@ export function CodeAnalyzerPage() {
                         </div>
                       </div>
                       <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                        <div style={{ fontSize: 12, color: 'var(--color-outline)' }}>{levelQ.length} questions</div>
+                        <div style={{ fontSize: 12, color: solvedCount === levelQ.length ? '#4ADE80' : 'var(--color-outline)' }}>
+                          {solvedCount}/{levelQ.length} solved
+                        </div>
                       </div>
                     </div>
                   )
@@ -188,7 +204,10 @@ export function CodeAnalyzerPage() {
                               onMouseEnter={e => { e.currentTarget.style.background = 'var(--color-surface-container-high, rgba(255,255,255,0.05))' }}
                               onMouseLeave={e => { e.currentTarget.style.background = 'var(--color-surface-container)' }}
                             >
-                              <span style={{ fontSize: 13.5, color: 'var(--color-on-surface-variant)', fontWeight: 500 }}>{q.title}</span>
+                              <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13.5, color: 'var(--color-on-surface-variant)', fontWeight: 500 }}>
+                                {solvedQuestions.has(q.id) && <span style={{ color: '#4ADE80', fontSize: 14 }}>✓</span>}
+                                {q.title}
+                              </span>
                               <span style={{ fontSize: 11, fontWeight: 600, color: dc.text, background: dc.bg, padding: '2px 10px', borderRadius: 8 }}>
                                 {q.difficulty}
                               </span>
@@ -398,31 +417,23 @@ export function CodeAnalyzerPage() {
                 </div>
               )}
               {result && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 14, padding: 16, borderRadius: 10, border: '1px solid var(--color-border-subtle)', background: 'var(--color-surface-container)', marginBottom: 16 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: 16, borderRadius: 10, border: '1px solid var(--color-border-subtle)', background: 'var(--color-surface-container)', marginBottom: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <div style={{
-                      width: 56, height: 56, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 20, fontWeight: 700,
+                      width: 48, height: 48, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 18, fontWeight: 700,
                       background: result.isCorrect ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)',
                       color: result.isCorrect ? '#4ADE80' : '#F87171',
                     }}>
-                      {result.score}
+                      {result.isCorrect ? '✓' : '✗'}
                     </div>
                     <div>
-                      <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--color-on-surface)' }}>
+                      <div style={{ fontSize: 15, fontWeight: 600, color: result.isCorrect ? '#4ADE80' : '#F87171' }}>
                         {result.isCorrect ? 'Correct Solution' : 'Needs Improvement'}
                       </div>
-                      <div style={{ fontSize: 12, color: 'var(--color-outline)' }}>AI Evaluation Score</div>
                     </div>
                   </div>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 6, background: 'rgba(59,130,246,0.1)', color: '#60A5FA', fontWeight: 600 }}>Time: {result.timeComplexity}</span>
-                    <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 6, background: 'rgba(139,92,246,0.1)', color: '#A78BFA', fontWeight: 600 }}>Space: {result.spaceComplexity}</span>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-on-surface)', marginBottom: 4 }}>Feedback</div>
-                    <p style={{ fontSize: 13, color: 'var(--color-on-surface-variant)', lineHeight: 1.6, margin: 0 }}>{result.feedback}</p>
-                  </div>
+                  <p style={{ fontSize: 13, color: 'var(--color-on-surface-variant)', lineHeight: 1.6, margin: 0 }}>{result.feedback}</p>
                   {!result.isCorrect && result.issues.length > 0 && (
                     <div>
                       <div style={{ fontSize: 12, fontWeight: 600, color: '#F87171', marginBottom: 4 }}>Issues</div>
@@ -431,18 +442,6 @@ export function CodeAnalyzerPage() {
                       </ul>
                     </div>
                   )}
-                  {!result.isCorrect && result.suggestions.length > 0 && (
-                    <div>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: '#4ADE80', marginBottom: 4 }}>Suggestions</div>
-                      <ul style={{ margin: 0, paddingLeft: 14, fontSize: 12, color: 'var(--color-on-surface-variant)', lineHeight: 1.7 }}>
-                        {result.suggestions.map((s, i) => <li key={i}>{s}</li>)}
-                      </ul>
-                    </div>
-                  )}
-                  <div style={{ padding: 10, borderRadius: 8, background: 'rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.15)' }}>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-primary)', marginBottom: 2 }}>Expected Approach</div>
-                    <p style={{ fontSize: 12, color: 'var(--color-on-surface-variant)', lineHeight: 1.6, margin: 0 }}>{result.expectedApproach}</p>
-                  </div>
                   <button
                     onClick={() => { setShowEditor(false); checkMutation.reset() }}
                     style={{ alignSelf: 'flex-start', fontSize: 12, color: 'var(--color-primary)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
