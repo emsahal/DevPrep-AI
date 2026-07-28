@@ -4,8 +4,10 @@ import CodeMirror from '@uiw/react-codemirror'
 import { cpp } from '@codemirror/lang-cpp'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
+import { autocompletion, type CompletionContext } from '@codemirror/autocomplete'
 import { allQuestions, LEVELS } from '@/data/dsa-questions'
 import { dsaCheckService } from '@/services/dsaCheckService'
+import { useAuthStore } from '@/store/authStore'
 
 type View = 'levels' | 'questions' | 'solve'
 
@@ -31,6 +33,59 @@ const levelNames: Record<number, string> = {
   5: 'Dynamic Programming',
 }
 
+const cppKeywords = [
+  'auto', 'bool', 'break', 'case', 'catch', 'char', 'class', 'const',
+  'constexpr', 'continue', 'default', 'delete', 'do', 'double', 'else',
+  'enum', 'explicit', 'extern', 'false', 'float', 'for', 'friend', 'goto',
+  'if', 'inline', 'int', 'long', 'mutable', 'namespace', 'new', 'noexcept',
+  'nullptr', 'operator', 'override', 'private', 'protected', 'public',
+  'register', 'return', 'short', 'signed', 'sizeof', 'static', 'static_cast',
+  'struct', 'switch', 'template', 'this', 'throw', 'true', 'try', 'typedef',
+  'typeid', 'typename', 'union', 'unsigned', 'using', 'virtual', 'void',
+  'volatile', 'while',
+]
+
+const cppIdentifiers = [
+  'cout', 'cin', 'endl', 'cerr', 'clog',
+  'push_back', 'push', 'pop_back', 'pop', 'front', 'back',
+  'top', 'empty', 'size', 'clear', 'erase', 'insert', 'find',
+  'begin', 'end', 'rbegin', 'rend', 'sort', 'reverse',
+  'min', 'max', 'swap', 'abs', 'make_pair',
+  'true', 'false', 'NULL', 'nullptr',
+]
+
+const cppHeaders = [
+  'iostream', 'vector', 'algorithm', 'string', 'map', 'unordered_map',
+  'set', 'unordered_set', 'queue', 'stack', 'deque', 'list', 'utility',
+  'cmath', 'cstdlib', 'cstdio', 'cstring', 'ctime', 'climits',
+  'fstream', 'sstream', 'memory', 'functional', 'iterator', 'numeric',
+  'array', 'tuple', 'bitset', 'regex', 'thread', 'mutex',
+]
+
+const cppCompletionSource = (context: CompletionContext) => {
+  const includeMatch = context.matchBefore(/#include\s*<(\w*)/)
+  if (includeMatch && includeMatch.from > -1) {
+    const prefix = (includeMatch[1] || '').toLowerCase()
+    const base = includeMatch.from + '#include <'.length - (includeMatch[1] || '').length
+    return {
+      from: base,
+      options: cppHeaders
+        .filter(h => h.startsWith(prefix))
+        .map(h => ({ label: h, type: 'keyword' as const })),
+    }
+  }
+
+  const word = context.matchBefore(/\w+/)
+  if (!word && !context.explicit) return null
+
+  const prefix = word.text.toLowerCase()
+  const allOptions = [
+    ...cppKeywords.filter(k => k.startsWith(prefix)).map(k => ({ label: k, type: 'keyword' as const })),
+    ...cppIdentifiers.filter(k => k.startsWith(prefix)).map(k => ({ label: k, type: 'keyword' as const })),
+  ]
+  return { from: word.from, options: allOptions }
+}
+
 export function CodeAnalyzerPage() {
   const [view, setView] = useState<View>('levels')
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null)
@@ -41,15 +96,33 @@ export function CodeAnalyzerPage() {
   const [solvedQuestions, setSolvedQuestions] = useState<Set<string>>(() => {
     try { return new Set(JSON.parse(localStorage.getItem('solvedQuestions') || '[]')) } catch { return new Set<string>() }
   })
+  const [savedSolutions, setSavedSolutions] = useState<Record<string, string>>(() => {
+    try { return JSON.parse(localStorage.getItem('savedSolutions') || '{}') } catch { return {} }
+  })
+
+  const user = useAuthStore(state => state.user)
 
   useEffect(() => {
     localStorage.setItem('solvedQuestions', JSON.stringify([...solvedQuestions]))
   }, [solvedQuestions])
 
+  useEffect(() => {
+    localStorage.setItem('savedSolutions', JSON.stringify(savedSolutions))
+  }, [savedSolutions])
+
   const question = useMemo(() => {
     if (!selectedId) return null
     return allQuestions.find(q => q.id === selectedId) ?? null
   }, [selectedId])
+
+  const extensions = useMemo(() => {
+    const lang = language === 'cpp' ? cpp() : javascript()
+    const auto = autocompletion({
+      activateOnTyping: true,
+      override: language === 'cpp' ? [cppCompletionSource] : undefined,
+    })
+    return [lang, auto]
+  }, [language])
 
   const checkMutation = useMutation({
     mutationFn: (params: { questionTitle: string; questionProblem: string; questionExamples: { input: string; output: string }[]; code: string }) =>
@@ -104,6 +177,8 @@ export function CodeAnalyzerPage() {
       onSuccess: (data) => {
         if (data.isCorrect && question) {
           setSolvedQuestions(prev => new Set(prev).add(question.id))
+          const solutionKey = user ? `${user.id}_${question.id}` : question.id
+          setSavedSolutions(prev => ({ ...prev, [solutionKey]: code }))
         }
       },
     })
@@ -386,7 +461,7 @@ export function CodeAnalyzerPage() {
                     <CodeMirror
                       value={code}
                       onChange={setCode}
-                      extensions={[language === 'cpp' ? cpp() : javascript()]}
+                      extensions={extensions}
                       theme={oneDark}
                       height="auto"
                       minHeight="250px"
