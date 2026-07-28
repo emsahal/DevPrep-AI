@@ -6,7 +6,6 @@ import technologyRoutes from './technology.routes'
 import topicRoutes from './topic.routes'
 import aiTutorRoutes from './ai-tutor.routes'
 import codeAnalyzerRoutes from './code-analyzer.routes'
-import dsaQuestionsRoutes from './dsa-questions.routes'
 import quizRoutes from './quiz.routes'
 import flashcardRoutes from './flashcard.routes'
 import revisionRoutes from './revision.routes'
@@ -15,6 +14,7 @@ import bookmarkRoutes from './bookmark.routes'
 import interviewPrepRoutes from './interview-prep.routes'
 import gamificationRoutes from './gamification.routes'
 import notificationRoutes from './notification.routes'
+import dsaCheckRoutes from './dsa-check.routes'
 
 const router = Router()
 
@@ -25,7 +25,6 @@ router.use('/technologies', technologyRoutes)
 router.use('/topics', topicRoutes)
 router.use('/ai-tutor', aiTutorRoutes)
 router.use('/code-analyzer', codeAnalyzerRoutes)
-router.use('/dsa-questions', dsaQuestionsRoutes)
 router.use('/quizzes', quizRoutes)
 router.use('/flashcards', flashcardRoutes)
 router.use('/revision', revisionRoutes)
@@ -34,5 +33,6 @@ router.use('/bookmarks', bookmarkRoutes)
 router.use('/interview-prep', interviewPrepRoutes)
 router.use('/gamification', gamificationRoutes)
 router.use('/notifications', notificationRoutes)
+router.use('/dsa-check', dsaCheckRoutes)
 
 export default router
