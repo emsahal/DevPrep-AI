@@ -1,7 +1,6 @@
 import { useState, useMemo, useCallback } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { allQuestions, LEVELS } from '@/data/dsa-questions'
-import type { DSAQuestion } from '@/data/dsa-questions'
 import { dsaCheckService } from '@/services/dsaCheckService'
 
 type Panel = 'intuition' | 'pseudocode' | 'dry-run' | 'tips'
@@ -107,7 +106,6 @@ export function CodeAnalyzerPage() {
                 {isOpen && (
                   <div>
                     {level.topics.map(topic => {
-                      const topicQuestions = levelQuestions.filter(q => q.id === topic.questionIds.find(id => levelQuestions.some(lq => lq.id === id)))
                       return (
                         <div key={topic.name}>
                           <div style={{
