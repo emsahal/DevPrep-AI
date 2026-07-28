@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { quizService } from '@/services/quizService'
+import { ModuleHero } from '@/components/common/ModuleHero'
 
 
 const DIFF_COLOR: Record<string, string> = {
@@ -62,10 +63,13 @@ export function QuizzesPage() {
 
   return (
     <div className="px-6 py-8 max-w-6xl mx-auto">
-      <div className="mb-8 animate-fade-up">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-2" style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-on-surface)' }}>Assessment Center</h1>
-        <p className="text-sm" style={{ color: 'var(--color-on-surface-variant)' }}>AI-generated quizzes tuned to your current skill level.</p>
-      </div>
+      <ModuleHero
+        icon="quiz"
+        title="Assessment Center"
+        description="AI-generated quizzes tuned to your current skill level."
+        badge="AI Powered"
+        accentColor="var(--color-secondary)"
+      />
 
       <form onSubmit={handleCreateQuiz}
             className="bento-card ai-glow-border p-5 mb-6 grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4 animate-fade-up animation-delay-100">

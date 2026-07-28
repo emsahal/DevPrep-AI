@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { gamificationService } from '@/services/gamificationService'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { ModuleHero } from '@/components/common/ModuleHero'
 import type { LeaderboardEntry } from '@/types'
 
 const TABS = [
@@ -80,34 +81,29 @@ export function LeaderboardPage() {
 
   return (
     <div className="px-6 py-8 max-w-4xl mx-auto">
-      <div className="mb-8 animate-fade-up">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-2" style={{ color: 'var(--color-on-surface)' }}>
-          Leaderboard
-        </h1>
-        <p className="text-sm" style={{ color: 'var(--color-on-surface-variant)' }}>
-          See how you stack up against the community
-        </p>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex gap-1 mb-6 p-1 rounded-xl animate-fade-up animation-delay-100"
-           style={{ background: 'var(--color-surface-container-low)' }}>
-        {TABS.map(tab => (
-          <button
-            key={tab.key}
-            onClick={() => { setActiveTab(tab.key); setPage(1) }}
-            className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition-all ${
-              activeTab === tab.key ? 'shadow-sm' : 'opacity-60 hover:opacity-100'
-            }`}
-            style={{
-              background: activeTab === tab.key ? 'var(--color-surface-container)' : 'transparent',
-              color: activeTab === tab.key ? 'var(--color-on-surface)' : 'var(--color-outline)',
-            }}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <ModuleHero
+        icon="leaderboard"
+        title="Leaderboard"
+        description="See how you stack up against the community"
+        accentColor="var(--color-success)"
+      >
+        <div className="flex gap-1 p-1 rounded-xl"
+             style={{ background: 'var(--color-surface-container-low)' }}>
+          {TABS.map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => { setActiveTab(tab.key); setPage(1) }}
+              className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition-all ${activeTab === tab.key ? 'shadow-sm' : 'opacity-60 hover:opacity-100'}`}
+              style={{
+                background: activeTab === tab.key ? 'var(--color-surface-container)' : 'transparent',
+                color: activeTab === tab.key ? 'var(--color-on-surface)' : 'var(--color-outline)',
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </ModuleHero>
 
       {/* Friends placeholder */}
       {activeTab === 'friends' && (

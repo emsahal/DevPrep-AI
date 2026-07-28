@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { flashcardService } from '@/services/flashcardService'
+import { ModuleHero } from '@/components/common/ModuleHero'
 
 
 export function FlashcardsPage() {
@@ -56,10 +57,12 @@ export function FlashcardsPage() {
 
   return (
     <div className="px-6 py-8 max-w-3xl mx-auto">
-      <div className="mb-8 animate-fade-up">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-2" style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-on-surface)' }}>Flashcards</h1>
-        <p className="text-sm" style={{ color: 'var(--color-on-surface-variant)' }}>Spaced-repetition review to lock in key concepts.</p>
-      </div>
+      <ModuleHero
+        icon="style"
+        title="Flashcards"
+        description="Spaced-repetition review to lock in key concepts."
+        accentColor="var(--color-warning)"
+      />
 
       <div className="bento-card p-5 mb-6 animate-fade-up animation-delay-100">
         <div className="flex items-center justify-between mb-3">

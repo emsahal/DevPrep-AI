@@ -6,6 +6,7 @@ import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { allQuestions, LEVELS } from '@/data/dsa-questions'
 import { dsaCheckService } from '@/services/dsaCheckService'
+import { ModuleHero } from '@/components/common/ModuleHero'
 
 type View = 'levels' | 'questions' | 'solve'
 
@@ -119,10 +120,12 @@ export function CodeAnalyzerPage() {
           {/* ========== LEVELS VIEW ========== */}
           {view === 'levels' && (
             <div style={{ padding: 32, maxWidth: 900, margin: '0 auto', width: '100%' }}>
-              <div style={{ marginBottom: 28 }}>
-                <h1 style={{ fontSize: 26, fontWeight: 800, color: 'var(--color-on-surface)', margin: 0 }}>DSA Practice</h1>
-                <p style={{ fontSize: 14, color: 'var(--color-outline)', margin: '6px 0 0' }}>Choose a level to start practicing. {allQuestions.length} questions total.</p>
-              </div>
+              <ModuleHero
+                icon="data_object"
+                title="DSA Practice"
+                description={`Choose a level to start practicing. ${allQuestions.length} questions total.`}
+                accentColor="var(--color-secondary)"
+              />
               <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                 {LEVELS.map((level, i) => {
                   const levelQ = allQuestions.filter(q => q.level === level.level)

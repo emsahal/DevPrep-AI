@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { learningPathService } from '@/services/learningPathService'
 import { MaterialIcon } from '@/components/common/MaterialIcon'
+import { ModuleHero } from '@/components/common/ModuleHero'
 
 const COLORS = [
   'var(--color-primary)', 'var(--color-secondary)', 'var(--color-tertiary)',
@@ -17,30 +18,27 @@ export function LearningPathsPage() {
 
   return (
     <div className="px-6 py-8 max-w-7xl mx-auto">
-      <div className="mb-10 animate-fade-up">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-2" style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-on-surface)' }}>
-          Learning Roadmaps
-        </h1>
-        <p className="text-sm max-w-xl" style={{ color: 'var(--color-on-surface-variant)' }}>
-          {isLoading ? 'Loading...' : `${paths?.length ?? 0} curated paths to go from zero to job-ready.`}
-        </p>
-      </div>
-
-      <div className="rounded-2xl p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4 animate-fade-up animation-delay-100"
-           style={{ background: 'rgba(208,188,255,0.06)', border: '1px solid rgba(208,188,255,0.2)' }}>
-        <span className="material-symbols-outlined text-3xl flex-shrink-0" style={{ color: 'var(--color-primary)', fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
-        <div className="flex-1">
-          <p className="font-semibold text-sm mb-1" style={{ color: 'var(--color-primary)' }}>AI Recommendation</p>
-          <p className="text-sm" style={{ color: 'var(--color-on-surface-variant)' }}>
-            Based on your progress, we suggest continuing with <strong style={{ color: 'var(--color-on-surface)' }}>JavaScript → Advanced</strong> before moving to React.
-          </p>
+      <ModuleHero
+        icon="map"
+        title="Learning Roadmaps"
+        description={isLoading ? 'Loading...' : `${paths?.length ?? 0} curated paths to go from zero to job-ready.`}
+      >
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4"
+             style={{ background: 'rgba(208,188,255,0.06)', border: '1px solid rgba(208,188,255,0.2)', borderRadius: 12, padding: '14px 16px' }}>
+          <span className="material-symbols-outlined text-2xl flex-shrink-0" style={{ color: 'var(--color-primary)', fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+          <div className="flex-1">
+            <p className="font-semibold text-xs mb-0.5" style={{ color: 'var(--color-primary)' }}>AI Recommendation</p>
+            <p className="text-xs" style={{ color: 'var(--color-on-surface-variant)' }}>
+              Based on your progress, we suggest continuing with <strong style={{ color: 'var(--color-on-surface)' }}>JavaScript → Advanced</strong> before moving to React.
+            </p>
+          </div>
+          <Link to="/library/javascript"
+                className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all hover:opacity-90"
+                style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
+            Continue <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+          </Link>
         </div>
-        <Link to="/library/javascript"
-              className="flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all hover:opacity-90"
-              style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
-          Continue <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-        </Link>
-      </div>
+      </ModuleHero>
 
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
