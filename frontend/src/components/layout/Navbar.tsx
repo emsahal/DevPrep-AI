@@ -57,7 +57,7 @@ export function Navbar() {
             <div className="flex items-center gap-3">
               <Link to="/profile">
                 <Avatar className="h-8 w-8 cursor-pointer">
-                  <AvatarImage src={user?.avatar} />
+                  <AvatarImage src={user?.avatar ?? undefined} />
                   <AvatarFallback>{user?.name?.charAt(0) || 'U'}</AvatarFallback>
                 </Avatar>
               </Link>

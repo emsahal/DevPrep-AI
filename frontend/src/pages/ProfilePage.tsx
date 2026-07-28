@@ -30,7 +30,7 @@ export function ProfilePage() {
     <div className="px-6 py-8 max-w-4xl mx-auto">
       <div className="bento-card ai-glow-border p-8 mb-8 flex flex-col sm:flex-row items-center sm:items-start gap-6 animate-fade-up">
         <Avatar className="w-20 h-20 flex-shrink-0 ring-2 ring-offset-2">
-          <AvatarImage src={user?.avatar} />
+          <AvatarImage src={user?.avatar ?? undefined} />
           <AvatarFallback className="text-3xl font-extrabold"
                          style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
             {user?.name?.charAt(0) ?? 'U'}
