@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { gamificationService } from '@/services/gamificationService'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import type { LeaderboardEntry } from '@/types'
 
 const TABS = [
@@ -36,10 +37,13 @@ function LeaderboardTable({ entries, currentUserId }: { entries: LeaderboardEntr
             }}
           >
             <RankIcon rank={entries.indexOf(entry) + 1} />
-            <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
-                 style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
-              {entry.name?.charAt(0) ?? '?'}
-            </div>
+            <Avatar className="w-8 h-8 flex-shrink-0">
+              <AvatarImage src={entry.avatar ?? undefined} />
+              <AvatarFallback className="text-sm font-bold"
+                             style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
+                {entry.name?.charAt(0) ?? '?'}
+              </AvatarFallback>
+            </Avatar>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold truncate" style={{ color: 'var(--color-on-surface)' }}>
                 {entry.name}

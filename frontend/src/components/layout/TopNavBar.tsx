@@ -98,7 +98,7 @@ export function TopNavBar() {
               <NotificationDropdown />
               {/* Avatar */}
               <Link to="/profile">
-                <Avatar className="h-8 w-8 cursor-pointer ring-2 ring-offset-2 transition-all hover:ring-primary">
+                <Avatar className="h-8 w-8 cursor-pointer ring-1 ring-offset-1 transition-all hover:ring-primary">
                   <AvatarImage src={user?.avatar ?? undefined} />
                   <AvatarFallback style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)', fontSize: '0.875rem', fontWeight: 700 }}>
                     {user?.name?.charAt(0) ?? 'U'}
