@@ -6,6 +6,7 @@ import technologyRoutes from './technology.routes'
 import topicRoutes from './topic.routes'
 import aiTutorRoutes from './ai-tutor.routes'
 import codeAnalyzerRoutes from './code-analyzer.routes'
+import dsaQuestionsRoutes from './dsa-questions.routes'
 import quizRoutes from './quiz.routes'
 import flashcardRoutes from './flashcard.routes'
 import revisionRoutes from './revision.routes'
@@ -24,6 +25,7 @@ router.use('/technologies', technologyRoutes)
 router.use('/topics', topicRoutes)
 router.use('/ai-tutor', aiTutorRoutes)
 router.use('/code-analyzer', codeAnalyzerRoutes)
+router.use('/dsa-questions', dsaQuestionsRoutes)
 router.use('/quizzes', quizRoutes)
 router.use('/flashcards', flashcardRoutes)
 router.use('/revision', revisionRoutes)
