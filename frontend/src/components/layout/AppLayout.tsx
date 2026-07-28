@@ -14,7 +14,7 @@ export function AppLayout() {
       <main className={`${isHome ? '' : 'lg:ml-60'} pt-16 pb-20 lg:pb-0 min-h-screen`}>
         <Outlet />
       </main>
-      <Footer />
+      {isHome && <Footer />}
     </div>
   )
 }

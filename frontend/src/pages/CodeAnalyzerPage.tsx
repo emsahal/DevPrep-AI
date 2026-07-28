@@ -6,11 +6,11 @@ import { dsaCheckService } from '@/services/dsaCheckService'
 type View = 'levels' | 'questions' | 'solve'
 
 const levelColors = [
-  { bg: 'linear-gradient(135deg, #1a1a3e, #2d1b69)', border: '#4a3a8a', accent: '#8B5CF6' },
-  { bg: 'linear-gradient(135deg, #0f2d1a, #1a4a2e)', border: '#2a6a3e', accent: '#4ADE80' },
-  { bg: 'linear-gradient(135deg, #2d1a0f, #4a2e1a)', border: '#7a4a2a', accent: '#FB923C' },
-  { bg: 'linear-gradient(135deg, #0f1a2d, #1a2e4a)', border: '#2a4a7a', accent: '#60A5FA' },
-  { bg: 'linear-gradient(135deg, #1a0f2d, #2e1a4a)', border: '#4a2a7a', accent: '#A78BFA' },
+  { bg: 'var(--color-surface-container)', border: 'var(--color-border-muted)', accent: 'var(--color-primary)' },
+  { bg: 'var(--color-surface-container)', border: 'var(--color-border-muted)', accent: 'var(--color-primary)' },
+  { bg: 'var(--color-surface-container)', border: 'var(--color-border-muted)', accent: 'var(--color-primary)' },
+  { bg: 'var(--color-surface-container)', border: 'var(--color-border-muted)', accent: 'var(--color-primary)' },
+  { bg: 'var(--color-surface-container)', border: 'var(--color-border-muted)', accent: 'var(--color-primary)' },
 ]
 
 const difficultyColors: Record<string, { bg: string; text: string }> = {
@@ -18,8 +18,6 @@ const difficultyColors: Record<string, { bg: string; text: string }> = {
   Medium: { bg: '#EA580C22', text: '#FB923C' },
   Hard: { bg: '#DC262622', text: '#F87171' },
 }
-
-const levelRatings = ['⭐', '⭐⭐', '⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐⭐⭐']
 
 const levelNames: Record<number, string> = {
   1: 'Must Know',
@@ -128,19 +126,18 @@ export function CodeAnalyzerPage() {
                     >
                       <div style={{
                         width: 48, height: 48, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        background: 'rgba(255,255,255,0.1)', fontSize: 22, fontWeight: 700, color: colors.accent, flexShrink: 0,
+                        background: 'var(--color-surface-container-high, rgba(139,92,246,0.1))', fontSize: 22, fontWeight: 700, color: 'var(--color-primary)', flexShrink: 0,
                       }}>
                         {level.level}
                       </div>
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: 17, fontWeight: 700, color: '#FFF', marginBottom: 2 }}>Level {level.level}: {level.name}</div>
-                        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>
+                        <div style={{ fontSize: 17, fontWeight: 700, color: 'var(--color-on-surface)', marginBottom: 2 }}>Level {level.level}: {level.name}</div>
+                        <div style={{ fontSize: 13, color: 'var(--color-on-surface-variant)' }}>
                           {level.topics.map(t => t.name).join(' • ')}
                         </div>
                       </div>
                       <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                        <div style={{ fontSize: 22 }}>{levelRatings[level.rating - 1] || '⭐⭐⭐⭐⭐'}</div>
-                        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>{levelQ.length} questions</div>
+                        <div style={{ fontSize: 12, color: 'var(--color-outline)' }}>{levelQ.length} questions</div>
                       </div>
                     </div>
                   )
