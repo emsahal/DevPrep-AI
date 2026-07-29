@@ -24,6 +24,10 @@
   </div>
 </div>
 
+<p align="center">
+  <img src="./frontend/src/assets/homepage.png" alt="Homepage" width="80%" />
+</p>
+
 ## 📋 Table of Contents
 
 1. [Introduction](#introduction)
@@ -174,3 +178,27 @@ Interview-Preps/
 - **Backend**: Deploy on [Render](https://render.com) using `render.yaml` blueprint (auto-detected PostgreSQL, Redis, and web service)
 - **Frontend**: Deploy on [Vercel](https://vercel.com) — configured with SPA rewrites via `vercel.json`
 - **API Docs**: Available at `/api-docs` (Swagger UI) on the backend instance
+
+## Dashboard
+
+<p align="center">
+  <img src="./frontend/src/assets/dashboard.png" alt="Dashboard" width="80%" />
+</p>
+
+## Contributing
+
+Contributions are what make the open-source community such an amazing place to learn, inspire, and grow. Any contributions you make are **greatly appreciated**.
+
+- Fork the project
+- Create your feature branch (`git checkout -b feature/AmazingFeature`)
+- Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+- Push to the branch (`git push origin feature/AmazingFeature`)
+- Open a Pull Request
+
+Feel free to open issues for bugs, feature requests, or questions.
+
+## Author
+
+**Sahal Sajeed** — [sahaal.vercel.app](https://sahaal.vercel.app)
+
+If you find this project useful, consider giving it a ⭐ and sharing it with others!
