@@ -63,12 +63,13 @@ const cppHeaders = [
 ]
 
 const cppCompletionSource = (context: CompletionContext) => {
-  const includeMatch = context.matchBefore(/#include\s*<(\w*)/)
-  if (includeMatch && includeMatch.from > -1) {
-    const prefix = (includeMatch[1] || '').toLowerCase()
-    const base = includeMatch.from + '#include <'.length - (includeMatch[1] || '').length
+  const lineBefore = context.matchBefore(/#include\s*<[^>]*$/)
+  if (lineBefore && lineBefore.text.includes('<')) {
+    const word = context.matchBefore(/\w+/)
+    if (!word) return null
+    const prefix = word.text.toLowerCase()
     return {
-      from: base,
+      from: word.from,
       options: cppHeaders
         .filter(h => h.startsWith(prefix))
         .map(h => ({ label: h, type: 'keyword' as const })),
@@ -77,6 +78,7 @@ const cppCompletionSource = (context: CompletionContext) => {
 
   const word = context.matchBefore(/\w+/)
   if (!word && !context.explicit) return null
+  if (!word) return null
 
   const prefix = word.text.toLowerCase()
   const allOptions = [
