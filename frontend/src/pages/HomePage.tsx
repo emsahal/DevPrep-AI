@@ -148,7 +148,7 @@ export function HomePage() {
                       { icon: 'leaderboard', title: 'Progress Tracking',  desc: 'Streaks, benchmarks & peer comparisons',           color: '#FF6B6B' },
                       { icon: 'description', title: 'Resume Optimizer',   desc: 'ATS scores, templates & gap analysis',             color: 'var(--color-primary)' },
                       { icon: 'mail',        title: 'Cover Letters',      desc: 'AI-generated letters tailored to each role',       color: 'var(--color-secondary)' },
-                    ].map((f, i) => (
+                    ].map((f) => (
                       <div key={f.title}
                            className="group rounded-xl p-4 transition-all duration-200 hover:-translate-y-0.5"
                            style={{
