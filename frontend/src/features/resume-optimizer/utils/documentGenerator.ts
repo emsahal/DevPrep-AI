@@ -38,7 +38,7 @@ export async function generateResumePdf(data: ResumeData): Promise<Blob> {
     const indent = 16
     const maxW = pageW - left * 2 - indent
     const lines = doc.splitTextToSize(text, maxW)
-    doc.text('\u2022', left, y)
+    doc.text('\u2022', left, y + 1)
     doc.text(lines, left + indent, y)
     y += lines.length * (size * 0.3528 * 1.4) + 4
   }
@@ -184,6 +184,212 @@ export async function generateResumePdf(data: ResumeData): Promise<Blob> {
   }
 
   return doc.output('blob')
+}
+
+export async function generateResumeDocx(data: ResumeData): Promise<Blob> {
+  const { Document, Packer, Paragraph, TextRun, AlignmentType, BorderStyle, TabStopType, TabStopPosition } = await import('docx')
+
+  const NAVY = '1a3a5c'
+  const DARK = '1a1a1a'
+  const GRAY = '333333'
+  const FONT = 'Times New Roman'
+
+  const children: any[] = []
+
+  // Name header
+  const p = data.personalInfo || {} as any
+  if (p.name) {
+    children.push(new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 80 },
+      children: [new TextRun({ text: p.name.toUpperCase(), bold: true, size: 44, font: FONT, color: NAVY })],
+    }))
+  }
+
+  // Contact line
+  const contactParts: string[] = []
+  if (p.phone) contactParts.push(p.phone)
+  if (p.email) contactParts.push(p.email)
+  if (p.linkedin) contactParts.push(p.linkedin.replace(/^https?:\/\//, ''))
+  if (p.github) contactParts.push(p.github.replace(/^https?:\/\//, ''))
+  if (p.location) contactParts.push(p.location)
+  if (contactParts.length) {
+    children.push(new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 120 },
+      children: [new TextRun({ text: contactParts.join(' | '), size: 19, font: FONT, color: GRAY })],
+    }))
+  }
+
+  // Divider after header
+  children.push(new Paragraph({
+    spacing: { after: 200 },
+    border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: NAVY } },
+    children: [],
+  }))
+
+  function addSectionHeader(title: string) {
+    children.push(new Paragraph({
+      spacing: { before: 200, after: 60 },
+      border: { bottom: { style: BorderStyle.SINGLE, size: 3, color: NAVY } },
+      children: [new TextRun({ text: title.toUpperCase(), bold: true, size: 24, font: FONT, color: NAVY })],
+    }))
+  }
+
+  function addBulletItem(text: string) {
+    children.push(new Paragraph({
+      spacing: { after: 60 },
+      indent: { left: 360, hanging: 180 },
+      children: [
+        new TextRun({ text: '\u2022  ', size: 21, font: FONT, color: DARK }),
+        new TextRun({ text, size: 21, font: FONT, color: DARK }),
+      ],
+    }))
+  }
+
+  // Summary
+  if (data.summary) {
+    addSectionHeader('Summary')
+    children.push(new Paragraph({
+      spacing: { after: 120 },
+      alignment: AlignmentType.JUSTIFIED,
+      children: [new TextRun({ text: data.summary, size: 21, font: FONT, color: DARK })],
+    }))
+  }
+
+  // Experience
+  if (data.experience?.length) {
+    addSectionHeader('Work Experience')
+    for (const exp of data.experience) {
+      // Company + date on same line
+      const headerRuns: any[] = []
+      if (exp.company) headerRuns.push(new TextRun({ text: exp.company, bold: true, size: 22, font: FONT, color: DARK }))
+      if (exp.dateRange) {
+        headerRuns.push(new TextRun({ text: '\t', size: 22, font: FONT }))
+        headerRuns.push(new TextRun({ text: exp.dateRange, size: 20, font: FONT, color: GRAY }))
+      }
+      children.push(new Paragraph({
+        spacing: { before: 100, after: 40 },
+        tabStops: [{ type: TabStopType.RIGHT, position: TabStopPosition.MAX }],
+        children: headerRuns,
+      }))
+
+      // Role + location
+      const subRuns: any[] = []
+      if (exp.role) subRuns.push(new TextRun({ text: exp.role, italics: true, size: 20, font: FONT, color: GRAY }))
+      if (exp.location) {
+        subRuns.push(new TextRun({ text: '\t', size: 20, font: FONT }))
+        subRuns.push(new TextRun({ text: exp.location, italics: true, size: 20, font: FONT, color: GRAY }))
+      }
+      if (subRuns.length) {
+        children.push(new Paragraph({
+          spacing: { after: 60 },
+          tabStops: [{ type: TabStopType.RIGHT, position: TabStopPosition.MAX }],
+          children: subRuns,
+        }))
+      }
+
+      // Bullets
+      if (exp.bullets?.length) {
+        exp.bullets.forEach((b: string) => addBulletItem(b))
+      }
+    }
+  }
+
+  // Projects
+  if (data.projects?.length) {
+    addSectionHeader('Projects')
+    for (const proj of data.projects) {
+      children.push(new Paragraph({
+        spacing: { before: 80, after: 40 },
+        children: [new TextRun({ text: proj.name, bold: true, size: 21, font: FONT, color: DARK })],
+      }))
+      if (proj.bullets?.length) {
+        proj.bullets.forEach((b: string) => addBulletItem(b))
+      }
+    }
+  }
+
+  // Education
+  if (data.education?.length) {
+    addSectionHeader('Education')
+    for (const edu of data.education) {
+      const headerRuns: any[] = []
+      if (edu.institution) headerRuns.push(new TextRun({ text: edu.institution, bold: true, size: 22, font: FONT, color: DARK }))
+      if (edu.dateRange) {
+        headerRuns.push(new TextRun({ text: '\t', size: 22, font: FONT }))
+        headerRuns.push(new TextRun({ text: edu.dateRange, size: 20, font: FONT, color: GRAY }))
+      }
+      children.push(new Paragraph({
+        spacing: { before: 80, after: 40 },
+        tabStops: [{ type: TabStopType.RIGHT, position: TabStopPosition.MAX }],
+        children: headerRuns,
+      }))
+
+      const subRuns: any[] = []
+      if (edu.degree) subRuns.push(new TextRun({ text: edu.degree, italics: true, size: 20, font: FONT, color: GRAY }))
+      if (edu.location) {
+        subRuns.push(new TextRun({ text: '\t', size: 20, font: FONT }))
+        subRuns.push(new TextRun({ text: edu.location, italics: true, size: 20, font: FONT, color: GRAY }))
+      }
+      if (subRuns.length) {
+        children.push(new Paragraph({
+          spacing: { after: 60 },
+          tabStops: [{ type: TabStopType.RIGHT, position: TabStopPosition.MAX }],
+          children: subRuns,
+        }))
+      }
+    }
+  }
+
+  // Skills
+  if (data.skills?.length) {
+    addSectionHeader('Skills')
+    for (const sk of data.skills) {
+      children.push(new Paragraph({
+        spacing: { after: 60 },
+        children: [
+          new TextRun({ text: `${sk.category}: `, bold: true, size: 21, font: FONT, color: NAVY }),
+          new TextRun({ text: (sk.items || []).join(', '), size: 21, font: FONT, color: DARK }),
+        ],
+      }))
+    }
+  }
+
+  // Technical Skills
+  if (data.technicalSkills?.length) {
+    addSectionHeader('Technical Skills')
+    children.push(new Paragraph({
+      spacing: { after: 80 },
+      children: [new TextRun({ text: data.technicalSkills.join(', '), size: 21, font: FONT, color: DARK })],
+    }))
+  }
+
+  // Certifications
+  if (data.certifications?.length) {
+    addSectionHeader('Certifications')
+    data.certifications.forEach((cert: string) => addBulletItem(cert))
+  }
+
+  // Achievements
+  if ((data as any).achievements?.length) {
+    addSectionHeader('Achievements')
+    ;(data as any).achievements.forEach((ach: string) => addBulletItem(ach))
+  }
+
+  const doc = new Document({
+    sections: [{
+      properties: {
+        page: {
+          size: { width: 12240, height: 15840 },
+          margin: { top: 1080, bottom: 1080, left: 1200, right: 1200 },
+        },
+      },
+      children,
+    }],
+  })
+
+  return Packer.toBlob(doc)
 }
 
 export async function generateCoverLetterDocx(_letter: string, _candidateName: string): Promise<Blob> {

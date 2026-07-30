@@ -10,7 +10,7 @@ const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2
 
 function wrapText(doc: PDFKit.PDFDocument, text: string, indent: number = 0) {
   doc.font('Times-Roman').fontSize(10.5).fillColor(DARK)
-  doc.text(text, { indent, width: CONTENT_WIDTH - indent, lineGap: 2 })
+  doc.text(text, { indent, width: CONTENT_WIDTH - indent, lineGap: 3 })
 }
 
 function sectionHeader(doc: PDFKit.PDFDocument, title: string) {
@@ -21,7 +21,7 @@ function sectionHeader(doc: PDFKit.PDFDocument, title: string) {
   doc.fontSize(0.5).fillColor(NAVY)
   const y = doc.y
   doc.rect(MARGIN, y, CONTENT_WIDTH, 0.6).fill(NAVY)
-  doc.moveDown(0.5)
+  doc.moveDown(0.6)
 }
 
 function entryHeader(doc: PDFKit.PDFDocument, left: string, right: string) {
@@ -50,7 +50,7 @@ function entrySub(doc: PDFKit.PDFDocument, left: string, right: string) {
     doc.text(left, { width: CONTENT_WIDTH })
     doc.text(right, { align: 'right', width: CONTENT_WIDTH })
   }
-  doc.moveDown(0.15)
+  doc.moveDown(0.25)
 }
 
 function bulletList(doc: PDFKit.PDFDocument, items: string[]) {
@@ -60,9 +60,10 @@ function bulletList(doc: PDFKit.PDFDocument, items: string[]) {
     const savedX = doc.x
     const savedY = doc.y
     doc.x = x - 12
-    doc.text('\u2022', { width: 10, lineGap: 2 })
+    doc.text('\u2022', { width: 10, lineGap: 3 })
+    doc.y = savedY
     doc.x = x
-    doc.text(item, { width: CONTENT_WIDTH - 18, lineGap: 2 })
+    doc.text(item, { width: CONTENT_WIDTH - 18, lineGap: 3 })
     doc.x = savedX
   }
   doc.moveDown(0.3)
@@ -110,7 +111,7 @@ export class PdfGeneratorService {
       if (data.summary) {
         sectionHeader(doc, 'Summary')
         doc.font('Times-Roman').fontSize(10).fillColor(DARK)
-        doc.text(data.summary, { width: CONTENT_WIDTH, lineGap: 2, align: 'justify' })
+        doc.text(data.summary, { width: CONTENT_WIDTH, lineGap: 3, align: 'justify' })
       }
 
       // ── Work Experience ──
@@ -126,7 +127,7 @@ export class PdfGeneratorService {
           if (exp.bullets?.length) {
             bulletList(doc, exp.bullets)
           }
-          doc.moveDown(0.3)
+          doc.moveDown(0.5)
         }
       }
 
@@ -139,7 +140,7 @@ export class PdfGeneratorService {
           if (proj.bullets?.length) {
             bulletList(doc, proj.bullets)
           }
-          doc.moveDown(0.2)
+          doc.moveDown(0.4)
         }
       }
 
@@ -153,7 +154,7 @@ export class PdfGeneratorService {
           if (edu.degree || edu.location) {
             entrySub(doc, edu.degree || '', edu.location || '')
           }
-          doc.moveDown(0.3)
+          doc.moveDown(0.4)
         }
       }
 
@@ -161,12 +162,13 @@ export class PdfGeneratorService {
       if (data.skills?.length) {
         sectionHeader(doc, 'Skills')
         for (const sk of data.skills) {
-          doc.font('Times-Bold').fontSize(10.5).fillColor(NAVY)
           const label = `${sk.category}: `
           const items = (sk.items || []).join(', ')
+          doc.font('Times-Bold').fontSize(10.5).fillColor(NAVY)
+          doc.text(label, { width: CONTENT_WIDTH, continued: true })
           doc.font('Times-Roman').fontSize(10.5).fillColor(DARK)
-          doc.text(label + items, { width: CONTENT_WIDTH, lineGap: 2 })
-          doc.moveDown(0.15)
+          doc.text(items, { width: CONTENT_WIDTH, lineGap: 3 })
+          doc.moveDown(0.2)
         }
       }
 
