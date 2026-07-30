@@ -40,11 +40,11 @@ export function JobDescriptionInput() {
     try {
       const optResult = await optimizeMutation.mutateAsync(id)
       const store = useResumeOptimizerStore.getState()
-      const originalParsed = store.uploadResult?.parsedData || {}
+      const originalParsed = store.uploadResult?.parsedData as Record<string, unknown> | undefined
       const merged = {
         ...originalParsed,
         ...optResult.optimizedData,
-        personalInfo: originalParsed.personalInfo || {},
+        personalInfo: (originalParsed?.personalInfo as Record<string, string> | undefined) || {},
       }
       store.setOptimizedResume(merged)
 
