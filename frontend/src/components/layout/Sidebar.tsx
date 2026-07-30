@@ -68,13 +68,13 @@ export function Sidebar() {
                 <Link
                   key={to}
                   to={to}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150 group ${
+                  className={`flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150 ${
                     active
                       ? 'bg-primary/10 text-primary'
-                      : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'
+                      : 'text-on-surface-variant'
                   }`}
                 >
-                  <span className={`material-symbols-outlined text-[20px] leading-none ${active ? 'text-primary' : 'group-hover:text-primary transition-colors'}`}
+                  <span className={`material-symbols-outlined text-[20px] leading-none ${active ? 'text-primary' : ''}`}
                         style={{ fontVariationSettings: active ? "'FILL' 1" : "'FILL' 0" }}>
                     {icon}
                   </span>
