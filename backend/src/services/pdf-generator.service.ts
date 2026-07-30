@@ -142,6 +142,13 @@ export class PdfGeneratorService {
 
         // Contact line — phone/email/location as plain text,
         // LinkedIn/GitHub rendered as clickable hyperlinks.
+        //
+        // NOTE: we intentionally avoid passing explicit x/y coordinates to
+        // doc.text() when using the `link` option. PDFKit's link-annotation
+        // code computes the clickable rectangle from its own internal text
+        // layout state; mixing that with manual x/y + lineBreak:false made
+        // it compute a NaN width and crash inside PDFDocument.link(). Using
+        // `continued: true` chaining lets PDFKit track position/width itself.
         const LINK_COLOR = '#1155CC'
         type ContactPart = { text: string; url?: string }
         const contactItems: ContactPart[] = []
@@ -158,43 +165,40 @@ export class PdfGeneratorService {
         if (p.location) contactItems.push({ text: p.location })
 
         if (contactItems.length) {
-          doc.fontSize(9.5)
           const sep = '   |   '
 
-          // Compute total width so the whole line can be centered manually,
-          // since mixed link/non-link runs can't use align:'center' with continued text.
-          doc.font('Times-Roman')
+          // Compute total rendered width so we can center the whole line
+          // by setting a starting x, then let continued:true handle the rest.
+          doc.font('Times-Roman').fontSize(9.5)
           let totalWidth = 0
           contactItems.forEach((item, i) => {
             totalWidth += doc.widthOfString(item.text)
             if (i < contactItems.length - 1) totalWidth += doc.widthOfString(sep)
           })
 
-          let x = MARGIN + (CONTENT_WIDTH - totalWidth) / 2
-          const y = doc.y
+          const startX = MARGIN + Math.max(0, (CONTENT_WIDTH - totalWidth) / 2)
+          doc.x = startX
 
           contactItems.forEach((item, i) => {
+            const isLast = i === contactItems.length - 1
+
             doc.font('Times-Roman').fontSize(9.5)
             doc.fillColor(item.url ? LINK_COLOR : LIGHT_GRAY)
-            const opts: PDFKit.Mixins.TextOptions & { link?: string; underline?: boolean } = {
-              lineBreak: false,
-            }
-            if (item.url) {
-              opts.link = item.url
-              opts.underline = true
-            }
-            doc.text(item.text, x, y, opts)
-            x += doc.widthOfString(item.text)
+            doc.text(item.text, {
+              continued: !isLast,
+              link: item.url,
+              underline: !!item.url,
+            })
 
-            if (i < contactItems.length - 1) {
+            if (!isLast) {
               doc.fillColor(LIGHT_GRAY)
-              doc.text(sep, x, y, { lineBreak: false })
-              x += doc.widthOfString(sep)
+              doc.text(sep, { continued: true })
             }
           })
 
+          // last item already had continued:false, so the line is already closed
           doc.x = MARGIN
-          doc.y = y + doc.currentLineHeight()
+          doc.moveDown(0.2)
         }
 
         // header underline rule
