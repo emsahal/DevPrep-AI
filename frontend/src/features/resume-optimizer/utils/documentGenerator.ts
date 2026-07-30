@@ -186,13 +186,13 @@ export async function generateResumePdf(data: ResumeData): Promise<Blob> {
   return doc.output('blob')
 }
 
-export async function generateResumeDocx(data: ResumeData): Promise<Blob> {
+export async function generateResumeDocx(data: ResumeData, selectedFont: string = 'Times New Roman'): Promise<Blob> {
   const { Document, Packer, Paragraph, TextRun, AlignmentType, BorderStyle, TabStopType, TabStopPosition } = await import('docx')
 
   const NAVY = '1a3a5c'
   const DARK = '1a1a1a'
   const GRAY = '333333'
-  const FONT = 'Times New Roman'
+  const FONT = selectedFont || 'Times New Roman'
 
   const children: any[] = []
 

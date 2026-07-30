@@ -104,7 +104,8 @@ export class ResumeOptimizerController {
 
   async downloadPdf(req: AuthRequest, res: Response, next: NextFunction) {
     try {
-      const pdf = await resumeOptimizerService.generatePdf(req.params.id, req.userId!)
+      const font = (req.query.font as string) || 'Times New Roman'
+      const pdf = await resumeOptimizerService.generatePdf(req.params.id, req.userId!, font)
       const resume = await resumeOptimizerService.getResume(req.params.id)
       const name = resume.parsedData?.personalInfo?.name || 'Resume'
       const parts = (name as string).trim().split(/\s+/)

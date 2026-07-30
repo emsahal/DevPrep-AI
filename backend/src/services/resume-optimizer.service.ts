@@ -309,13 +309,13 @@ export class ResumeOptimizerService {
     return resume.originalFilePath
   }
 
-  async generatePdf(resumeId: string, userId: string): Promise<Buffer> {
+  async generatePdf(resumeId: string, userId: string, fontName: string = 'Times New Roman'): Promise<Buffer> {
     const resume = await prisma.resume.findFirst({ where: { id: resumeId, userId } })
     if (!resume) throw new Error('Resume not found')
 
     const data = resume.optimizedData || resume.parsedData || { originalText: resume.originalText }
     const { pdfGeneratorService } = await import('@/services/pdf-generator.service')
-    return pdfGeneratorService.generateResumePdf(data)
+    return pdfGeneratorService.generateResumePdf(data, fontName)
   }
 
   async deleteResume(resumeId: string, userId: string): Promise<void> {

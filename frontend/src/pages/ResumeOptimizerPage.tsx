@@ -37,14 +37,30 @@ export function ResumeOptimizerPage() {
     return `${base}.${ext}`
   }
 
-  const handleDownloadResume = async () => {
+  const [showFontModal, setShowFontModal] = useState(false)
+  const [selectedFont, setSelectedFont] = useState('Times New Roman')
+
+  const AVAILABLE_FONTS = [
+    { id: 'Times New Roman', name: 'Times New Roman', type: 'Serif (Classic & ATS)' },
+    { id: 'Calibri', name: 'Calibri', type: 'Sans-Serif (Modern & Clean)' },
+    { id: 'Arial', name: 'Arial', type: 'Sans-Serif (Standard)' },
+    { id: 'Georgia', name: 'Georgia', type: 'Serif (Elegant)' },
+    { id: 'Garamond', name: 'Garamond', type: 'Serif (Professional)' },
+  ]
+
+  const handleDownloadClick = () => {
+    setShowFontModal(true)
+  }
+
+  const handleExecuteDownload = async (fontToUse: string) => {
+    setShowFontModal(false)
     setDownloading('resume')
     try {
       const optimized = useResumeOptimizerStore.getState().optimizedResume
       const resumeData = (optimized || uploadResult?.parsedData) as any
       const isDocx = uploadResult?.originalName?.toLowerCase().endsWith('.docx')
       if (isDocx && resumeData) {
-        const blob = await generateResumeDocx(resumeData)
+        const blob = await generateResumeDocx(resumeData, fontToUse)
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')
         a.href = url
@@ -52,7 +68,7 @@ export function ResumeOptimizerPage() {
         a.click()
         URL.revokeObjectURL(url)
       } else if (uploadResult?.resumeId) {
-        const blob = await resumeOptimizerService.downloadPdf(uploadResult.resumeId)
+        const blob = await resumeOptimizerService.downloadPdf(uploadResult.resumeId, fontToUse)
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')
         a.href = url
@@ -171,7 +187,7 @@ export function ResumeOptimizerPage() {
                       style={{ borderColor: 'var(--color-border-muted)', color: 'var(--color-on-surface-variant)', background: 'transparent' }}>
                       Preview
                     </button>
-                    <button onClick={handleDownloadResume}
+                    <button onClick={handleDownloadClick}
                       disabled={downloading === 'resume'}
                       className="flex-1 py-2 rounded-lg text-xs font-bold border-none cursor-pointer"
                       style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
@@ -241,6 +257,62 @@ export function ResumeOptimizerPage() {
 
       {/* Modals */}
       <PricingModal open={showPricing} onClose={() => setShowPricing(false)} />
+
+      {/* Font Selection Modal */}
+      {showFontModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)' }}
+          onClick={() => setShowFontModal(false)}>
+          <div className="relative w-full max-w-md rounded-2xl p-6"
+            style={{ background: 'var(--color-surface-container-lowest)', border: '1px solid var(--color-border-subtle)' }}
+            onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-bold" style={{ color: 'var(--color-on-surface)' }}>Select Resume Font</h3>
+              <button onClick={() => setShowFontModal(false)} className="bg-none border-none cursor-pointer" style={{ color: 'var(--color-outline)' }}>
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <p className="text-xs mb-4" style={{ color: 'var(--color-outline)' }}>
+              Choose a font style for your downloaded resume:
+            </p>
+            <div className="space-y-2 mb-6">
+              {AVAILABLE_FONTS.map((font) => (
+                <div
+                  key={font.id}
+                  onClick={() => setSelectedFont(font.id)}
+                  className="flex items-center justify-between p-3 rounded-xl cursor-pointer border transition-all"
+                  style={{
+                    borderColor: selectedFont === font.id ? 'var(--color-primary)' : 'var(--color-border-muted)',
+                    background: selectedFont === font.id ? 'rgba(208,188,255,0.08)' : 'var(--color-surface-container)',
+                  }}>
+                  <div>
+                    <p className="text-sm font-semibold" style={{ fontFamily: font.id, color: 'var(--color-on-surface)' }}>
+                      {font.name}
+                    </p>
+                    <p className="text-[11px]" style={{ color: 'var(--color-outline)' }}>{font.type}</p>
+                  </div>
+                  {selectedFont === font.id && (
+                    <span className="material-symbols-outlined text-[20px]" style={{ color: 'var(--color-primary)' }}>
+                      check_circle
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <button onClick={() => setShowFontModal(false)}
+                className="flex-1 py-2.5 rounded-lg text-xs font-bold border cursor-pointer"
+                style={{ borderColor: 'var(--color-border-muted)', color: 'var(--color-on-surface-variant)', background: 'transparent' }}>
+                Cancel
+              </button>
+              <button onClick={() => handleExecuteDownload(selectedFont)}
+                className="flex-1 py-2.5 rounded-lg text-xs font-bold border-none cursor-pointer"
+                style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
+                Download
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Resume Preview Modal */}
       {showResumePreview && (

@@ -66,8 +66,9 @@ export const resumeOptimizerService = {
     URL.revokeObjectURL(url)
   },
 
-  async downloadPdf(resumeId: string): Promise<Blob> {
+  async downloadPdf(resumeId: string, font?: string): Promise<Blob> {
     const { data } = await api.get(`/resume-optimizer/resumes/${resumeId}/pdf`, {
+      params: { font },
       responseType: 'blob',
     })
     return data
