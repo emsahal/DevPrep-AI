@@ -192,3 +192,123 @@ export interface LeaderboardResponse {
   }
   currentUser: { rank: number; points: number } | null
 }
+
+export interface ResumeData {
+  personalInfo: {
+    name: string
+    email: string
+    phone: string
+    location: string
+    linkedin?: string
+    github?: string
+    portfolio?: string
+  }
+  summary: string
+  experience: ResumeExperience[]
+  projects: ResumeProject[]
+  education: ResumeEducation[]
+  skills: ResumeSkillCategory[]
+  certifications: string[]
+  achievements: string[]
+  technicalSkills: string[]
+  softSkills: string[]
+  strengths: string[]
+  weaknesses: string[]
+  yearsOfExperience: number
+  industries: string[]
+}
+
+export interface ResumeExperience {
+  company: string
+  role: string
+  dateRange: string
+  location: string
+  bullets: string[]
+}
+
+export interface ResumeProject {
+  name: string
+  bullets: string[]
+}
+
+export interface ResumeEducation {
+  institution: string
+  degree: string
+  dateRange: string
+  location: string
+}
+
+export interface ResumeSkillCategory {
+  category: string
+  items: string[]
+}
+
+export interface JobAnalysis {
+  requiredSkills: string[]
+  responsibilities: string[]
+  technologies: string[]
+  seniorityLevel: string
+  keywords: string[]
+  softSkills: string[]
+  qualifications: string[]
+  yearsOfExperience: number
+  education: string
+  niceToHave: string[]
+  companyName: string
+  jobTitle: string
+}
+
+export interface GapAnalysis {
+  matchingSkills: string[]
+  missingSkills: string[]
+  missingKeywords: string[]
+  resumeMatchPercentage: number
+  atsScore: number
+  keywordMatchPercentage: number
+  strengthAreas: string[]
+  weakAreas: string[]
+  strongSections: string[]
+  weakSections: string[]
+  improvementSuggestions: string[]
+  sectionOrderSuggestions: string[]
+}
+
+export interface OptimizedResume {
+  summary: string
+  experience: ResumeExperience[]
+  projects: ResumeProject[]
+  skills: ResumeSkillCategory[]
+  certifications: string[]
+  sectionOrder: string[]
+}
+
+export interface CoverLetterData {
+  greeting: string
+  introduction: string
+  bodyParagraphs: string[]
+  closing: string
+  signature: string
+  fullLetter: string
+  id?: string
+}
+
+export interface ResumeUploadResult {
+  resumeId: string
+  parsedData: ResumeData
+  originalText: string
+}
+
+export interface CreditInfo {
+  available: number
+  totalUsed: number
+  freeCredits: number
+  purchasedCredits: number
+}
+
+export interface PricingPlan {
+  freeCredits: number
+  costPerOptimization: number
+  plans: { credits: number; price: number }[]
+}
+
+export type ResumeTemplate = 'classic' | 'modern' | 'ats-professional' | 'executive' | 'minimal'

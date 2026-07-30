@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { to: '/quizzes',        icon: 'quiz',             label: 'Quizzes'    },
   { to: '/flashcards',     icon: 'style',            label: 'Flashcards' },
   { to: '/revision',       icon: 'event_repeat',     label: 'Revision'   },
+  { to: '/resume-optimizer', icon: 'description',      label: 'Resume AI'   },
   { to: '/interview-prep', icon: 'quiz',              label: 'Interview'   },
   { to: '/leaderboard',    icon: 'leaderboard',      label: 'Leaderboard'},
   { to: '/duel',           icon: 'sports_esports',   label: 'Duels',       tag: 'Soon' },

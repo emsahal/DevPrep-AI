@@ -15,6 +15,7 @@ import interviewPrepRoutes from './interview-prep.routes'
 import gamificationRoutes from './gamification.routes'
 import notificationRoutes from './notification.routes'
 import dsaCheckRoutes from './dsa-check.routes'
+import resumeOptimizerRoutes from './resume-optimizer.routes'
 
 const router = Router()
 
@@ -34,5 +35,6 @@ router.use('/interview-prep', interviewPrepRoutes)
 router.use('/gamification', gamificationRoutes)
 router.use('/notifications', notificationRoutes)
 router.use('/dsa-check', dsaCheckRoutes)
+router.use('/resume-optimizer', resumeOptimizerRoutes)
 
 export default router

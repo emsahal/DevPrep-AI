@@ -26,6 +26,7 @@ import { NotificationsPage } from '@/pages/NotificationsPage'
 import { InterviewPrepTopicPage } from '@/pages/InterviewPrepTopicPage'
 import { ProfilePage } from '@/pages/ProfilePage'
 import { SettingsPage } from '@/pages/SettingsPage'
+import { ResumeOptimizerPage } from '@/pages/ResumeOptimizerPage'
 import { useAuthStore } from '@/store/authStore'
 import { ThemeProvider } from '@/providers/ThemeProvider'
 import { QueryProvider } from '@/providers/QueryProvider'
@@ -82,6 +83,7 @@ export default function App() {
               <Route path="/leaderboard" element={<LeaderboardPage />} />
               <Route path="/duel" element={<ProtectedRoute><DuelPage /></ProtectedRoute>} />
               <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
+              <Route path="/resume-optimizer" element={<ProtectedRoute><ResumeOptimizerPage /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
             </Route>
