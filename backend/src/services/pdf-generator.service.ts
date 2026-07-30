@@ -77,9 +77,36 @@ function entrySub(doc: PDFKit.PDFDocument, left: string, right: string) {
   doc.moveDown(0.15)
 }
 
+/**
+ * Renders a "Stack: X, Y, Z" line as a non-bulleted, hanging-indent line
+ * with a bold "Stack:" label — matching how the docx template renders
+ * skills lines, instead of treating it as a regular bullet point.
+ */
+function stackLine(doc: PDFKit.PDFDocument, item: string, labelMatch: RegExpMatchArray) {
+  if (needsPageBreak(doc, 20)) doc.addPage()
+  const label = labelMatch[0] // e.g. "Stack: "
+  const rest = item.slice(label.length)
+
+  doc.font('Times-Bold').fontSize(10.5).fillColor(DARK)
+  doc.text(label, MARGIN + 4, undefined, { continued: true, width: CONTENT_WIDTH - 4 })
+  doc.font('Times-Roman').fontSize(10.5).fillColor(DARK)
+  doc.text(rest, { width: CONTENT_WIDTH - 4, lineGap: 2 })
+  doc.x = MARGIN
+}
+
+// Matches "Stack:", "Tech Stack:", "Technologies:" etc. at the start of a line
+const STACK_LABEL_REGEX = /^(stack|tech stack|technologies|tools)\s*:\s*/i
+
 function bulletList(doc: PDFKit.PDFDocument, items: string[]) {
   for (const item of items) {
     if (needsPageBreak(doc, 20)) doc.addPage()
+
+    const labelMatch = item.match(STACK_LABEL_REGEX)
+    if (labelMatch) {
+      stackLine(doc, item, labelMatch)
+      continue
+    }
+
     doc.font('Times-Roman').fontSize(10.5).fillColor(DARK)
     // Bullet + text rendered as a single text call so PDFKit never splits
     // them across a page break with mismatched Y positions.
@@ -113,17 +140,61 @@ export class PdfGeneratorService {
         doc.text(p.name || 'Resume', { align: 'center', width: CONTENT_WIDTH })
         doc.moveDown(0.3)
 
-        // Contact line
-        const contactParts: string[] = []
-        if (p.phone) contactParts.push(p.phone)
-        if (p.email) contactParts.push(p.email)
-        if (p.linkedin) contactParts.push(p.linkedin.replace(/^https?:\/\//, ''))
-        if (p.github) contactParts.push(p.github.replace(/^https?:\/\//, ''))
-        if (p.location) contactParts.push(p.location)
-        const contactLine = contactParts.join('  |  ')
-        if (contactLine) {
-          doc.font('Times-Roman').fontSize(9.5).fillColor(LIGHT_GRAY)
-          doc.text(contactLine, { align: 'center', width: CONTENT_WIDTH })
+        // Contact line — phone/email/location as plain text,
+        // LinkedIn/GitHub rendered as clickable hyperlinks.
+        const LINK_COLOR = '#1155CC'
+        type ContactPart = { text: string; url?: string }
+        const contactItems: ContactPart[] = []
+        if (p.phone) contactItems.push({ text: p.phone })
+        if (p.email) contactItems.push({ text: p.email, url: `mailto:${p.email}` })
+        if (p.linkedin) {
+          const url = p.linkedin.startsWith('http') ? p.linkedin : `https://${p.linkedin}`
+          contactItems.push({ text: p.linkedin.replace(/^https?:\/\//, ''), url })
+        }
+        if (p.github) {
+          const url = p.github.startsWith('http') ? p.github : `https://${p.github}`
+          contactItems.push({ text: p.github.replace(/^https?:\/\//, ''), url })
+        }
+        if (p.location) contactItems.push({ text: p.location })
+
+        if (contactItems.length) {
+          doc.fontSize(9.5)
+          const sep = '   |   '
+
+          // Compute total width so the whole line can be centered manually,
+          // since mixed link/non-link runs can't use align:'center' with continued text.
+          doc.font('Times-Roman')
+          let totalWidth = 0
+          contactItems.forEach((item, i) => {
+            totalWidth += doc.widthOfString(item.text)
+            if (i < contactItems.length - 1) totalWidth += doc.widthOfString(sep)
+          })
+
+          let x = MARGIN + (CONTENT_WIDTH - totalWidth) / 2
+          const y = doc.y
+
+          contactItems.forEach((item, i) => {
+            doc.font('Times-Roman').fontSize(9.5)
+            doc.fillColor(item.url ? LINK_COLOR : LIGHT_GRAY)
+            const opts: PDFKit.Mixins.TextOptions & { link?: string; underline?: boolean } = {
+              lineBreak: false,
+            }
+            if (item.url) {
+              opts.link = item.url
+              opts.underline = true
+            }
+            doc.text(item.text, x, y, opts)
+            x += doc.widthOfString(item.text)
+
+            if (i < contactItems.length - 1) {
+              doc.fillColor(LIGHT_GRAY)
+              doc.text(sep, x, y, { lineBreak: false })
+              x += doc.widthOfString(sep)
+            }
+          })
+
+          doc.x = MARGIN
+          doc.y = y + doc.currentLineHeight()
         }
 
         // header underline rule
