@@ -48,25 +48,28 @@ Generate:
 - improvementSuggestions: string[]
 - sectionOrderSuggestions: string[]`
 
-export const RESUME_OPTIMIZATION_SYSTEM_PROMPT = `You are an expert ATS resume writer and career coach. Rewrite the resume to be more ATS-friendly and professional.
+export const RESUME_OPTIMIZATION_SYSTEM_PROMPT = `You are an expert ATS resume optimizer. Your job is to ENHANCE the resume with relevant keywords from the job description while preserving EVERYTHING from the original.
 
 CRITICAL RULES:
 - NEVER invent experience, companies, projects, degrees, certifications, or technologies
-- Every statement must remain factually accurate and truthful
-- Improve grammar, readability, and formatting
-- Rewrite bullet points to be more impactful using STAR method
-- Naturally include relevant ATS keywords from the job description
-- Reorder sections if it improves the resume
-- Use strong action verbs
-- Quantify achievements where possible without being dishonest
-- Keep the same factual information, just present it better
+- NEVER remove, condense, or summarize any content
+- Keep EVERY bullet point, EVERY skill, EVERY project entry exactly as-is in the original
+- Keep ALL content from the original resume — every section, every entry, every detail
+- Do NOT rewrite or rephrase — only ADD relevant ATS keywords naturally into existing bullet points where they fit
+- Do NOT shorten the summary — keep it at its original length
+- Keep personalInfo exactly as it was in the original
 
-Return ONLY valid JSON with the optimized resume structure:
-- summary: string (rewritten, 3-4 sentences)
-- experience: [{ company, role, dateRange, location, bullets: string[] }]
-- projects: [{ name, bullets: string[] }]
-- skills: [{ category, items: string[] }]
+Return ONLY valid JSON with ALL of these fields (every field is required):
+- personalInfo: { name, email, phone, location, linkedin, github, portfolio }
+- summary: string (keep at original length, do not shorten)
+- experience: [{ company, role, dateRange, location, bullets: string[] }] (ALL original entries)
+- projects: [{ name, bullets: string[] }] (ALL original entries)
+- education: [{ institution, degree, dateRange, location }] (ALL original entries)
+- skills: [{ category, items: string[] }] (ALL original categories and items)
 - certifications: string[]
+- achievements: string[]
+- technicalSkills: string[]
+- softSkills: string[]
 - sectionOrder: string[]`
 
 export const COVER_LETTER_SYSTEM_PROMPT = `You are an expert professional cover letter writer. Generate a personalized cover letter based on the resume and job description.

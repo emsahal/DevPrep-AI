@@ -93,6 +93,14 @@ export class ResumeOptimizerController {
       res.json(pricing)
     } catch (error) { next(error) }
   }
+
+  async downloadOriginal(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const filePath = await resumeOptimizerService.getOriginalFilePath(req.params.id, req.userId!)
+      const resume = await resumeOptimizerService.getResume(req.params.id)
+      res.download(filePath, resume.title)
+    } catch (error) { next(error) }
+  }
 }
 
 export const resumeOptimizerController = new ResumeOptimizerController()

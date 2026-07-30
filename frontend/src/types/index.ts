@@ -296,6 +296,7 @@ export interface ResumeUploadResult {
   resumeId: string
   parsedData: ResumeData
   originalText: string
+  originalName?: string
 }
 
 export interface CreditInfo {

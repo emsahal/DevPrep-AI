@@ -39,6 +39,7 @@ router.post('/optimize', authenticate, resumeOptimizerController.optimizeResume.
 router.post('/cover-letter', authenticate, resumeOptimizerController.generateCoverLetter.bind(resumeOptimizerController))
 router.get('/resumes', authenticate, resumeOptimizerController.getUserResumes.bind(resumeOptimizerController))
 router.get('/resumes/:id', authenticate, resumeOptimizerController.getResume.bind(resumeOptimizerController))
+router.get('/resumes/:id/download', authenticate, resumeOptimizerController.downloadOriginal.bind(resumeOptimizerController))
 router.delete('/resumes/:id', authenticate, resumeOptimizerController.deleteResume.bind(resumeOptimizerController))
 router.get('/pricing', resumeOptimizerController.getPricing.bind(resumeOptimizerController))
 

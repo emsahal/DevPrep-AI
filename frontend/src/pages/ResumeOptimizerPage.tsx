@@ -7,7 +7,7 @@ import { CoverLetterPreview } from '@/features/resume-optimizer/components/Cover
 import { PricingModal } from '@/features/resume-optimizer/components/PricingModal'
 import { useResumeOptimizerStore } from '@/store/resumeOptimizerStore'
 import { resumeOptimizerService } from '@/services/resumeOptimizerService'
-import { generateResumeDocx, generateCoverLetterDocx } from '@/features/resume-optimizer/utils/documentGenerator'
+import { generateResumePdf, generateCoverLetterDocx } from '@/features/resume-optimizer/utils/documentGenerator'
 
 export function ResumeOptimizerPage() {
   const step = useResumeOptimizerStore(s => s.step)
@@ -31,19 +31,32 @@ export function ResumeOptimizerPage() {
       .catch(() => {})
   }, [])
 
+  const getResumeFileName = (ext: string) => {
+    const name = uploadResult?.parsedData?.personalInfo?.name || ''
+    const parts = name.trim().split(/\s+/)
+    const base = parts.length >= 2 ? `${parts[0]}_${parts[1]}_Resume` : name ? `${name.replace(/\s+/g, '_')}_Resume` : 'Resume'
+    return `${base}.${ext}`
+  }
+
   const handleDownloadResume = async () => {
     setDownloading('resume')
     try {
-      const data = optimizedResume || uploadResult?.parsedData
-      if (!data) return
-      const blob = await generateResumeDocx(data as any)
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = 'Optimized_Resume.docx'
-      a.click()
-      URL.revokeObjectURL(url)
-    } catch {}
+      const isDocx = uploadResult?.originalName?.toLowerCase().endsWith('.docx')
+      if (isDocx && uploadResult?.resumeId) {
+        await resumeOptimizerService.downloadOriginal(uploadResult.resumeId, getResumeFileName('docx'))
+      } else {
+        const data = optimizedResume || uploadResult?.parsedData
+        if (data) {
+          const blob = await generateResumePdf(data as any)
+          const url = URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url
+          a.download = getResumeFileName('pdf')
+          a.click()
+          URL.revokeObjectURL(url)
+        }
+      }
+    } catch { }
     setDownloading(null)
   }
 
@@ -145,7 +158,7 @@ export function ResumeOptimizerPage() {
                     </div>
                     <div>
                       <p className="text-sm font-bold" style={{ color: 'var(--color-on-surface)' }}>Optimized Resume</p>
-                      <p className="text-xs" style={{ color: 'var(--color-outline)' }}>ATS-friendly format</p>
+                      <p className="text-xs" style={{ color: 'var(--color-outline)' }}>Original styling preserved</p>
                     </div>
                   </div>
                   <div className="flex gap-2">

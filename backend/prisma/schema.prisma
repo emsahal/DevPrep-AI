@@ -401,21 +401,25 @@ model Notification {
 }
 
 model Resume {
-  id            String   @id @default(uuid())
-  userId        String
-  title         String   @default("Untitled Resume")
-  originalText  String   @db.Text
-  parsedData    Json?
-  optimizedText String?  @db.Text
-  optimizedData Json?
-  atsScore      Int?
-  matchScore    Int?
-  missingSkills String[]
+  id              String   @id @default(uuid())
+  userId          String
+  title           String   @default("Untitled Resume")
+  originalText    String   @db.Text
+  originalFilePath String?
+  parsedData      Json?
+  optimizedText   String?  @db.Text
+  optimizedData   Json?
+  atsScore        Int?
+  matchScore      Int?
+  missingSkills   String[]
   missingKeywords String[]
-  suggestions   Json?
-  template      String   @default("classic")
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  suggestions     Json?
+  jobTitle        String?
+  jobDescription  String?  @db.Text
+  interviewChance Int?
+  template        String   @default("classic")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   coverLetters CoverLetter[]

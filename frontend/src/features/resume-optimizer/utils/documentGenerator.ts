@@ -1,183 +1,199 @@
-import {
-  Document, Packer, Paragraph, TextRun, AlignmentType,
-  BorderStyle, ExternalHyperlink, LevelFormat, convertInchesToTwip
-} from 'docx'
+import jsPDF from 'jspdf'
 import type { ResumeData } from '@/types'
 
-export async function generateResumeDocx(data: ResumeData): Promise<Blob> {
-  const NAVY = '1F3864'
-  const DARKGRAY = '333333'
-  const FONT = 'Times New Roman'
+export async function generateResumePdf(data: ResumeData): Promise<Blob> {
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' })
+  const pageW = doc.internal.pageSize.getWidth()
+  const left = 56
+  let y = 48
+  const lineH = 14
+  const FONT = 'Times-Roman'
 
-  const children: Paragraph[] = []
-
-  children.push(new Paragraph({
-    alignment: AlignmentType.CENTER,
-    spacing: { after: 80 },
-    children: [new TextRun({ text: data.personalInfo?.name || 'Resume', bold: true, size: 44, font: FONT, color: NAVY })],
-  }))
-
-  const contactParts: any[] = []
-  if (data.personalInfo?.phone) contactParts.push(new TextRun({ text: data.personalInfo.phone, size: 20, font: FONT }))
-  if (data.personalInfo?.email) {
-    if (contactParts.length) contactParts.push(new TextRun({ text: '  |  ', size: 20, font: FONT, color: '888888' }))
-    contactParts.push(new TextRun({ text: data.personalInfo.email, size: 20, font: FONT }))
-  }
-  if (data.personalInfo?.linkedin) {
-    if (contactParts.length) contactParts.push(new TextRun({ text: '  |  ', size: 20, font: FONT, color: '888888' }))
-    contactParts.push(new ExternalHyperlink({
-      link: data.personalInfo.linkedin,
-      children: [new TextRun({ text: data.personalInfo.linkedin, size: 20, font: FONT, color: '1155CC', underline: {} })],
-    }))
+  function addText(text: string, size: number, style: 'normal' | 'bold' | 'italic' = 'normal', color?: string, maxW?: number) {
+    doc.setFont(FONT, style)
+    doc.setFontSize(size)
+    if (color) doc.setTextColor(color)
+    else doc.setTextColor(0)
+    const lines = doc.splitTextToSize(text, maxW || pageW - left * 2)
+    doc.text(lines, left, y)
+    y += lines.length * (size * 0.3528 * 1.4)
   }
 
-  children.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 240 }, children: contactParts }))
-
-  function sectionHeading(text: string) {
-    return new Paragraph({
-      spacing: { before: 200, after: 100 },
-      border: { bottom: { color: NAVY, space: 2, style: BorderStyle.SINGLE, size: 6 } },
-      children: [new TextRun({ text: text.toUpperCase(), bold: true, size: 24, font: FONT, color: NAVY })],
-    })
+  function addSection(title: string) {
+    y += 12
+    doc.setDrawColor('#1F3864')
+    doc.setLineWidth(0.75)
+    doc.line(left, y, pageW - left, y)
+    y += 4
+    doc.setFont(FONT, 'bold')
+    doc.setFontSize(11)
+    doc.setTextColor('#1F3864')
+    doc.text(title.toUpperCase(), left, y)
+    y += 16
   }
 
-  function titleLine(left: string, right?: string) {
-    return new Paragraph({
-      spacing: { before: 120, after: 20 },
-      tabStops: [{ type: 'right', position: convertInchesToTwip(6.5) }],
-      children: [
-        new TextRun({ text: left, bold: true, size: 22, font: FONT }),
-        ...(right ? [new TextRun({ text: `\t${right}`, bold: true, size: 20, font: FONT, color: DARKGRAY })] : []),
-      ],
-    })
+  function addBullet(text: string, size: number) {
+    doc.setFont(FONT, 'normal')
+    doc.setFontSize(size)
+    doc.setTextColor('#333333')
+    const indent = 16
+    const maxW = pageW - left * 2 - indent
+    const lines = doc.splitTextToSize(text, maxW)
+    doc.text('\u2022', left, y)
+    doc.text(lines, left + indent, y)
+    y += lines.length * (size * 0.3528 * 1.4) + 4
   }
 
-  function subTitleLine(left: string, right?: string) {
-    return new Paragraph({
-      spacing: { after: 80 },
-      tabStops: [{ type: 'right', position: convertInchesToTwip(6.5) }],
-      children: [
-        new TextRun({ text: left, italics: true, size: 20, font: FONT }),
-        ...(right ? [new TextRun({ text: `\t${right}`, italics: true, size: 20, font: FONT, color: DARKGRAY })] : []),
-      ],
-    })
+  // Page check
+  function checkPage() {
+    if (y > doc.internal.pageSize.getHeight() - 56) {
+      doc.addPage()
+      y = 48
+    }
   }
 
-  function bulletItem(text: string) {
-    return new Paragraph({
-      numbering: { reference: 'bullet-list', level: 0 },
-      spacing: { after: 60 },
-      alignment: AlignmentType.JUSTIFIED,
-      children: [new TextRun({ text, size: 20, font: FONT })],
-    })
+  // Name
+  doc.setFont(FONT, 'bold')
+  doc.setFontSize(22)
+  doc.setTextColor('#1F3864')
+  const name = data.personalInfo?.name || 'Resume'
+  doc.text(name, left, y)
+  y += 24
+
+  // Contact
+  const contactParts = [data.personalInfo?.phone, data.personalInfo?.email].filter(Boolean)
+  if (contactParts.length) {
+    doc.setFont(FONT, 'normal')
+    doc.setFontSize(10)
+    doc.setTextColor('#333333')
+    doc.text(contactParts.join('  |  '), left, y)
+    y += 16
   }
 
-  function skillLine(label: string, value: string) {
-    return new Paragraph({
-      spacing: { after: 60 },
-      children: [
-        new TextRun({ text: `${label}: `, bold: true, size: 20, font: FONT }),
-        new TextRun({ text: value, size: 20, font: FONT }),
-      ],
-    })
-  }
-
+  // Summary
   if (data.summary) {
-    children.push(sectionHeading('Professional Summary'))
-    children.push(new Paragraph({
-      spacing: { after: 120 },
-      alignment: AlignmentType.JUSTIFIED,
-      children: [new TextRun({ text: data.summary, size: 20, font: FONT })],
-    }))
+    addSection('Professional Summary')
+    checkPage()
+    addText(data.summary, 10, 'normal', '#333333')
   }
 
+  // Experience
   if (data.experience?.length) {
-    children.push(sectionHeading('Experience'))
+    addSection('Experience')
     data.experience.forEach((exp) => {
-      children.push(titleLine(exp.company, exp.dateRange))
-      children.push(subTitleLine(exp.role, exp.location))
-      exp.bullets?.forEach((b) => children.push(bulletItem(b)))
+      checkPage()
+      doc.setFont(FONT, 'bold')
+      doc.setFontSize(11)
+      doc.setTextColor('#000000')
+      const expLine = `${exp.company}${exp.dateRange ? `   ${exp.dateRange}` : ''}`
+      const parts = doc.splitTextToSize(expLine, pageW - left * 2)
+      doc.text(parts, left, y)
+      y += parts.length * 15 + 4
+
+      doc.setFont(FONT, 'italic')
+      doc.setFontSize(10)
+      doc.setTextColor('#555555')
+      const roleLine = [exp.role, exp.location].filter(Boolean).join(' · ')
+      if (roleLine) {
+        doc.text(roleLine, left, y)
+        y += 16
+      }
+
+      exp.bullets?.forEach((b) => {
+        checkPage()
+        addBullet(b, 10)
+      })
+      y += 4
     })
   }
 
+  // Projects
   if (data.projects?.length) {
-    children.push(sectionHeading('Projects'))
+    addSection('Projects')
     data.projects.forEach((proj) => {
-      children.push(titleLine(proj.name))
-      proj.bullets?.forEach((b) => children.push(bulletItem(b)))
+      checkPage()
+      doc.setFont(FONT, 'bold')
+      doc.setFontSize(11)
+      doc.setTextColor('#000000')
+      doc.text(proj.name, left, y)
+      y += 16
+
+      proj.bullets?.forEach((b) => {
+        checkPage()
+        addBullet(b, 10)
+      })
+      y += 4
     })
   }
 
+  // Education
   if (data.education?.length) {
-    children.push(sectionHeading('Education'))
+    addSection('Education')
     data.education.forEach((edu) => {
-      children.push(titleLine(edu.institution, edu.dateRange))
-      children.push(subTitleLine(edu.degree, edu.location))
+      checkPage()
+      doc.setFont(FONT, 'bold')
+      doc.setFontSize(11)
+      doc.setTextColor('#000000')
+      doc.text(edu.institution, left, y)
+      y += 14
+
+      doc.setFont(FONT, 'italic')
+      doc.setFontSize(10)
+      doc.setTextColor('#555555')
+      const eduLine = [edu.degree, edu.location].filter(Boolean).join(' · ')
+      if (eduLine) {
+        doc.text(`${eduLine}   ${edu.dateRange || ''}`, left, y)
+        y += 14
+      }
     })
   }
 
-  if (data.technicalSkills?.length) {
-    children.push(sectionHeading('Technical Skills'))
-    children.push(new Paragraph({
-      spacing: { after: 100 },
-      children: [new TextRun({ text: data.technicalSkills.join(' · '), size: 20, font: FONT })],
-    }))
-  }
-
+  // Skills
   if (data.skills?.length) {
-    children.push(sectionHeading('Skills'))
-    data.skills.forEach((sk) => skillLine(sk.category, sk.items?.join(', ')))
-  }
-
-  if (data.certifications?.length) {
-    children.push(sectionHeading('Certifications'))
-    data.certifications.forEach((cert) => {
-      children.push(new Paragraph({
-        spacing: { after: 40 },
-        children: [new TextRun({ text: `· ${cert}`, size: 20, font: FONT })],
-      }))
+    addSection('Skills')
+    data.skills.forEach((sk) => {
+      checkPage()
+      doc.setFont(FONT, 'bold')
+      doc.setFontSize(10)
+      doc.setTextColor('#333333')
+      const label = `${sk.category}: `
+      const labelW = doc.getTextWidth(label)
+      doc.text(label, left, y)
+      doc.setFont(FONT, 'normal')
+      const items = (sk.items || []).join(', ')
+      const maxW = pageW - left * 2 - labelW
+      const itemLines = doc.splitTextToSize(items, maxW)
+      doc.text(itemLines, left + labelW, y)
+      y += Math.max(itemLines.length, 1) * 14
     })
   }
 
-  const doc = new Document({
-    numbering: {
-      config: [{
-        reference: 'bullet-list',
-        levels: [{
-          level: 0,
-          format: LevelFormat.BULLET,
-          text: '\u2022',
-          alignment: AlignmentType.LEFT,
-          style: {
-            paragraph: {
-              indent: { left: convertInchesToTwip(0.28), hanging: convertInchesToTwip(0.18) },
-            },
-          },
-        }],
-      }],
-    },
-    sections: [{
-      properties: {
-        page: {
-          size: { width: 12240, height: 15840 },
-          margin: { top: 720, bottom: 720, left: 900, right: 900 },
-        },
-      },
-      children,
-    }],
-  })
+  // Technical Skills (flat)
+  if (data.technicalSkills?.length) {
+    addSection('Technical Skills')
+    checkPage()
+    addText(data.technicalSkills.join(', '), 10, 'normal', '#333333')
+  }
 
-  return Packer.toBlob(doc)
+  // Certifications
+  if (data.certifications?.length) {
+    addSection('Certifications')
+    data.certifications.forEach((cert) => {
+      checkPage()
+      addBullet(cert, 10)
+    })
+  }
+
+  return doc.output('blob')
 }
 
-export async function generateCoverLetterDocx(letter: string, _candidateName: string): Promise<Blob> {
-  const FONT = 'Times New Roman'
-
-  const children = letter.split('\n').filter(l => l.trim()).map((line) => {
+export async function generateCoverLetterDocx(_letter: string, _candidateName: string): Promise<Blob> {
+  const { Document, Packer, Paragraph, TextRun, AlignmentType } = await import('docx')
+  const children = _letter.split('\n').filter(l => l.trim()).map((line) => {
     return new Paragraph({
       spacing: { after: 160 },
       alignment: AlignmentType.JUSTIFIED,
-      children: [new TextRun({ text: line, size: 22, font: FONT })],
+      children: [new TextRun({ text: line, size: 22, font: 'Times New Roman' })],
     })
   })
 

@@ -53,4 +53,16 @@ export const resumeOptimizerService = {
     const { data } = await api.get('/resume-optimizer/pricing')
     return data
   },
+
+  async downloadOriginal(resumeId: string, filename: string): Promise<void> {
+    const { data } = await api.get(`/resume-optimizer/resumes/${resumeId}/download`, {
+      responseType: 'blob',
+    })
+    const url = URL.createObjectURL(data)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    a.click()
+    URL.revokeObjectURL(url)
+  },
 }

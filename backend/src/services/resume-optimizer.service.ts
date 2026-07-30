@@ -77,7 +77,7 @@ export class ResumeOptimizerService {
     })
   }
 
-  async uploadAndParseResume(userId: string, filePath: string, originalName: string): Promise<{ resumeId: string; parsedData: any; originalText: string }> {
+  async uploadAndParseResume(userId: string, filePath: string, originalName: string): Promise<{ resumeId: string; parsedData: any; originalText: string; originalName: string }> {
     const fs = await import('fs/promises')
     const path = await import('path')
     const ext = path.extname(originalName).toLowerCase()
@@ -114,13 +114,12 @@ export class ResumeOptimizerService {
         userId,
         title: originalName,
         originalText,
+        originalFilePath: filePath,
         parsedData,
       },
     })
 
-    try { await fs.unlink(filePath) } catch {}
-
-    return { resumeId: resume.id, parsedData, originalText }
+    return { resumeId: resume.id, parsedData, originalText, originalName }
   }
 
   async analyzeJobDescription(resumeId: string, jobDescription: string): Promise<any> {
@@ -153,6 +152,17 @@ export class ResumeOptimizerService {
       gapData = { resumeMatchPercentage: 0, atsScore: 0, missingSkills: [], missingKeywords: [], improvementSuggestions: [] }
     }
 
+    const interviewChance = Math.max(0, Math.min(100,
+      Math.round(
+        (gapData.atsScore ?? 0) * 0.35 +
+        (gapData.resumeMatchPercentage ?? 0) * 0.25 +
+        (gapData.keywordMatchPercentage ?? 0) * 0.2 -
+        (gapData.missingSkills?.length ?? 0) * 3
+      )
+    ))
+
+    const companyName = jobData.companyName ?? null
+
     await prisma.resume.update({
       where: { id: resumeId },
       data: {
@@ -160,13 +170,18 @@ export class ResumeOptimizerService {
         matchScore: gapData.resumeMatchPercentage ?? 0,
         missingSkills: gapData.missingSkills ?? [],
         missingKeywords: gapData.missingKeywords ?? [],
-        suggestions: gapData,
+        suggestions: { ...gapData, _jobAnalysis: jobData },
+        jobTitle: jobData.jobTitle ?? null,
+        jobDescription,
+        interviewChance,
       },
     })
 
     return {
       jobAnalysis: jobData,
       gapAnalysis: gapData,
+      interviewChance,
+      companyName,
     }
   }
 
@@ -195,16 +210,48 @@ export class ResumeOptimizerService {
       optimizedData = { parseError: 'AI returned invalid JSON' }
     }
 
-    const optimizedContent = optimizedData.summary + '\n\n' +
-      (optimizedData.experience || []).map((exp: any) =>
+    const originalParsed = resume.parsedData as any || {}
+    const merged = {
+      ...originalParsed,
+      ...optimizedData,
+      personalInfo: originalParsed.personalInfo || optimizedData.personalInfo || {},
+    }
+
+    const sections: string[] = []
+    if (merged.summary) sections.push(merged.summary)
+    if (merged.experience?.length) {
+      sections.push(...merged.experience.map((exp: any) =>
         `${exp.role} at ${exp.company} (${exp.dateRange})\n${(exp.bullets || []).map((b: string) => `• ${b}`).join('\n')}`
-      ).join('\n\n')
+      ))
+    }
+    if (merged.projects?.length) {
+      sections.push(...merged.projects.map((proj: any) =>
+        `Project: ${proj.name}\n${(proj.bullets || []).map((b: string) => `• ${b}`).join('\n')}`
+      ))
+    }
+    if (merged.education?.length) {
+      sections.push('EDUCATION\n' + merged.education.map((edu: any) =>
+        `${edu.degree} at ${edu.institution} (${edu.dateRange})`
+      ).join('\n'))
+    }
+    if (merged.skills?.length) {
+      sections.push('SKILLS\n' + merged.skills.map((sk: any) =>
+        `${sk.category}: ${(sk.items || []).join(', ')}`
+      ).join('\n'))
+    }
+    if (merged.certifications?.length) {
+      sections.push('CERTIFICATIONS\n' + merged.certifications.join('\n'))
+    }
+    if (merged.technicalSkills?.length) {
+      sections.push('TECHNICAL SKILLS\n' + merged.technicalSkills.join(', '))
+    }
+    const optimizedContent = sections.join('\n\n')
 
     await prisma.resume.update({
       where: { id: resumeId },
       data: {
         optimizedText: optimizedContent,
-        optimizedData,
+        optimizedData: merged,
       },
     })
 
@@ -253,9 +300,22 @@ export class ResumeOptimizerService {
     return prisma.resume.findMany({ where: { userId }, orderBy: { createdAt: 'desc' }, include: { _count: { select: { coverLetters: true } } } })
   }
 
+  async getOriginalFilePath(resumeId: string, userId: string): Promise<string> {
+    const resume = await prisma.resume.findFirst({ where: { id: resumeId, userId } })
+    if (!resume) throw new Error('Resume not found')
+    if (!resume.originalFilePath) throw new Error('Original file not available (PDF uploads cannot preserve original styling)')
+    const fs = await import('fs')
+    if (!fs.existsSync(resume.originalFilePath)) throw new Error('Original file no longer exists on server')
+    return resume.originalFilePath
+  }
+
   async deleteResume(resumeId: string, userId: string): Promise<void> {
+    const resume = await prisma.resume.findFirst({ where: { id: resumeId, userId } })
     await prisma.coverLetter.deleteMany({ where: { resumeId } })
     await prisma.resume.deleteMany({ where: { id: resumeId, userId } })
+    if (resume?.originalFilePath) {
+      try { const fs = await import('fs/promises'); await fs.unlink(resume.originalFilePath) } catch {}
+    }
   }
 
   async getPricing(): Promise<{ freeCredits: number; costPerOptimization: number; plans: { credits: number; price: number }[] }> {
