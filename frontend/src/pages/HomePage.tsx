@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { AnimateOnScroll } from '@/components/common/AnimateOnScroll'
-import dashboardImg from '@/assets/dashboard.png'
 
 const faqs = [
   { q: 'Is DevPrep AI free to use?', a: 'Yes, we offer a generous free tier with access to roadmaps, quizzes, and limited AI tutor sessions. Premium plans unlock unlimited AI interactions, advanced code labs, and priority support.' },
@@ -56,12 +55,12 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* ═══════ 2. Platform Overview — MacBook mockup ═══════ */}
+      {/* ═══════ 2. Platform Overview — window showcase ═══════ */}
       <section className="relative px-6 py-28 overflow-hidden"
                style={{
                  background: 'linear-gradient(180deg, rgba(208,188,255,0.02) 0%, transparent 40%, transparent 100%)',
                }}>
-        {/* Background decoration */}
+        {/* Dot-grid background */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl h-full opacity-[0.03]"
                style={{
@@ -79,84 +78,111 @@ export function HomePage() {
                 PLATFORM OVERVIEW
               </div>
               <h2 className="text-2xl font-bold mb-3" style={{ color: 'var(--color-on-surface)' }}>
-                Your entire interview prep, in one place
+                Everything DevPrep AI offers
               </h2>
               <p className="text-sm max-w-xl mx-auto" style={{ color: 'var(--color-on-surface-variant)' }}>
-                From roadmaps to mock interviews — everything you need, beautifully organized in a single dashboard.
+                Eight integrated tools — from roadmaps to resume optimization — working together to make you interview-ready.
               </p>
             </div>
           </AnimateOnScroll>
 
           <AnimateOnScroll delay={200}>
             <div className="relative flex flex-col items-center">
-              {/* Ambient glow behind screen */}
-              <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-[80%] h-48 blur-[80px] opacity-20 pointer-events-none rounded-full"
+              {/* Glow behind window */}
+              <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-[70%] h-36 blur-[80px] opacity-15 pointer-events-none rounded-full"
                    style={{ background: 'radial-gradient(ellipse, var(--color-primary), transparent)' }} />
 
-              {/* ── MacBook Screen ── */}
-              <div className="relative w-full max-w-4xl rounded-[16px] overflow-hidden z-10"
+              {/* ── Window Frame ── */}
+              <div className="relative w-full max-w-4xl rounded-[14px] overflow-hidden z-10 shadow-2xl"
                    style={{
-                     background: '#1a1a1a',
-                     border: '1.5px solid rgba(255,255,255,0.08)',
-                     boxShadow: '0 25px 60px rgba(0,0,0,0.3), 0 0 60px rgba(208,188,255,0.03)',
-                     aspectRatio: '16/10',
+                     background: 'var(--color-surface-container-lowest)',
+                     border: '1px solid var(--color-border-subtle)',
+                     boxShadow: '0 25px 60px rgba(0,0,0,0.25)',
                    }}>
-                {/* Inner screen bezel */}
-                <div className="absolute inset-[3px] rounded-[12px] overflow-hidden"
-                     style={{ border: '1px solid rgba(255,255,255,0.04)' }}>
-                  {/* Notch */}
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-1.5 rounded-b-lg z-20"
-                       style={{ background: '#1a1a1a' }} />
+                {/* Window chrome */}
+                <div className="flex items-center gap-2 px-5 py-3.5 select-none"
+                     style={{
+                       background: 'var(--color-surface-container)',
+                       borderBottom: '1px solid var(--color-border-subtle)',
+                     }}>
+                  <div className="w-3 h-3 rounded-full" style={{ background: '#EF4444' }} />
+                  <div className="w-3 h-3 rounded-full" style={{ background: '#F59E0B' }} />
+                  <div className="w-3 h-3 rounded-full" style={{ background: '#10B981' }} />
+                  <div className="ml-3 flex-1 max-w-xs rounded-lg py-1.5 px-3 text-xs text-center truncate"
+                       style={{ background: 'var(--color-surface-container-high)', color: 'var(--color-outline)' }}>
+                    app.devprep.ai/features
+                  </div>
+                  <div className="w-5 h-5 flex items-center justify-center rounded" style={{ color: 'var(--color-outline)' }}>
+                    <span className="material-symbols-outlined text-[16px]">more_vert</span>
+                  </div>
+                </div>
 
-                  {/* Browser chrome */}
-                  <div className="flex items-center gap-1.5 px-4 py-2.5"
-                       style={{ background: 'var(--color-surface-container)' }}>
-                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#EF4444' }} />
-                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#F59E0B' }} />
-                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#10B981' }} />
-                    <div className="ml-3 flex-1 max-w-xs rounded-md py-1 px-3 text-xs text-center truncate"
-                         style={{ background: 'var(--color-surface-container-high)', color: 'var(--color-outline)' }}>
-                      app.devprep.ai/dashboard
+                {/* ── Window Content: Feature Showcase ── */}
+                <div className="p-6 md:p-8">
+                  {/* Welcome bar */}
+                  <div className="flex items-center justify-between mb-8 pb-6"
+                       style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
+                    <div>
+                      <h3 className="text-lg font-bold" style={{ color: 'var(--color-on-surface)' }}>
+                        Welcome to DevPrep AI
+                      </h3>
+                      <p className="text-xs mt-1" style={{ color: 'var(--color-on-surface-variant)' }}>
+                        Your personalized interview preparation suite
+                      </p>
                     </div>
-                    <div className="flex items-center gap-1 ml-auto text-xs" style={{ color: 'var(--color-outline)' }}>
-                      <span className="material-symbols-outlined text-[14px]">more_vert</span>
+                    <div className="hidden sm:flex items-center gap-2 text-xs px-4 py-2 rounded-lg font-semibold"
+                         style={{ background: 'rgba(208,188,255,0.1)', color: 'var(--color-primary)' }}>
+                      <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+                      AI-Powered
                     </div>
                   </div>
 
-                  {/* Dashboard screenshot */}
-                  <img
-                    src={dashboardImg}
-                    alt="DevPrep AI Dashboard"
-                    className="w-full h-full object-cover block"
-                    style={{ height: 'calc(100% - 40px)' }}
-                  />
+                  {/* Feature grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {[
+                      { icon: 'map',         title: 'Guided Roadmaps',    desc: 'Curated learning paths by senior engineers',       color: 'var(--color-primary)' },
+                      { icon: 'smart_toy',   title: 'AI Tutor',           desc: 'Real-time explanations, reviews & hints',           color: 'var(--color-secondary)' },
+                      { icon: 'data_object', title: 'Live Code Lab',      desc: 'Write, run & analyze code with AI feedback',        color: 'var(--color-tertiary)' },
+                      { icon: 'quiz',        title: 'Adaptive Quizzes',   desc: 'Dynamic difficulty that matches your skill level',  color: 'var(--color-success)' },
+                      { icon: 'style',       title: 'Flashcard Decks',    desc: 'Spaced repetition for maximum retention',          color: 'var(--color-warning)' },
+                      { icon: 'leaderboard', title: 'Progress Tracking',  desc: 'Streaks, benchmarks & peer comparisons',           color: '#FF6B6B' },
+                      { icon: 'description', title: 'Resume Optimizer',   desc: 'ATS scores, templates & gap analysis',             color: 'var(--color-primary)' },
+                      { icon: 'mail',        title: 'Cover Letters',      desc: 'AI-generated letters tailored to each role',       color: 'var(--color-secondary)' },
+                    ].map((f, i) => (
+                      <div key={f.title}
+                           className="group rounded-xl p-4 transition-all duration-200 hover:-translate-y-0.5"
+                           style={{
+                             background: `${f.color}06`,
+                             border: '1px solid',
+                             borderColor: `${f.color}12`,
+                           }}>
+                        <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-3 transition-transform group-hover:scale-110"
+                             style={{ background: `${f.color}14` }}>
+                          <span className="material-symbols-outlined text-lg" style={{ color: f.color, fontVariationSettings: "'FILL' 1" }}>{f.icon}</span>
+                        </div>
+                        <h4 className="text-sm font-semibold mb-1" style={{ color: 'var(--color-on-surface)' }}>{f.title}</h4>
+                        <p className="text-xs leading-relaxed" style={{ color: 'var(--color-on-surface-variant)' }}>{f.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Bottom stats bar */}
+                  <div className="mt-8 pt-6 flex flex-wrap items-center justify-center gap-6 md:gap-10 text-center"
+                       style={{ borderTop: '1px solid var(--color-border-subtle)' }}>
+                    {[
+                      { value: '500+', label: 'Hours of content' },
+                      { value: '40+',  label: 'Technologies' },
+                      { value: '50K+', label: 'Active developers' },
+                      { value: '95%',  label: 'Satisfaction rate' },
+                    ].map((s) => (
+                      <div key={s.label}>
+                        <div className="text-lg font-extrabold" style={{ color: 'var(--color-primary)' }}>{s.value}</div>
+                        <div className="text-xs" style={{ color: 'var(--color-on-surface-variant)' }}>{s.label}</div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-
-              {/* ── Hinge ── */}
-              <div className="relative z-10 w-[102%] max-w-[1070px] h-[10px] rounded-b-xl flex items-end justify-center -mt-[2px]"
-                   style={{
-                     background: 'linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%)',
-                     border: '1px solid rgba(255,255,255,0.04)',
-                     borderTop: 'none',
-                   }}>
-                <div className="w-[30%] h-[3px] rounded-full opacity-30" style={{ background: 'var(--color-primary)' }} />
-              </div>
-
-              {/* ── Keyboard Deck ── */}
-              <div className="relative z-0 w-[108%] max-w-[1120px] h-12 -mt-[1px]"
-                   style={{
-                     background: 'linear-gradient(180deg, #2a2a2a 0%, #222 50%, #1a1a1a 100%)',
-                     border: '1px solid rgba(255,255,255,0.04)',
-                     borderTop: 'none',
-                     borderRadius: '0 0 6px 6px',
-                     transform: 'perspective(500px) rotateX(6deg)',
-                     transformOrigin: 'top center',
-                   }} />
-
-              {/* ── Shadow on surface ── */}
-              <div className="w-[110%] max-w-[1160px] h-8 -mt-2 rounded-full blur-2xl opacity-25 pointer-events-none"
-                   style={{ background: 'rgba(0,0,0,0.5)' }} />
             </div>
           </AnimateOnScroll>
         </div>
