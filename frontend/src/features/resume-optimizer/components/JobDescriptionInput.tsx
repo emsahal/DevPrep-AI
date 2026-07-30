@@ -39,7 +39,14 @@ export function JobDescriptionInput() {
   const runOptimization = async (id: string) => {
     try {
       const optResult = await optimizeMutation.mutateAsync(id)
-      useResumeOptimizerStore.getState().setOptimizedResume(optResult.optimizedData)
+      const store = useResumeOptimizerStore.getState()
+      const originalParsed = store.uploadResult?.parsedData || {}
+      const merged = {
+        ...originalParsed,
+        ...optResult.optimizedData,
+        personalInfo: originalParsed.personalInfo || {},
+      }
+      store.setOptimizedResume(merged)
 
       const jobAnalysis = useResumeOptimizerStore.getState().jobAnalysis
       const clResult = await coverLetterMutation.mutateAsync({
