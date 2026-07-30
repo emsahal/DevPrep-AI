@@ -15,7 +15,6 @@ export function ResumeOptimizerPage() {
   const coverLetter = useResumeOptimizerStore(s => s.coverLetter)
   const uploadResult = useResumeOptimizerStore(s => s.uploadResult)
   const optimizedResume = useResumeOptimizerStore(s => s.optimizedResume)
-  const _isLoading = useResumeOptimizerStore(s => s.isLoading)
   const error = useResumeOptimizerStore(s => s.error)
   const setError = useResumeOptimizerStore(s => s.setError)
   const setCredits = useResumeOptimizerStore(s => s.setCredits)

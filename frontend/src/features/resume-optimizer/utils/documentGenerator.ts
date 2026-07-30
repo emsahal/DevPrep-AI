@@ -17,7 +17,7 @@ export async function generateResumeDocx(data: ResumeData): Promise<Blob> {
     children: [new TextRun({ text: data.personalInfo?.name || 'Resume', bold: true, size: 44, font: FONT, color: NAVY })],
   }))
 
-  const contactParts: TextRun[] = []
+  const contactParts: any[] = []
   if (data.personalInfo?.phone) contactParts.push(new TextRun({ text: data.personalInfo.phone, size: 20, font: FONT }))
   if (data.personalInfo?.email) {
     if (contactParts.length) contactParts.push(new TextRun({ text: '  |  ', size: 20, font: FONT, color: '888888' }))

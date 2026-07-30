@@ -7,7 +7,6 @@ export function CoverLetterPreview() {
   if (!coverLetter) return null
 
   const displayCompany = jobAnalysis?.companyName || 'Hiring Manager'
-  const _displayTitle = jobAnalysis?.jobTitle || 'position'
 
   return (
     <div className="rounded-xl overflow-hidden" style={{
