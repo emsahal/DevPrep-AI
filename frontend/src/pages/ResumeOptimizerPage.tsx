@@ -7,7 +7,7 @@ import { CoverLetterPreview } from '@/features/resume-optimizer/components/Cover
 import { PricingModal } from '@/features/resume-optimizer/components/PricingModal'
 import { useResumeOptimizerStore } from '@/store/resumeOptimizerStore'
 import { resumeOptimizerService } from '@/services/resumeOptimizerService'
-import { generateResumePdf, generateCoverLetterDocx } from '@/features/resume-optimizer/utils/documentGenerator'
+import { generateCoverLetterDocx } from '@/features/resume-optimizer/utils/documentGenerator'
 
 export function ResumeOptimizerPage() {
   const step = useResumeOptimizerStore(s => s.step)
@@ -44,17 +44,14 @@ export function ResumeOptimizerPage() {
       const isDocx = uploadResult?.originalName?.toLowerCase().endsWith('.docx')
       if (isDocx && uploadResult?.resumeId) {
         await resumeOptimizerService.downloadOriginal(uploadResult.resumeId, getResumeFileName('docx'))
-      } else {
-        const data = optimizedResume || uploadResult?.parsedData
-        if (data) {
-          const blob = await generateResumePdf(data as any)
-          const url = URL.createObjectURL(blob)
-          const a = document.createElement('a')
-          a.href = url
-          a.download = getResumeFileName('pdf')
-          a.click()
-          URL.revokeObjectURL(url)
-        }
+      } else if (uploadResult?.resumeId) {
+        const blob = await resumeOptimizerService.downloadPdf(uploadResult.resumeId)
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = getResumeFileName('pdf')
+        a.click()
+        URL.revokeObjectURL(url)
       }
     } catch { }
     setDownloading(null)

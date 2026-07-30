@@ -101,6 +101,21 @@ export class ResumeOptimizerController {
       res.download(filePath, resume.title)
     } catch (error) { next(error) }
   }
+
+  async downloadPdf(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const pdf = await resumeOptimizerService.generatePdf(req.params.id, req.userId!)
+      const resume = await resumeOptimizerService.getResume(req.params.id)
+      const name = resume.parsedData?.personalInfo?.name || 'Resume'
+      const parts = (name as string).trim().split(/\s+/)
+      const filename = parts.length >= 2
+        ? `${parts[0]}_${parts[1]}_Resume.pdf`
+        : `${name.replace(/\s+/g, '_')}_Resume.pdf`
+      res.set('Content-Type', 'application/pdf')
+      res.set('Content-Disposition', `attachment; filename="${filename}"`)
+      res.send(pdf)
+    } catch (error) { next(error) }
+  }
 }
 
 export const resumeOptimizerController = new ResumeOptimizerController()

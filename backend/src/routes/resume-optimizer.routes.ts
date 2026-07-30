@@ -40,6 +40,7 @@ router.post('/cover-letter', authenticate, resumeOptimizerController.generateCov
 router.get('/resumes', authenticate, resumeOptimizerController.getUserResumes.bind(resumeOptimizerController))
 router.get('/resumes/:id', authenticate, resumeOptimizerController.getResume.bind(resumeOptimizerController))
 router.get('/resumes/:id/download', authenticate, resumeOptimizerController.downloadOriginal.bind(resumeOptimizerController))
+router.get('/resumes/:id/pdf', authenticate, resumeOptimizerController.downloadPdf.bind(resumeOptimizerController))
 router.delete('/resumes/:id', authenticate, resumeOptimizerController.deleteResume.bind(resumeOptimizerController))
 router.get('/pricing', resumeOptimizerController.getPricing.bind(resumeOptimizerController))
 
