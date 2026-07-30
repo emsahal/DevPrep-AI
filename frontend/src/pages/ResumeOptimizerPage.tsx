@@ -14,7 +14,6 @@ export function ResumeOptimizerPage() {
   const gapAnalysis = useResumeOptimizerStore(s => s.gapAnalysis)
   const coverLetter = useResumeOptimizerStore(s => s.coverLetter)
   const uploadResult = useResumeOptimizerStore(s => s.uploadResult)
-  const optimizedResume = useResumeOptimizerStore(s => s.optimizedResume)
   const error = useResumeOptimizerStore(s => s.error)
   const setError = useResumeOptimizerStore(s => s.setError)
   const setCredits = useResumeOptimizerStore(s => s.setCredits)
