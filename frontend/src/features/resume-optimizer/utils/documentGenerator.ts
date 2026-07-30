@@ -6,7 +6,6 @@ export async function generateResumePdf(data: ResumeData): Promise<Blob> {
   const pageW = doc.internal.pageSize.getWidth()
   const left = 56
   let y = 48
-  const lineH = 14
   const FONT = 'Times-Roman'
 
   function addText(text: string, size: number, style: 'normal' | 'bold' | 'italic' = 'normal', color?: string, maxW?: number) {

@@ -4,7 +4,7 @@ export function ResumePreview() {
   const optimizedResume = useResumeOptimizerStore(s => s.optimizedResume)
   const uploadResult = useResumeOptimizerStore(s => s.uploadResult)
 
-  const data = optimizedResume || uploadResult?.parsedData
+  const data: any = optimizedResume || uploadResult?.parsedData
 
   if (!data) {
     return (
