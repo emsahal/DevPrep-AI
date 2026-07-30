@@ -62,7 +62,7 @@ export function Sidebar() {
         {SECTIONS.map((section, si) => (
           <div key={si}>
             {section.label && <SectionHeading label={section.label} />}
-            {section.items.map(({ to, icon, label, tag }) => {
+            {section.items.map(({ to, icon, label, tag }: { to: string; icon: string; label: string; tag?: string }) => {
               const active = location.pathname === to || (to !== '/' && location.pathname.startsWith(to))
               return (
                 <Link
