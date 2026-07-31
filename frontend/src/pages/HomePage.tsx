@@ -329,7 +329,7 @@ export function HomePage() {
                     </div>
                     <div className="flex-1 pl-4 font-mono text-xs text-primary/80">
                       <div className="mb-2">class <span className="text-blue-400">LRUCache</span>:</div>
-                      <div className="pl-4">def <span class="text-yellow-400">__init__</span>(self, capacity: int):</div>
+                      <div className="pl-4">def <span className="text-yellow-400">__init__</span>(self, capacity: int):</div>
                       <div className="pl-8">self.cap = capacity</div>
                       <div className="pl-8">self.cache = OrderedDict()</div>
                       <div className="mt-4 animate-pulse">|</div>
