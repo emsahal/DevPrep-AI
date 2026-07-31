@@ -22,7 +22,7 @@ export function HomePage() {
                style={{ background: 'var(--color-surface-container-lowest)' }}>
         {/* Full Hero Background Image */}
         <div className="absolute inset-0 z-0 pointer-events-none">
-          <img src={heroImg} alt="Hero Background" className="w-[80%] h-[80%] object-cover object-center opacity-70" />
+          <img src={heroImg} alt="Hero Background" className="pt-5 w-[80%] h-[80%] object-cover object-center opacity-70" />
           <div className="absolute inset-0 bg-gradient-to-b from-surface-container-lowest/20 via-surface-container-lowest/60 to-surface-container-lowest" />
         </div>
 
