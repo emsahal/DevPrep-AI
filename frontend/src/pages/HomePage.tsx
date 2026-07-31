@@ -104,12 +104,19 @@ export function HomePage() {
                 { icon: 'api', title: 'API Design', desc: 'REST, GraphQL, and gRPC best practices.' },
                 { icon: 'shield_person', title: 'Leadership', desc: 'Executive-level communication & conflict resolution.' },
               ].map((item) => (
-                <div key={item.title} className="bg-surface-container-lowest/50 backdrop-blur-md p-6 rounded-2xl border border-primary/20 hover:border-primary/50 transition-all flex flex-col justify-between"
-                     style={{ background: 'var(--color-surface-container-lowest)', border: '1px solid var(--color-border-subtle)' }}>
-                  <div>
-                    <span className="material-symbols-outlined text-primary mb-3 text-2xl">{item.icon}</span>
-                    <h4 className="font-semibold text-sm mb-2" style={{ color: 'var(--color-on-surface)' }}>{item.title}</h4>
-                    <p className="text-xs text-on-surface-variant/70 leading-relaxed">{item.desc}</p>
+                <div key={item.title} className="group relative backdrop-blur-xl p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between overflow-hidden"
+                     style={{
+                       background: 'linear-gradient(135deg, rgba(28,27,27,0.7) 0%, rgba(18,18,18,0.9) 100%)',
+                       borderColor: 'rgba(139,92,246,0.2)',
+                       boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
+                     }}>
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/25 transition-all duration-500 pointer-events-none" />
+                  <div className="relative z-10">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-300">
+                      <span className="material-symbols-outlined text-primary text-xl">{item.icon}</span>
+                    </div>
+                    <h4 className="font-semibold text-sm mb-2 group-hover:text-primary transition-colors" style={{ color: 'var(--color-on-surface)' }}>{item.title}</h4>
+                    <p className="text-xs text-on-surface-variant/75 leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -126,20 +133,24 @@ export function HomePage() {
             
             {/* Large Feature */}
             <AnimateOnScroll className="h-full" direction="left">
-              <div className="p-8 sm:p-10 rounded-2xl border border-white/5 h-full flex flex-col justify-between"
-                   style={{ background: 'var(--color-surface-container)' }}>
-                <div>
-                  <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6">
+              <div className="relative p-8 sm:p-10 rounded-3xl border h-full flex flex-col justify-between overflow-hidden shadow-2xl group"
+                   style={{
+                     background: 'linear-gradient(145deg, rgba(139,92,246,0.12) 0%, rgba(20,20,20,0.85) 60%, rgba(10,10,10,0.95) 100%)',
+                     borderColor: 'rgba(139,92,246,0.3)',
+                   }}>
+                <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-primary/15 rounded-full blur-3xl group-hover:bg-primary/30 transition-all duration-700 pointer-events-none" />
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-2xl bg-primary/15 border border-primary/30 flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(139,92,246,0.2)]">
                     <span className="material-symbols-outlined text-primary text-3xl">map</span>
                   </div>
-                  <div className="font-mono text-xs text-primary/80 mb-3 tracking-wider">PROVEN METHODOLOGY</div>
+                  <div className="font-mono text-xs text-primary font-semibold mb-3 tracking-wider">PROVEN METHODOLOGY</div>
                   <h3 className="text-3xl font-bold mb-4 tracking-tighter">Adaptive Curriculums</h3>
-                  <p className="text-on-surface-variant text-sm leading-relaxed opacity-80">
+                  <p className="text-on-surface-variant text-sm leading-relaxed opacity-85">
                     Our neural engine maps your current technical proficiency against target role requirements, generating a path focused exclusively on your knowledge gaps. Over 500+ hours of curriculum content covering 40+ technologies.
                   </p>
                 </div>
-                <div className="mt-8 pt-6 border-t border-white/5">
-                  <Link to="/learning-paths" className="inline-flex items-center gap-2 text-primary font-mono text-xs font-semibold tracking-wider">
+                <div className="relative z-10 mt-8 pt-6 border-t border-white/10">
+                  <Link to="/learning-paths" className="inline-flex items-center gap-2 text-primary font-mono text-xs font-semibold tracking-wider group-hover:translate-x-1 transition-transform">
                     EXPLORE MODULES <span className="material-symbols-outlined text-sm">arrow_forward</span>
                   </Link>
                 </div>
@@ -150,16 +161,24 @@ export function HomePage() {
             <AnimateOnScroll direction="right">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
-                  { icon: 'code', title: 'Real-time Critique', desc: 'Complexity analysis as you type.' },
-                  { icon: 'draw', title: 'Design Sandbox', desc: 'Interactive canvas for scaling.' },
-                  { icon: 'mic', title: 'Voice AI Coaching', desc: 'Simulated live feedback loops.' },
-                  { icon: 'analytics', title: 'Progress Analytics', desc: 'Detailed dimension mapping.' },
+                  { icon: 'code', title: 'Real-time Critique', desc: 'Complexity analysis as you type.', accent: '#8B5CF6' },
+                  { icon: 'draw', title: 'Design Sandbox', desc: 'Interactive canvas for scaling.', accent: '#4CD7F6' },
+                  { icon: 'mic', title: 'Voice AI Coaching', desc: 'Simulated live feedback loops.', accent: '#FFB869' },
+                  { icon: 'analytics', title: 'Progress Analytics', desc: 'Detailed dimension mapping.', accent: '#10B981' },
                 ].map((f) => (
-                  <div key={f.title} className="p-6 rounded-xl border border-white/5"
-                       style={{ background: 'var(--color-surface-container)' }}>
-                    <span className="material-symbols-outlined text-primary mb-3 text-2xl">{f.icon}</span>
-                    <h4 className="font-semibold text-sm mb-1">{f.title}</h4>
-                    <p className="text-xs text-on-surface-variant opacity-70 leading-relaxed">{f.desc}</p>
+                  <div key={f.title} className="group relative p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1 overflow-hidden"
+                       style={{
+                         background: 'linear-gradient(135deg, rgba(32,31,31,0.6) 0%, rgba(18,18,18,0.85) 100%)',
+                         borderColor: 'rgba(255,255,255,0.08)',
+                       }}>
+                    <div className="absolute top-0 right-0 w-20 h-20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full blur-xl pointer-events-none"
+                         style={{ background: `${f.accent}20` }} />
+                    <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110"
+                         style={{ background: `${f.accent}15`, border: `1px solid ${f.accent}30` }}>
+                      <span className="material-symbols-outlined text-xl" style={{ color: f.accent }}>{f.icon}</span>
+                    </div>
+                    <h4 className="font-semibold text-sm mb-1" style={{ color: 'var(--color-on-surface)' }}>{f.title}</h4>
+                    <p className="text-xs text-on-surface-variant opacity-75 leading-relaxed">{f.desc}</p>
                   </div>
                 ))}
               </div>
@@ -190,16 +209,19 @@ export function HomePage() {
               { step: '04', icon: 'work_history', title: 'Crush the Interview', desc: 'Simulate real interviews with company-specific questions and time pressure.' },
             ].map((s, i) => (
               <AnimateOnScroll key={s.step} delay={i * 120} direction="up">
-                <div className="flex flex-col items-center text-center relative">
+                <div className="flex flex-col items-center text-center relative group">
                   {i < 3 && (
                     <div className="hidden md:block absolute top-8 left-[60%] w-[calc(100%-40px)] h-[2px]"
-                         style={{ background: 'linear-gradient(90deg, var(--color-primary), var(--color-border-muted))' }} />
+                         style={{ background: 'linear-gradient(90deg, #8B5CF6, rgba(139,92,246,0.15))' }} />
                   )}
-                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 relative z-10"
-                       style={{ background: 'var(--color-surface-container)', border: '1px solid var(--color-border-muted)' }}>
+                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 relative z-10 transition-transform duration-300 group-hover:scale-110 shadow-[0_4px_20px_rgba(0,0,0,0.4)]"
+                       style={{
+                         background: 'linear-gradient(135deg, rgba(35,30,45,0.9) 0%, rgba(20,20,25,0.95) 100%)',
+                         border: '1px solid rgba(139,92,246,0.3)',
+                       }}>
                     <span className="material-symbols-outlined text-2xl" style={{ color: 'var(--color-primary)', fontVariationSettings: "'FILL' 1" }}>{s.icon}</span>
                   </div>
-                  <div className="text-xs font-mono font-semibold mb-2 px-3 py-1 rounded-full" style={{ background: 'rgba(208,188,255,0.1)', color: 'var(--color-primary)' }}>
+                  <div className="text-xs font-mono font-semibold mb-2 px-3 py-1 rounded-full border border-primary/20" style={{ background: 'rgba(139,92,246,0.12)', color: 'var(--color-primary)' }}>
                     Step {s.step}
                   </div>
                   <h3 className="font-semibold mb-2" style={{ color: 'var(--color-on-surface)' }}>{s.title}</h3>
@@ -236,16 +258,19 @@ export function HomePage() {
                 ))}
               </ul>
               <div className="pt-4">
-                <Link to="/code-analyzer" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm" style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
+                <Link to="/code-analyzer" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] transition-all" style={{ background: '#8B5CF6', color: '#FFF' }}>
                   Try Code Lab <span className="material-symbols-outlined text-sm">arrow_forward</span>
                 </Link>
               </div>
             </AnimateOnScroll>
 
             <AnimateOnScroll className="lg:w-1/2 w-full" direction="left">
-              <div className="bg-surface-container-lowest rounded-xl overflow-hidden border border-white/10 shadow-2xl"
-                   style={{ background: 'var(--color-surface-container-lowest)', border: '1px solid var(--color-border-subtle)' }}>
-                <div className="h-9 px-4 flex items-center gap-2 border-b border-white/5" style={{ background: 'var(--color-surface-container)' }}>
+              <div className="rounded-2xl overflow-hidden border shadow-2xl"
+                   style={{
+                     background: 'linear-gradient(145deg, rgba(25,25,30,0.9) 0%, rgba(12,12,15,0.95) 100%)',
+                     borderColor: 'rgba(139,92,246,0.25)',
+                   }}>
+                <div className="h-9 px-4 flex items-center gap-2 border-b border-white/5" style={{ background: 'rgba(35,35,40,0.6)' }}>
                   <div className="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
                   <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
                   <div className="w-2.5 h-2.5 rounded-full bg-green-500/50"></div>
@@ -259,7 +284,7 @@ export function HomePage() {
                     &nbsp;&nbsp;pq = [(0, start)]<br />
                     &nbsp;&nbsp;...
                   </div>
-                  <div className="mt-5 p-4 rounded-lg border-l-2 border-primary" style={{ background: 'rgba(208,188,255,0.06)' }}>
+                  <div className="mt-5 p-4 rounded-xl border-l-2 border-primary" style={{ background: 'rgba(139,92,246,0.08)' }}>
                     <div className="text-primary font-bold mb-1 flex items-center gap-1.5">
                       <span className="material-symbols-outlined text-sm">auto_awesome</span> AI Suggestion:
                     </div>
@@ -287,7 +312,7 @@ export function HomePage() {
               </div>
               <div className="space-y-6">
                 <div className="flex gap-4">
-                  <div className="w-10 h-10 shrink-0 rounded bg-white/5 border border-white/10 flex items-center justify-center">
+                  <div className="w-10 h-10 shrink-0 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
                     <span className="material-symbols-outlined text-primary text-xl">integration_instructions</span>
                   </div>
                   <div>
@@ -296,7 +321,7 @@ export function HomePage() {
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="w-10 h-10 shrink-0 rounded bg-white/5 border border-white/10 flex items-center justify-center">
+                  <div className="w-10 h-10 shrink-0 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
                     <span className="material-symbols-outlined text-primary text-xl">description</span>
                   </div>
                   <div>
@@ -308,9 +333,12 @@ export function HomePage() {
             </AnimateOnScroll>
 
             <AnimateOnScroll className="lg:w-1/2 w-full" direction="right">
-              <div className="rounded-xl overflow-hidden border border-white/10 shadow-xl aspect-video flex flex-col"
-                   style={{ background: 'var(--color-surface-container-lowest)' }}>
-                <div className="h-8 px-4 flex items-center gap-2 border-b border-white/5" style={{ background: 'var(--color-surface-container)' }}>
+              <div className="rounded-2xl overflow-hidden border shadow-2xl aspect-video flex flex-col"
+                   style={{
+                     background: 'linear-gradient(145deg, rgba(25,25,30,0.9) 0%, rgba(12,12,15,0.95) 100%)',
+                     borderColor: 'rgba(139,92,246,0.25)',
+                   }}>
+                <div className="h-8 px-4 flex items-center gap-2 border-b border-white/5" style={{ background: 'rgba(35,35,40,0.6)' }}>
                   <div className="flex gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
                     <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
@@ -347,8 +375,11 @@ export function HomePage() {
               <div className="text-primary font-mono text-xs tracking-widest uppercase mb-3">BENCHMARKING</div>
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter">Engineered for Results</h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 border border-white/5 rounded-2xl overflow-hidden shadow-xl"
-                 style={{ background: 'var(--color-surface-container-lowest)' }}>
+            <div className="grid grid-cols-1 md:grid-cols-3 border rounded-3xl overflow-hidden shadow-2xl"
+                 style={{
+                   background: 'linear-gradient(135deg, rgba(25,25,30,0.8) 0%, rgba(15,15,18,0.95) 100%)',
+                   borderColor: 'rgba(139,92,246,0.2)',
+                 }}>
               <div className="p-8 border-b md:border-b-0 md:border-r border-white/5">
                 <div className="font-mono text-xs text-on-surface-variant/50 mb-6 uppercase">FEATURES</div>
                 <ul className="space-y-5 text-sm font-medium">
@@ -369,7 +400,7 @@ export function HomePage() {
                   <li>~12%</li>
                 </ul>
               </div>
-              <div className="p-8" style={{ background: 'rgba(208,188,255,0.04)' }}>
+              <div className="p-8 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(139,92,246,0.05) 100%)' }}>
                 <div className="font-mono text-xs text-primary font-bold mb-6 uppercase">DEVPREP AI</div>
                 <ul className="space-y-5 text-sm font-semibold text-primary">
                   <li className="flex items-center gap-2"><span className="material-symbols-outlined text-sm">check_circle</span> Neural Engine</li>
@@ -401,8 +432,12 @@ export function HomePage() {
                 { step: '02', title: 'Dynamic Scaling', desc: 'Adjusts problem difficulty in real-time based on your latency and accuracy metrics.' },
                 { step: '03', title: 'Sentiment Analysis', desc: 'Evaluates your verbal confidence and technical communication clarity during mock loops.' },
               ].map((item) => (
-                <div key={item.step} className="p-8 rounded-xl border border-white/10" style={{ background: 'var(--color-surface-container)' }}>
-                  <div className="text-primary font-bold text-xl mb-2">{item.step}</div>
+                <div key={item.step} className="group relative p-8 rounded-2xl border transition-all duration-300 hover:-translate-y-1 overflow-hidden"
+                     style={{
+                       background: 'linear-gradient(135deg, rgba(30,30,35,0.7) 0%, rgba(18,18,22,0.9) 100%)',
+                       borderColor: 'rgba(139,92,246,0.2)',
+                     }}>
+                  <div className="text-primary font-bold text-xl mb-2 group-hover:scale-110 transition-transform origin-left">{item.step}</div>
                   <h4 className="font-semibold text-base mb-2">{item.title}</h4>
                   <p className="text-on-surface-variant text-xs sm:text-sm opacity-75 leading-relaxed">{item.desc}</p>
                 </div>
@@ -424,8 +459,12 @@ export function HomePage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Stage 1 */}
-              <div className="p-8 rounded-xl border border-white/10 flex flex-col items-center text-center" style={{ background: 'var(--color-surface-container-lowest)' }}>
-                <div className="w-14 h-14 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-6">
+              <div className="p-8 rounded-2xl border flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1"
+                   style={{
+                     background: 'linear-gradient(145deg, rgba(25,25,30,0.8) 0%, rgba(15,15,18,0.95) 100%)',
+                     borderColor: 'rgba(255,255,255,0.08)',
+                   }}>
+                <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6">
                   <span className="material-symbols-outlined text-primary text-3xl">school</span>
                 </div>
                 <h3 className="font-bold text-xl mb-3">BSCS & BSSE Students</h3>
@@ -434,19 +473,27 @@ export function HomePage() {
               </div>
 
               {/* Stage 2 */}
-              <div className="p-8 rounded-xl border border-primary/40 relative flex flex-col items-center text-center" style={{ background: 'var(--color-surface-container-lowest)' }}>
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary px-3 py-0.5 rounded-full text-[10px] font-bold text-black tracking-widest uppercase">Popular</div>
-                <div className="w-14 h-14 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mb-6">
+              <div className="p-8 rounded-2xl border relative flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1 shadow-[0_0_30px_rgba(139,92,246,0.15)]"
+                   style={{
+                     background: 'linear-gradient(145deg, rgba(139,92,246,0.12) 0%, rgba(20,20,25,0.95) 100%)',
+                     borderColor: 'rgba(139,92,246,0.4)',
+                   }}>
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary px-3 py-0.5 rounded-full text-[10px] font-bold text-black tracking-widest uppercase shadow-md">Popular</div>
+                <div className="w-14 h-14 rounded-2xl bg-primary/20 border border-primary/40 flex items-center justify-center mb-6">
                   <span className="material-symbols-outlined text-primary text-3xl">terminal</span>
                 </div>
                 <h3 className="font-bold text-xl mb-3">Fresh Graduates</h3>
                 <p className="text-on-surface-variant text-xs sm:text-sm leading-relaxed mb-6">Bridging the gap to professional software engineering with intensive technical polishing and interview simulation.</p>
-                <div className="mt-auto w-full pt-4 border-t border-white/5 text-[11px] font-mono text-white/40">ACCELERATED TRACK</div>
+                <div className="mt-auto w-full pt-4 border-t border-white/10 text-[11px] font-mono text-primary/80 font-semibold">ACCELERATED TRACK</div>
               </div>
 
               {/* Stage 3 */}
-              <div className="p-8 rounded-xl border border-white/10 flex flex-col items-center text-center" style={{ background: 'var(--color-surface-container-lowest)' }}>
-                <div className="w-14 h-14 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-6">
+              <div className="p-8 rounded-2xl border flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1"
+                   style={{
+                     background: 'linear-gradient(145deg, rgba(25,25,30,0.8) 0%, rgba(15,15,18,0.95) 100%)',
+                     borderColor: 'rgba(255,255,255,0.08)',
+                   }}>
+                <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6">
                   <span className="material-symbols-outlined text-tertiary text-3xl">architecture</span>
                 </div>
                 <h3 className="font-bold text-xl mb-3">Senior Engineers</h3>
@@ -496,7 +543,11 @@ export function HomePage() {
           </AnimateOnScroll>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <AnimateOnScroll direction="left" delay={0}>
-              <div className="p-6 rounded-xl border border-white/5 h-full" style={{ background: 'var(--color-surface-container)' }}>
+              <div className="p-6 rounded-2xl border h-full transition-all duration-300 hover:-translate-y-1"
+                   style={{
+                     background: 'linear-gradient(145deg, rgba(28,27,35,0.7) 0%, rgba(18,18,22,0.9) 100%)',
+                     borderColor: 'rgba(255,255,255,0.08)',
+                   }}>
                 <p className="text-on-surface-variant text-xs sm:text-sm leading-relaxed mb-6 italic">
                   "The system design feedback was incredibly detailed. It pointed out flaws in my database sharding logic that I never would have noticed myself."
                 </p>
@@ -511,7 +562,11 @@ export function HomePage() {
             </AnimateOnScroll>
 
             <AnimateOnScroll direction="up" delay={100}>
-              <div className="p-6 rounded-xl border border-primary/20 h-full" style={{ background: 'rgba(208,188,255,0.05)' }}>
+              <div className="p-6 rounded-2xl border h-full transition-all duration-300 hover:-translate-y-1 shadow-[0_0_25px_rgba(139,92,246,0.1)]"
+                   style={{
+                     background: 'linear-gradient(145deg, rgba(139,92,246,0.12) 0%, rgba(20,20,25,0.9) 100%)',
+                     borderColor: 'rgba(139,92,246,0.3)',
+                   }}>
                 <p className="text-on-surface text-xs sm:text-sm leading-relaxed mb-6 italic">
                   "DevPrep AI helped me transition smoothly to a top software role in just 3 months. The roadmap kept me focused on what actually matters in interviews."
                 </p>
@@ -526,7 +581,11 @@ export function HomePage() {
             </AnimateOnScroll>
 
             <AnimateOnScroll direction="right" delay={200}>
-              <div className="p-6 rounded-xl border border-white/5 h-full" style={{ background: 'var(--color-surface-container)' }}>
+              <div className="p-6 rounded-2xl border h-full transition-all duration-300 hover:-translate-y-1"
+                   style={{
+                     background: 'linear-gradient(145deg, rgba(28,27,35,0.7) 0%, rgba(18,18,22,0.9) 100%)',
+                     borderColor: 'rgba(255,255,255,0.08)',
+                   }}>
                 <p className="text-on-surface-variant text-xs sm:text-sm leading-relaxed mb-6 italic">
                   "The AI tutor doesn't just give the answer; it guides you to find it. Essential for mastering senior-level technical communication."
                 </p>
