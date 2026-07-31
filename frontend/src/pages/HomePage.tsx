@@ -56,46 +56,50 @@ export function HomePage() {
       </section>
 
       {/* ═══════ 2. Platform Overview ═══════ */}
-      <section className="py-24" style={{ background: 'var(--color-surface-container-low)' }}>
+      <section className="py-16" style={{ background: 'var(--color-surface-container-low)' }}>
         <div className="container mx-auto px-6 max-w-6xl">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          <div className="flex flex-col gap-8">
             
-            {/* Left Column: Header and Primary Spotlight */}
-            <AnimateOnScroll className="lg:col-span-7 flex flex-col gap-8" direction="left">
-              <div className="max-w-xl">
-                <div className="text-primary font-mono text-xs mb-3 tracking-widest uppercase">THE ECOSYSTEM</div>
-                <h2 className="text-3xl sm:text-4xl font-bold leading-tight mb-4 tracking-tighter">
-                  Complete Preparation <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#d0bcff]">Ecosystem</span>
-                </h2>
-                <p className="text-on-surface-variant text-sm sm:text-base opacity-80 leading-relaxed">
-                  Everything you need to master technical interview loops, from DS&A to System Design, powered by our proprietary neural engine.
-                </p>
-              </div>
-
-              {/* Featured Spotlight Card */}
-              <div className="relative flex-1 rounded-3xl overflow-hidden border border-primary/40 shadow-[0_0_30px_rgba(139,92,246,0.15)] group min-h-[360px] p-8 sm:p-10 flex flex-col justify-end"
-                   style={{ background: 'var(--color-surface-container-lowest)' }}>
-                <div className="absolute inset-0 z-0 pointer-events-none">
-                  <img src={cpeImg} alt="System Design Grid" className="w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-700" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-                </div>
-                <div className="relative z-10">
-                  <div className="w-14 h-14 rounded-2xl bg-primary/20 backdrop-blur-xl border border-primary/40 flex items-center justify-center mb-6">
-                    <span className="material-symbols-outlined text-primary text-3xl">architecture</span>
-                  </div>
-                  <h3 className="text-2xl sm:text-3xl font-bold mb-3">System Design Simulation</h3>
-                  <p className="text-on-surface-variant text-sm max-w-md leading-relaxed opacity-90">
-                    Interactive canvas for scaling distributed systems with real-time bottleneck detection and latency modeling. Master high-availability architecture.
+            {/* Top Header & Compact Primary Spotlight */}
+            <AnimateOnScroll direction="left">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                <div className="lg:col-span-5">
+                  <div className="text-primary font-mono text-xs mb-2 tracking-widest uppercase">THE ECOSYSTEM</div>
+                  <h2 className="text-2xl sm:text-3xl font-bold leading-tight mb-3 tracking-tighter">
+                    Complete Preparation <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#d0bcff]">Ecosystem</span>
+                  </h2>
+                  <p className="text-on-surface-variant text-xs sm:text-sm opacity-80 leading-relaxed">
+                    Everything you need to master technical interview loops, from DS&A to System Design, powered by our AI tutor.
                   </p>
-                  <Link to="/learning-paths" className="mt-6 inline-flex items-center gap-2 text-primary font-mono text-xs font-semibold tracking-wider">
-                    LAUNCH SIMULATOR <span className="material-symbols-outlined text-sm">arrow_outward</span>
-                  </Link>
+                </div>
+
+                {/* Featured Spotlight Card */}
+                <div className="lg:col-span-7 relative rounded-2xl overflow-hidden border border-primary/40 shadow-[0_0_25px_rgba(139,92,246,0.15)] group p-6 sm:p-7 flex flex-col justify-end"
+                     style={{ background: 'var(--color-surface-container-lowest)' }}>
+                  <div className="absolute inset-0 z-0 pointer-events-none">
+                    <img src={cpeImg} alt="System Design Grid" className="w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
+                  </div>
+                  <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                      <div className="inline-flex items-center gap-2 text-primary font-mono text-[11px] font-semibold tracking-wider mb-1">
+                        <span className="material-symbols-outlined text-base">architecture</span> SYSTEM DESIGN SIMULATION
+                      </div>
+                      <h3 className="text-lg font-bold mb-1">Interactive Architecture Sandbox</h3>
+                      <p className="text-on-surface-variant text-xs max-w-md leading-relaxed opacity-85">
+                        Interactive canvas for scaling distributed systems with bottleneck detection and latency modeling.
+                      </p>
+                    </div>
+                    <Link to="/learning-paths" className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary/20 hover:bg-primary/30 border border-primary/40 text-primary font-mono text-xs font-semibold tracking-wider transition-colors">
+                      LAUNCH <span className="material-symbols-outlined text-sm">arrow_outward</span>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </AnimateOnScroll>
 
-            {/* Right Column: Technical Matrix */}
-            <AnimateOnScroll className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-4" direction="right">
+            {/* Bottom 3-in-a-row Cards Grid */}
+            <AnimateOnScroll className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" direction="right">
               {[
                 { icon: 'smart_toy', title: '24/7 AI Tutor', desc: 'Step-by-step guidance, code walkthroughs, and instant problem explanations.' },
                 { icon: 'code', title: 'Code Analyzer', desc: 'Language-specific linting, complexity heatmaps, and automated test generation.' },
@@ -104,19 +108,19 @@ export function HomePage() {
                 { icon: 'swords', title: '1v1 Coding Duels', desc: 'Challenge peers in real-time competitive DSA battles & climb the leaderboard.' },
                 { icon: 'description', title: 'Resume Optimizer', desc: 'AI keyword extraction and ATS scoring tailored for software roles.' },
               ].map((item) => (
-                <div key={item.title} className="group relative backdrop-blur-xl p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between overflow-hidden"
+                <div key={item.title} className="group relative backdrop-blur-xl p-5 rounded-xl border transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between overflow-hidden"
                      style={{
                        background: 'linear-gradient(135deg, rgba(28,27,27,0.7) 0%, rgba(18,18,18,0.9) 100%)',
                        borderColor: 'rgba(139,92,246,0.2)',
                        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
                      }}>
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/25 transition-all duration-500 pointer-events-none" />
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/25 transition-all duration-500 pointer-events-none" />
                   <div className="relative z-10">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-300">
-                      <span className="material-symbols-outlined text-primary text-xl">{item.icon}</span>
+                    <div className="w-9 h-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-300">
+                      <span className="material-symbols-outlined text-primary text-lg">{item.icon}</span>
                     </div>
-                    <h4 className="font-semibold text-sm mb-2 group-hover:text-primary transition-colors" style={{ color: 'var(--color-on-surface)' }}>{item.title}</h4>
-                    <p className="text-xs text-on-surface-variant/75 leading-relaxed">{item.desc}</p>
+                    <h4 className="font-semibold text-xs sm:text-sm mb-1.5 group-hover:text-primary transition-colors" style={{ color: 'var(--color-on-surface)' }}>{item.title}</h4>
+                    <p className="text-[11px] sm:text-xs text-on-surface-variant/75 leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -367,114 +371,117 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* ═══════ 7. Comparison Matrix ═══════ */}
-      <section className="py-24" style={{ background: 'var(--color-surface-container-lowest)' }}>
-        <div className="container mx-auto px-6 max-w-5xl">
+      {/* ═══════ 7. Comparison Cards Section ═══════ */}
+      <section className="py-20" style={{ background: 'var(--color-surface-container-lowest)' }}>
+        <div className="container mx-auto px-6 max-w-6xl">
           <AnimateOnScroll direction="up">
-            <div className="text-center mb-14">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary font-mono text-xs mb-3 backdrop-blur-md">
-                <span className="material-symbols-outlined text-[14px]">tune</span>
-                BENCHMARKING & METRICS
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary font-mono text-xs mb-3 backdrop-blur-md">
+                <span className="material-symbols-outlined text-[14px]">insights</span>
+                MEASURABLE OUTCOMES
               </div>
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter">
                 Engineered for <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#d0bcff]">Proven Results</span>
               </h2>
-              <p className="text-on-surface-variant text-sm sm:text-base opacity-80 max-w-xl mx-auto mt-2">
-                See how AI-guided preparation outperforms traditional static study routines across key dimensions.
+              <p className="text-on-surface-variant text-xs sm:text-sm opacity-80 max-w-lg mx-auto mt-2">
+                See how AI-guided preparation transforms technical interview readiness compared to standard self-study.
               </p>
             </div>
           </AnimateOnScroll>
 
-          <AnimateOnScroll direction="up" delay={150}>
-            <div className="relative rounded-3xl overflow-hidden border shadow-[0_0_50px_rgba(139,92,246,0.15)]"
-                 style={{
-                   background: 'linear-gradient(145deg, rgba(25,24,30,0.95) 0%, rgba(12,12,15,0.98) 100%)',
-                   borderColor: 'rgba(139,92,246,0.3)',
-                 }}>
-              {/* Top ambient glow */}
-              <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-
-              {/* Table Container */}
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse min-w-[640px]">
-                  <thead>
-                    <tr className="border-b border-white/10" style={{ background: 'rgba(255,255,255,0.02)' }}>
-                      <th className="py-6 px-8 font-mono text-xs text-on-surface-variant/60 uppercase tracking-wider w-2/5">Evaluation Metric</th>
-                      <th className="py-6 px-6 font-mono text-xs text-on-surface-variant/60 uppercase tracking-wider w-1/4 text-center">Traditional Prep</th>
-                      <th className="py-6 px-8 font-mono text-xs text-primary font-bold uppercase tracking-wider w-1/3 text-center bg-primary/15 border-x border-primary/30">
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/20 text-primary border border-primary/30 text-[11px]">
-                          <span className="material-symbols-outlined text-sm">auto_awesome</span> DEVPREP AI
-                        </div>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/5 text-sm">
-                    {[
-                      {
-                        metric: 'Personalized Pathing',
-                        icon: 'route',
-                        traditional: 'Manual & Static',
-                        ai: 'Adaptive Neural Engine',
-                        aiStatus: true,
-                      },
-                      {
-                        metric: 'Technical Interview Feedback',
-                        icon: 'smart_toy',
-                        traditional: 'Peer or None',
-                        ai: '24/7 AI Tutor & Guidance',
-                        aiStatus: true,
-                      },
-                      {
-                        metric: 'System Design Sandbox',
-                        icon: 'architecture',
-                        traditional: 'Static Diagrams',
-                        ai: 'Interactive Canvas',
-                        aiStatus: true,
-                      },
-                      {
-                        metric: 'Resume Optimization',
-                        icon: 'description',
-                        traditional: 'Manual Proofreading',
-                        ai: 'Automated ATS Scanner',
-                        aiStatus: true,
-                      },
-                      {
-                        metric: 'Interview Placement Rate',
-                        icon: 'trophy',
-                        traditional: '~12%',
-                        ai: '84%',
-                        aiStatus: true,
-                        highlight: true,
-                      },
-                    ].map((row) => (
-                      <tr key={row.metric} className="transition-colors hover:bg-white/[0.02]">
-                        <td className="py-5 px-8 font-medium text-on-surface flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-primary shrink-0">
-                            <span className="material-symbols-outlined text-base">{row.icon}</span>
-                          </div>
-                          <span>{row.metric}</span>
-                        </td>
-                        <td className="py-5 px-6 text-center text-on-surface-variant/50 font-sans">
-                          <span className="inline-flex items-center gap-1 opacity-70">
-                            <span className="material-symbols-outlined text-red-400 text-sm">close</span>
-                            {row.traditional}
-                          </span>
-                        </td>
-                        <td className="py-5 px-8 text-center bg-primary/10 border-x border-primary/20 font-semibold text-primary">
-                          <div className="inline-flex items-center gap-2">
-                            <span className="material-symbols-outlined text-emerald-400 text-base">check_circle</span>
-                            <span className={row.highlight ? 'text-lg font-extrabold text-white bg-primary/30 px-3 py-0.5 rounded-full border border-primary/40' : ''}>
-                              {row.ai}
-                            </span>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Card 1: Traditional Study */}
+            <AnimateOnScroll direction="left" delay={0}>
+              <div className="p-7 rounded-2xl border border-white/10 h-full flex flex-col justify-between"
+                   style={{ background: 'linear-gradient(145deg, rgba(25,25,30,0.6) 0%, rgba(15,15,18,0.85) 100%)' }}>
+                <div>
+                  <div className="text-xs font-mono text-on-surface-variant/60 uppercase tracking-widest mb-3">TRADITIONAL PREP</div>
+                  <h3 className="text-xl font-bold mb-4 opacity-75">Self-Study & Static Cards</h3>
+                  <div className="text-3xl font-extrabold text-white/50 mb-6 font-mono">~12% <span className="text-xs font-normal text-white/40">placement rate</span></div>
+                  <ul className="space-y-3.5 text-xs text-on-surface-variant/70 border-t border-white/5 pt-4">
+                    <li className="flex items-center gap-2.5">
+                      <span className="material-symbols-outlined text-red-400/70 text-base">close</span>
+                      Manual & unguided learning tracks
+                    </li>
+                    <li className="flex items-center gap-2.5">
+                      <span className="material-symbols-outlined text-red-400/70 text-base">close</span>
+                      No real-time complexity checks
+                    </li>
+                    <li className="flex items-center gap-2.5">
+                      <span className="material-symbols-outlined text-red-400/70 text-base">close</span>
+                      Static diagrams without latency testing
+                    </li>
+                  </ul>
+                </div>
+                <div className="mt-8 pt-4 border-t border-white/5 text-[11px] font-mono text-white/30 text-center">STANDARD APPROACH</div>
               </div>
-            </div>
-          </AnimateOnScroll>
+            </AnimateOnScroll>
+
+            {/* Card 2: DEVPREP AI (Highlighted) */}
+            <AnimateOnScroll direction="up" delay={100}>
+              <div className="relative p-7 rounded-2xl border border-primary/40 h-full flex flex-col justify-between shadow-[0_0_35px_rgba(139,92,246,0.2)] overflow-hidden"
+                   style={{ background: 'linear-gradient(145deg, rgba(139,92,246,0.15) 0%, rgba(20,20,28,0.95) 100%)' }}>
+                <div className="absolute top-0 right-0 bg-primary px-3 py-1 rounded-bl-xl text-[10px] font-bold text-black uppercase tracking-wider shadow-md">
+                  Recommended
+                </div>
+                <div>
+                  <div className="inline-flex items-center gap-1.5 text-xs font-mono text-primary font-bold uppercase tracking-widest mb-3">
+                    <span className="material-symbols-outlined text-sm">auto_awesome</span> DEVPREP AI ENGINE
+                  </div>
+                  <h3 className="text-xl font-bold mb-4 text-white">AI-Accelerated Platform</h3>
+                  <div className="text-4xl font-extrabold text-primary mb-6 font-mono flex items-baseline gap-2">
+                    84% <span className="text-xs font-semibold text-primary/80">interview success rate</span>
+                  </div>
+                  <ul className="space-y-3.5 text-xs text-on-surface font-medium border-t border-primary/20 pt-4">
+                    <li className="flex items-center gap-2.5">
+                      <span className="material-symbols-outlined text-emerald-400 text-base">check_circle</span>
+                      24/7 AI Tutor with instant code hints
+                    </li>
+                    <li className="flex items-center gap-2.5">
+                      <span className="material-symbols-outlined text-emerald-400 text-base">check_circle</span>
+                      Real-time linting & complexity heatmaps
+                    </li>
+                    <li className="flex items-center gap-2.5">
+                      <span className="material-symbols-outlined text-emerald-400 text-base">check_circle</span>
+                      1v1 Peer Coding Duels & Leaderboard
+                    </li>
+                    <li className="flex items-center gap-2.5">
+                      <span className="material-symbols-outlined text-emerald-400 text-base">check_circle</span>
+                      Automated ATS Resume Optimizer
+                    </li>
+                  </ul>
+                </div>
+                <div className="mt-8 pt-4 border-t border-primary/20 text-[11px] font-mono text-primary font-bold text-center">7X FASTER PREPARATION</div>
+              </div>
+            </AnimateOnScroll>
+
+            {/* Card 3: Peer Practice */}
+            <AnimateOnScroll direction="right" delay={200}>
+              <div className="p-7 rounded-2xl border border-white/10 h-full flex flex-col justify-between"
+                   style={{ background: 'linear-gradient(145deg, rgba(25,25,30,0.6) 0%, rgba(15,15,18,0.85) 100%)' }}>
+                <div>
+                  <div className="text-xs font-mono text-on-surface-variant/60 uppercase tracking-widest mb-3">PEER MOCK LOOPS</div>
+                  <h3 className="text-xl font-bold mb-4 opacity-75">Unstructured Practice</h3>
+                  <div className="text-3xl font-extrabold text-white/50 mb-6 font-mono">~35% <span className="text-xs font-normal text-white/40">consistency</span></div>
+                  <ul className="space-y-3.5 text-xs text-on-surface-variant/70 border-t border-white/5 pt-4">
+                    <li className="flex items-center gap-2.5">
+                      <span className="material-symbols-outlined text-yellow-400/70 text-base">remove</span>
+                      Inconsistent schedule availability
+                    </li>
+                    <li className="flex items-center gap-2.5">
+                      <span className="material-symbols-outlined text-yellow-400/70 text-base">remove</span>
+                      Subjective peer feedback without metrics
+                    </li>
+                    <li className="flex items-center gap-2.5">
+                      <span className="material-symbols-outlined text-yellow-400/70 text-base">remove</span>
+                      No automated ATS CV scoring
+                    </li>
+                  </ul>
+                </div>
+                <div className="mt-8 pt-4 border-t border-white/5 text-[11px] font-mono text-white/30 text-center">LIMITED FEEDBACK</div>
+              </div>
+            </AnimateOnScroll>
+          </div>
         </div>
       </section>
 
