@@ -367,48 +367,111 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* ═══════ 7. Comparison Table ═══════ */}
+      {/* ═══════ 7. Comparison Matrix ═══════ */}
       <section className="py-24" style={{ background: 'var(--color-surface-container-lowest)' }}>
         <div className="container mx-auto px-6 max-w-5xl">
-          <AnimateOnScroll>
+          <AnimateOnScroll direction="up">
             <div className="text-center mb-14">
-              <div className="text-primary font-mono text-xs tracking-widest uppercase mb-3">BENCHMARKING</div>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter">Engineered for Results</h2>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary font-mono text-xs mb-3 backdrop-blur-md">
+                <span className="material-symbols-outlined text-[14px]">tune</span>
+                BENCHMARKING & METRICS
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter">
+                Engineered for <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#d0bcff]">Proven Results</span>
+              </h2>
+              <p className="text-on-surface-variant text-sm sm:text-base opacity-80 max-w-xl mx-auto mt-2">
+                See how AI-guided preparation outperforms traditional static study routines across key dimensions.
+              </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 border rounded-3xl overflow-hidden shadow-2xl"
+          </AnimateOnScroll>
+
+          <AnimateOnScroll direction="up" delay={150}>
+            <div className="relative rounded-3xl overflow-hidden border shadow-[0_0_50px_rgba(139,92,246,0.15)]"
                  style={{
-                   background: 'linear-gradient(135deg, rgba(25,25,30,0.8) 0%, rgba(15,15,18,0.95) 100%)',
-                   borderColor: 'rgba(139,92,246,0.2)',
+                   background: 'linear-gradient(145deg, rgba(25,24,30,0.95) 0%, rgba(12,12,15,0.98) 100%)',
+                   borderColor: 'rgba(139,92,246,0.3)',
                  }}>
-              <div className="p-8 border-b md:border-b-0 md:border-r border-white/5">
-                <div className="font-mono text-xs text-on-surface-variant/50 mb-6 uppercase">FEATURES</div>
-                <ul className="space-y-5 text-sm font-medium">
-                  <li>Personalized Pathing</li>
-                  <li>Live AI Interviewing</li>
-                  <li>System Design Simulation</li>
-                  <li>Resume ATS Check</li>
-                  <li>Interview Placement Rate</li>
-                </ul>
-              </div>
-              <div className="p-8 border-b md:border-b-0 md:border-r border-white/5">
-                <div className="font-mono text-xs text-on-surface-variant/50 mb-6 uppercase">TRADITIONAL PREP</div>
-                <ul className="space-y-5 text-sm opacity-50">
-                  <li>Manual Track Tracking</li>
-                  <li>Static Mock Interviews</li>
-                  <li>Static Diagrams</li>
-                  <li>Manual Review</li>
-                  <li>~12%</li>
-                </ul>
-              </div>
-              <div className="p-8 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(139,92,246,0.05) 100%)' }}>
-                <div className="font-mono text-xs text-primary font-bold mb-6 uppercase">DEVPREP AI</div>
-                <ul className="space-y-5 text-sm font-semibold text-primary">
-                  <li className="flex items-center gap-2"><span className="material-symbols-outlined text-sm">check_circle</span> Neural Engine</li>
-                  <li className="flex items-center gap-2"><span className="material-symbols-outlined text-sm">check_circle</span> Voice-Native AI</li>
-                  <li className="flex items-center gap-2"><span className="material-symbols-outlined text-sm">check_circle</span> Interactive Canvas</li>
-                  <li className="flex items-center gap-2"><span className="material-symbols-outlined text-sm">check_circle</span> Automated ATS</li>
-                  <li className="flex items-center gap-2"><span className="material-symbols-outlined text-sm">check_circle</span> 84%</li>
-                </ul>
+              {/* Top ambient glow */}
+              <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+
+              {/* Table Container */}
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse min-w-[640px]">
+                  <thead>
+                    <tr className="border-b border-white/10" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                      <th className="py-6 px-8 font-mono text-xs text-on-surface-variant/60 uppercase tracking-wider w-2/5">Evaluation Metric</th>
+                      <th className="py-6 px-6 font-mono text-xs text-on-surface-variant/60 uppercase tracking-wider w-1/4 text-center">Traditional Prep</th>
+                      <th className="py-6 px-8 font-mono text-xs text-primary font-bold uppercase tracking-wider w-1/3 text-center bg-primary/15 border-x border-primary/30">
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/20 text-primary border border-primary/30 text-[11px]">
+                          <span className="material-symbols-outlined text-sm">auto_awesome</span> DEVPREP AI
+                        </div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5 text-sm">
+                    {[
+                      {
+                        metric: 'Personalized Pathing',
+                        icon: 'route',
+                        traditional: 'Manual & Static',
+                        ai: 'Adaptive Neural Engine',
+                        aiStatus: true,
+                      },
+                      {
+                        metric: 'Mock Interview Feedback',
+                        icon: 'mic',
+                        traditional: 'Peer or None',
+                        ai: 'Voice-Native AI Mentor',
+                        aiStatus: true,
+                      },
+                      {
+                        metric: 'System Design Sandbox',
+                        icon: 'architecture',
+                        traditional: 'Static Diagrams',
+                        ai: 'Interactive Canvas',
+                        aiStatus: true,
+                      },
+                      {
+                        metric: 'Resume Optimization',
+                        icon: 'description',
+                        traditional: 'Manual Proofreading',
+                        ai: 'Automated ATS Scanner',
+                        aiStatus: true,
+                      },
+                      {
+                        metric: 'Interview Placement Rate',
+                        icon: 'trophy',
+                        traditional: '~12%',
+                        ai: '84%',
+                        aiStatus: true,
+                        highlight: true,
+                      },
+                    ].map((row, idx) => (
+                      <tr key={row.metric} className="transition-colors hover:bg-white/[0.02]">
+                        <td className="py-5 px-8 font-medium text-on-surface flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-primary shrink-0">
+                            <span className="material-symbols-outlined text-base">{row.icon}</span>
+                          </div>
+                          <span>{row.metric}</span>
+                        </td>
+                        <td className="py-5 px-6 text-center text-on-surface-variant/50 font-sans">
+                          <span className="inline-flex items-center gap-1 opacity-70">
+                            <span className="material-symbols-outlined text-red-400 text-sm">close</span>
+                            {row.traditional}
+                          </span>
+                        </td>
+                        <td className="py-5 px-8 text-center bg-primary/10 border-x border-primary/20 font-semibold text-primary">
+                          <div className="inline-flex items-center gap-2">
+                            <span className="material-symbols-outlined text-emerald-400 text-base">check_circle</span>
+                            <span className={row.highlight ? 'text-lg font-extrabold text-white bg-primary/30 px-3 py-0.5 rounded-full border border-primary/40' : ''}>
+                              {row.ai}
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           </AnimateOnScroll>
