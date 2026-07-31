@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useState, type FormEvent } from 'react'
 import { AnimateOnScroll } from '@/components/common/AnimateOnScroll'
-import heroImg from 'C:/Users/user/.gemini/antigravity/brain/ab3cc7b3-0d90-4ad8-83cb-6e9d8f8a5040/students_interview_prep_1785492502704.jpg'
+import heroImg from '@/assets/hero.jpg'
 
 const faqs = [
   { q: 'Is there a free trial?', a: 'Yes. Our platform allows complete diagnostic assessments and access to introductory modules across all CS paths at no cost.' },
@@ -102,7 +102,7 @@ export function HomePage() {
                 <img
                   className="w-full h-auto max-w-lg mx-auto rounded-2xl object-cover transform group-hover:scale-102 transition-transform duration-500"
                   src={heroImg}
-                  alt="DevPrep AI Platform"
+                  alt="Students Preparing for Tech Interviews"
                 />
               </div>
             </div>
