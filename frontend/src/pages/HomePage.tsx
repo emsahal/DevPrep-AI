@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { AnimateOnScroll } from '@/components/common/AnimateOnScroll'
 import heroImg from '@/assets/hero.jpg'
-import cpeImg from '@/assets/cpe.jpg'
 
 const faqs = [
   { q: 'Is there a free trial?', a: 'Yes. Our platform allows complete diagnostic assessments and access to introductory modules across all CS paths at no cost.' },
