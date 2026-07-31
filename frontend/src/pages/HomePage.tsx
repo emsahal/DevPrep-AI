@@ -19,12 +19,12 @@ export function HomePage() {
     <div className="min-h-[calc(100vh-64px)] flex flex-col font-sans selection:bg-primary/30 selection:text-white" style={{ background: 'var(--color-surface-container-lowest)', color: 'var(--color-on-surface)' }}>
 
       {/* ═══════ 1. Hero Section ═══════ */}
-      <section className="relative min-h-[85vh] pt-32 pb-20 flex flex-col items-center justify-center overflow-hidden"
+      <section className="relative min-h-[85vh] pt-16 pb-20 flex flex-col items-center justify-center overflow-hidden"
                style={{ background: 'var(--color-surface-container-lowest)' }}>
-        {/* Adjusted Background Image Container */}
-        <div className="absolute inset-x-0 top-20 bottom-4 z-0 opacity-25 pointer-events-none flex items-center justify-center px-6">
-          <img src={heroImg} alt="Hero Background" className="w-full max-w-4xl h-full object-contain object-top rounded-3xl" />
-          <div className="absolute inset-0 bg-gradient-to-b from-surface-container-lowest/80 via-transparent to-surface-container-lowest" />
+        {/* Full Hero Background Image */}
+        <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
+          <img src={heroImg} alt="Hero Background" className="w-full h-full object-cover object-center" />
+          <div className="absolute inset-0 bg-gradient-to-b from-surface-container-lowest/30 via-surface-container-lowest/80 to-surface-container-lowest" />
         </div>
 
         <div className="container mx-auto px-6 text-center relative z-10 max-w-5xl">
