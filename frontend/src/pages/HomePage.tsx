@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { AnimateOnScroll } from '@/components/common/AnimateOnScroll'
-import heroImg from '@/assets/hero.jpg'
 
 const faqs = [
   { q: 'Is there a free trial?', a: 'Yes. Our platform allows complete diagnostic assessments and access to introductory modules across all CS paths at no cost.' },
@@ -20,12 +19,6 @@ export function HomePage() {
       {/* ═══════ 1. Hero Section ═══════ */}
       <section className="relative min-h-[85vh] pt-16 pb-20 flex flex-col items-center justify-center overflow-hidden"
                style={{ background: 'var(--color-surface-container-lowest)' }}>
-        {/* Full Hero Background Image */}
-        <div className="absolute inset-0 z-0 pointer-events-none flex items-end justify-center">
-          <img src={heroImg} alt="Hero Background" className="w-full h-[75%] object-cover object-top opacity-65 translate-y-6" />
-          <div className="absolute inset-0 bg-gradient-to-b from-surface-container-lowest via-surface-container-lowest/30 to-surface-container-lowest" />
-        </div>
-
         <div className="container mx-auto px-6 text-center relative z-10 max-w-5xl">
           <h1 className="font-extrabold text-4xl sm:text-5xl md:text-6xl max-w-5xl mx-auto leading-[1.1] mb-6 tracking-tighter">
             The AI-Engineered Path to <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#d0bcff]">Software Career Success</span>
