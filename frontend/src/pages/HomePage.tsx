@@ -21,17 +21,12 @@ export function HomePage() {
       <section className="relative min-h-[85vh] pt-16 pb-20 flex flex-col items-center justify-center overflow-hidden"
                style={{ background: 'var(--color-surface-container-lowest)' }}>
         {/* Full Hero Background Image */}
-        <div className="absolute inset-0 z-0 opacity-18 pointer-events-none flex items-center justify-center">
+        <div className="absolute inset-0 z-0 opacity-10 pointer-events-none flex items-center justify-center">
           <img src={heroImg} alt="Hero Background" className="w-full max-w-5xl h-[80%] object-cover object-top translate-y-8 rounded-2xl" />
           <div className="absolute inset-0 bg-gradient-to-b from-surface-container-lowest/40 via-surface-container-lowest/70 to-surface-container-lowest" />
         </div>
 
         <div className="container mx-auto px-6 text-center relative z-10 max-w-5xl">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary font-mono text-xs mb-8 backdrop-blur-md">
-            <span className="material-symbols-outlined text-[14px]">bolt</span>
-            ENGINEERING EXCELLENCE FOR STUDENTS
-          </div>
-
           <h1 className="font-extrabold text-4xl sm:text-5xl md:text-6xl max-w-5xl mx-auto leading-[1.1] mb-6 tracking-tighter">
             The AI-Engineered Path to <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#d0bcff]">Software Career Success</span>
           </h1>
