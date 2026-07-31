@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { AnimateOnScroll } from '@/components/common/AnimateOnScroll'
-import heroImg from '@/assets/hero.jpg'
 
 const faqs = [
   { q: 'Is there a free trial?', a: 'Yes. Our platform allows complete diagnostic assessments and access to introductory modules across all CS paths at no cost.' },
@@ -20,10 +19,11 @@ export function HomePage() {
       {/* ═══════ 1. Hero Section ═══════ */}
       <section className="relative h-[calc(100vh-64px)] min-h-[650px] pt-16 pb-20 flex flex-col items-center justify-center overflow-hidden"
                style={{ background: 'var(--color-surface-container-lowest)' }}>
-        {/* Full Hero Background Image */}
-        <div className="absolute inset-0 z-0 pointer-events-none flex items-end justify-center">
-          <img src={heroImg} alt="Hero Background" className="w-full h-[75%] object-cover object-top opacity-70 translate-y-14" />
-          <div className="absolute inset-0 bg-gradient-to-b from-surface-container-lowest via-surface-container-lowest/30 to-surface-container-lowest" />
+        {/* Pure Gradient Background Effects */}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-gradient-to-tr from-[#8B5CF6]/20 via-[#d0bcff]/15 to-transparent rounded-full blur-[120px]" />
+          <div className="absolute top-1/3 left-1/3 w-[350px] h-[350px] bg-cyan-500/10 rounded-full blur-[100px]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-surface-container-lowest/60 via-transparent to-surface-container-lowest" />
         </div>
 
         <div className="container mx-auto px-6 text-center relative z-10 max-w-5xl">
