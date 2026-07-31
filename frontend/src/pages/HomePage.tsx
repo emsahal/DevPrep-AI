@@ -60,41 +60,16 @@ export function HomePage() {
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="flex flex-col gap-8">
             
-            {/* Top Header & Compact Primary Spotlight */}
+            {/* Top Header */}
             <AnimateOnScroll direction="left">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-                <div className="lg:col-span-5">
-                  <div className="text-primary font-mono text-xs mb-2 tracking-widest uppercase">THE ECOSYSTEM</div>
-                  <h2 className="text-2xl sm:text-3xl font-bold leading-tight mb-3 tracking-tighter">
-                    Complete Preparation <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#d0bcff]">Ecosystem</span>
-                  </h2>
-                  <p className="text-on-surface-variant text-xs sm:text-sm opacity-80 leading-relaxed">
-                    Everything you need to master technical interview loops, from DS&A to System Design, powered by our AI tutor.
-                  </p>
-                </div>
-
-                {/* Featured Spotlight Card */}
-                <div className="lg:col-span-7 relative rounded-2xl overflow-hidden border border-primary/40 shadow-[0_0_25px_rgba(139,92,246,0.15)] group p-6 sm:p-7 flex flex-col justify-end"
-                     style={{ background: 'var(--color-surface-container-lowest)' }}>
-                  <div className="absolute inset-0 z-0 pointer-events-none">
-                    <img src={cpeImg} alt="System Design Grid" className="w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-700" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
-                  </div>
-                  <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                      <div className="inline-flex items-center gap-2 text-primary font-mono text-[11px] font-semibold tracking-wider mb-1">
-                        <span className="material-symbols-outlined text-base">architecture</span> SYSTEM DESIGN SIMULATION
-                      </div>
-                      <h3 className="text-lg font-bold mb-1">Interactive Architecture Sandbox</h3>
-                      <p className="text-on-surface-variant text-xs max-w-md leading-relaxed opacity-85">
-                        Interactive canvas for scaling distributed systems with bottleneck detection and latency modeling.
-                      </p>
-                    </div>
-                    <Link to="/learning-paths" className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary/20 hover:bg-primary/30 border border-primary/40 text-primary font-mono text-xs font-semibold tracking-wider transition-colors">
-                      LAUNCH <span className="material-symbols-outlined text-sm">arrow_outward</span>
-                    </Link>
-                  </div>
-                </div>
+              <div className="max-w-2xl">
+                <div className="text-primary font-mono text-xs mb-2 tracking-widest uppercase">THE ECOSYSTEM</div>
+                <h2 className="text-2xl sm:text-3xl font-bold leading-tight mb-3 tracking-tighter">
+                  Complete Preparation <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#d0bcff]">Ecosystem</span>
+                </h2>
+                <p className="text-on-surface-variant text-xs sm:text-sm opacity-80 leading-relaxed">
+                  Everything you need to master technical interview loops, from DS&A practice to AI-driven feedback and competitive duels.
+                </p>
               </div>
             </AnimateOnScroll>
 
@@ -371,114 +346,101 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* ═══════ 7. Comparison Cards Section ═══════ */}
+      {/* ═══════ 7. 2-Column Comparison Section ═══════ */}
       <section className="py-20" style={{ background: 'var(--color-surface-container-lowest)' }}>
-        <div className="container mx-auto px-6 max-w-6xl">
+        <div className="container mx-auto px-6 max-w-5xl">
           <AnimateOnScroll direction="up">
             <div className="text-center mb-12">
               <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary font-mono text-xs mb-3 backdrop-blur-md">
-                <span className="material-symbols-outlined text-[14px]">insights</span>
-                MEASURABLE OUTCOMES
+                <span className="material-symbols-outlined text-[14px]">compare_arrows</span>
+                FEATURE COMPARISON
               </div>
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter">
                 Engineered for <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#d0bcff]">Proven Results</span>
               </h2>
               <p className="text-on-surface-variant text-xs sm:text-sm opacity-80 max-w-lg mx-auto mt-2">
-                See how AI-guided preparation transforms technical interview readiness compared to standard self-study.
+                See what is included in DevPrep AI compared to traditional unguided self-study.
               </p>
             </div>
           </AnimateOnScroll>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Card 1: Traditional Study */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Column 1: Traditional Prep */}
             <AnimateOnScroll direction="left" delay={0}>
-              <div className="p-7 rounded-2xl border border-white/10 h-full flex flex-col justify-between"
+              <div className="p-8 rounded-3xl border border-white/10 h-full flex flex-col justify-between"
                    style={{ background: 'linear-gradient(145deg, rgba(25,25,30,0.6) 0%, rgba(15,15,18,0.85) 100%)' }}>
                 <div>
-                  <div className="text-xs font-mono text-on-surface-variant/60 uppercase tracking-widest mb-3">TRADITIONAL PREP</div>
-                  <h3 className="text-xl font-bold mb-4 opacity-75">Self-Study & Static Cards</h3>
-                  <div className="text-3xl font-extrabold text-white/50 mb-6 font-mono">~12% <span className="text-xs font-normal text-white/40">placement rate</span></div>
-                  <ul className="space-y-3.5 text-xs text-on-surface-variant/70 border-t border-white/5 pt-4">
-                    <li className="flex items-center gap-2.5">
-                      <span className="material-symbols-outlined text-red-400/70 text-base">close</span>
-                      Manual & unguided learning tracks
+                  <div className="text-xs font-mono text-on-surface-variant/60 uppercase tracking-widest mb-3">TRADITIONAL METHOD</div>
+                  <h3 className="text-2xl font-bold mb-4 opacity-75">Standard Self-Study</h3>
+                  <p className="text-xs text-on-surface-variant/70 leading-relaxed mb-6">
+                    Relying on static PDF cards, manual note-taking, and unguided practice sets without real-time AI assistance.
+                  </p>
+                  <ul className="space-y-4 text-xs text-on-surface-variant/70 border-t border-white/5 pt-6">
+                    <li className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-red-400 text-lg shrink-0">cancel</span>
+                      <span>No 24/7 AI tutor for instant code explanations</span>
                     </li>
-                    <li className="flex items-center gap-2.5">
-                      <span className="material-symbols-outlined text-red-400/70 text-base">close</span>
-                      No real-time complexity checks
+                    <li className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-red-400 text-lg shrink-0">cancel</span>
+                      <span>No real-time linting & complexity heatmaps</span>
                     </li>
-                    <li className="flex items-center gap-2.5">
-                      <span className="material-symbols-outlined text-red-400/70 text-base">close</span>
-                      Static diagrams without latency testing
+                    <li className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-red-400 text-lg shrink-0">cancel</span>
+                      <span>No 1v1 peer coding duels or leaderboards</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-red-400 text-lg shrink-0">cancel</span>
+                      <span>No automated ATS resume optimization</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-red-400 text-lg shrink-0">cancel</span>
+                      <span>No spaced repetition flashcard algorithm</span>
                     </li>
                   </ul>
                 </div>
-                <div className="mt-8 pt-4 border-t border-white/5 text-[11px] font-mono text-white/30 text-center">STANDARD APPROACH</div>
+                <div className="mt-8 pt-4 border-t border-white/5 text-xs font-mono text-white/30 text-center">LIMITATIONS OF STATIC STUDY</div>
               </div>
             </AnimateOnScroll>
 
-            {/* Card 2: DEVPREP AI (Highlighted) */}
-            <AnimateOnScroll direction="up" delay={100}>
-              <div className="relative p-7 rounded-2xl border border-primary/40 h-full flex flex-col justify-between shadow-[0_0_35px_rgba(139,92,246,0.2)] overflow-hidden"
+            {/* Column 2: DEVPREP AI (Highlighted) */}
+            <AnimateOnScroll direction="right" delay={100}>
+              <div className="relative p-8 rounded-3xl border border-primary/40 h-full flex flex-col justify-between shadow-[0_0_40px_rgba(139,92,246,0.2)] overflow-hidden"
                    style={{ background: 'linear-gradient(145deg, rgba(139,92,246,0.15) 0%, rgba(20,20,28,0.95) 100%)' }}>
-                <div className="absolute top-0 right-0 bg-primary px-3 py-1 rounded-bl-xl text-[10px] font-bold text-black uppercase tracking-wider shadow-md">
-                  Recommended
+                <div className="absolute top-0 right-0 bg-primary px-4 py-1 rounded-bl-2xl text-[10px] font-bold text-black uppercase tracking-wider shadow-md">
+                  Complete Platform
                 </div>
                 <div>
                   <div className="inline-flex items-center gap-1.5 text-xs font-mono text-primary font-bold uppercase tracking-widest mb-3">
-                    <span className="material-symbols-outlined text-sm">auto_awesome</span> DEVPREP AI ENGINE
+                    <span className="material-symbols-outlined text-sm">auto_awesome</span> DEVPREP AI PLATFORM
                   </div>
-                  <h3 className="text-xl font-bold mb-4 text-white">AI-Accelerated Platform</h3>
-                  <div className="text-4xl font-extrabold text-primary mb-6 font-mono flex items-baseline gap-2">
-                    84% <span className="text-xs font-semibold text-primary/80">interview success rate</span>
-                  </div>
-                  <ul className="space-y-3.5 text-xs text-on-surface font-medium border-t border-primary/20 pt-4">
-                    <li className="flex items-center gap-2.5">
-                      <span className="material-symbols-outlined text-emerald-400 text-base">check_circle</span>
-                      24/7 AI Tutor with instant code hints
+                  <h3 className="text-2xl font-bold mb-4 text-white">Full AI Interview Suite</h3>
+                  <p className="text-xs text-on-surface-variant opacity-90 leading-relaxed mb-6">
+                    All-in-one AI ecosystem designed specifically to train, analyze, and elevate computer science candidates.
+                  </p>
+                  <ul className="space-y-4 text-xs text-on-surface font-semibold border-t border-primary/20 pt-6">
+                    <li className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-emerald-400 text-lg shrink-0">check_circle</span>
+                      <span>24/7 AI Tutor with instant code walkthroughs</span>
                     </li>
-                    <li className="flex items-center gap-2.5">
-                      <span className="material-symbols-outlined text-emerald-400 text-base">check_circle</span>
-                      Real-time linting & complexity heatmaps
+                    <li className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-emerald-400 text-lg shrink-0">check_circle</span>
+                      <span>Interactive Code Analyzer & test generation</span>
                     </li>
-                    <li className="flex items-center gap-2.5">
-                      <span className="material-symbols-outlined text-emerald-400 text-base">check_circle</span>
-                      1v1 Peer Coding Duels & Leaderboard
+                    <li className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-emerald-400 text-lg shrink-0">check_circle</span>
+                      <span>Real-time 1v1 Peer Coding Duels & Rankings</span>
                     </li>
-                    <li className="flex items-center gap-2.5">
-                      <span className="material-symbols-outlined text-emerald-400 text-base">check_circle</span>
-                      Automated ATS Resume Optimizer
+                    <li className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-emerald-400 text-lg shrink-0">check_circle</span>
+                      <span>Automated ATS Resume Optimizer for Tech CVs</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-emerald-400 text-lg shrink-0">check_circle</span>
+                      <span>SM-2 Spaced Repetition Flashcards & Quizzes</span>
                     </li>
                   </ul>
                 </div>
-                <div className="mt-8 pt-4 border-t border-primary/20 text-[11px] font-mono text-primary font-bold text-center">7X FASTER PREPARATION</div>
-              </div>
-            </AnimateOnScroll>
-
-            {/* Card 3: Peer Practice */}
-            <AnimateOnScroll direction="right" delay={200}>
-              <div className="p-7 rounded-2xl border border-white/10 h-full flex flex-col justify-between"
-                   style={{ background: 'linear-gradient(145deg, rgba(25,25,30,0.6) 0%, rgba(15,15,18,0.85) 100%)' }}>
-                <div>
-                  <div className="text-xs font-mono text-on-surface-variant/60 uppercase tracking-widest mb-3">PEER MOCK LOOPS</div>
-                  <h3 className="text-xl font-bold mb-4 opacity-75">Unstructured Practice</h3>
-                  <div className="text-3xl font-extrabold text-white/50 mb-6 font-mono">~35% <span className="text-xs font-normal text-white/40">consistency</span></div>
-                  <ul className="space-y-3.5 text-xs text-on-surface-variant/70 border-t border-white/5 pt-4">
-                    <li className="flex items-center gap-2.5">
-                      <span className="material-symbols-outlined text-yellow-400/70 text-base">remove</span>
-                      Inconsistent schedule availability
-                    </li>
-                    <li className="flex items-center gap-2.5">
-                      <span className="material-symbols-outlined text-yellow-400/70 text-base">remove</span>
-                      Subjective peer feedback without metrics
-                    </li>
-                    <li className="flex items-center gap-2.5">
-                      <span className="material-symbols-outlined text-yellow-400/70 text-base">remove</span>
-                      No automated ATS CV scoring
-                    </li>
-                  </ul>
-                </div>
-                <div className="mt-8 pt-4 border-t border-white/5 text-[11px] font-mono text-white/30 text-center">LIMITED FEEDBACK</div>
+                <div className="mt-8 pt-4 border-t border-primary/20 text-xs font-mono text-primary font-bold text-center">ALL-IN-ONE SOLUTION</div>
               </div>
             </AnimateOnScroll>
           </div>
