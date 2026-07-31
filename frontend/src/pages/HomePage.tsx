@@ -21,7 +21,7 @@ export function HomePage() {
       <section className="relative min-h-[85vh] pt-16 pb-20 flex flex-col items-center justify-center overflow-hidden"
                style={{ background: 'var(--color-surface-container-lowest)' }}>
         {/* Full Hero Background Image */}
-        <div className="absolute inset-0 z-0 opacity-10 pointer-events-none flex items-center justify-center">
+        <div className="absolute inset-0 z-0 opacity-75 pointer-events-none flex items-center justify-center">
           <img src={heroImg} alt="Hero Background" className="w-full max-w-5xl h-[80%] object-cover object-top translate-y-8 rounded-2xl" />
           <div className="absolute inset-0 bg-gradient-to-b from-surface-container-lowest/40 via-surface-container-lowest/70 to-surface-container-lowest" />
         </div>
