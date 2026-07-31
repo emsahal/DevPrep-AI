@@ -446,7 +446,7 @@ export function HomePage() {
                         aiStatus: true,
                         highlight: true,
                       },
-                    ].map((row, idx) => (
+                    ].map((row) => (
                       <tr key={row.metric} className="transition-colors hover:bg-white/[0.02]">
                         <td className="py-5 px-8 font-medium text-on-surface flex items-center gap-3">
                           <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-primary shrink-0">
