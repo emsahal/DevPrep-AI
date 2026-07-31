@@ -5,11 +5,11 @@ import heroImg from '@/assets/hero.jpg'
 import cpeImg from '@/assets/cpe.jpg'
 
 const faqs = [
-  { q: 'Is there a free trial?', a: 'Yes. Our "First Sprint" program allows for a complete diagnostic assessment and access to the first 3 modules of any curriculum track at no cost.' },
-  { q: 'How realistic are the mock interviews?', a: 'We utilize high-fidelity voice-to-voice models trained specifically on engineering interview patterns, simulating live whiteboarding and behavioral cross-examination.' },
-  { q: 'What programming languages are supported?', a: 'Full support for C++, Java, Python, Go, TypeScript, and Rust, including language-specific optimization feedback and idiom checks.' },
+  { q: 'Is there a free trial?', a: 'Yes. Our platform allows complete diagnostic assessments and access to introductory modules across all CS paths at no cost.' },
+  { q: 'How realistic are the mock practice sessions?', a: 'Our AI Tutor provides structured, step-by-step technical interviewing questions, instant rubrics, and real-time code analysis.' },
+  { q: 'What programming languages are supported?', a: 'Full support for C++, Java, Python, Go, JavaScript, TypeScript, and Rust, including language-specific optimization feedback and idiom checks.' },
   { q: 'How does the AI tutor work?', a: 'Our AI tutor provides real-time explanations, code reviews, and hints. You can ask questions about any topic, get code walkthroughs, or request personalized study plans.' },
-  { q: 'Can I practice company-specific questions?', a: 'Absolutely. Our platform includes curated question banks from top tech firms, fintechs, and high-growth startups with company-specific mock interviews and grading rubrics.' },
+  { q: 'Can I practice company-specific questions?', a: 'Absolutely. Our platform includes curated question banks and practice topics covering core computer science subjects and interview patterns.' },
 ]
 
 export function HomePage() {
@@ -97,12 +97,12 @@ export function HomePage() {
             {/* Right Column: Technical Matrix */}
             <AnimateOnScroll className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-4" direction="right">
               {[
-                { icon: 'terminal', title: 'DS&A Mastery', desc: '500+ curated problems with AI-driven hint generation.' },
-                { icon: 'psychology', title: 'Behavioral AI', desc: 'Simulated soft-skill loops with sentiment analysis.' },
-                { icon: 'cloud_sync', title: 'Distributed Systems', desc: 'Master CAP theorem and consensus protocols.' },
-                { icon: 'database', title: 'DB Internals', desc: 'Deep dives into B-Trees, LSM trees, and indexing.' },
-                { icon: 'api', title: 'API Design', desc: 'REST, GraphQL, and gRPC best practices.' },
-                { icon: 'shield_person', title: 'Leadership', desc: 'Executive-level communication & conflict resolution.' },
+                { icon: 'smart_toy', title: '24/7 AI Tutor', desc: 'Step-by-step guidance, code walkthroughs, and instant problem explanations.' },
+                { icon: 'code', title: 'Code Analyzer', desc: 'Language-specific linting, complexity heatmaps, and automated test generation.' },
+                { icon: 'quiz', title: 'Adaptive Quizzes', desc: 'Topic-based practice tests with instant rubrics & detailed explanations.' },
+                { icon: 'style', title: 'Spaced Flashcards', desc: 'Master key CS formulas, algorithms, and concepts with SM-2 retention.' },
+                { icon: 'swords', title: '1v1 Coding Duels', desc: 'Challenge peers in real-time competitive DSA battles & climb the leaderboard.' },
+                { icon: 'description', title: 'Resume Optimizer', desc: 'AI keyword extraction and ATS scoring tailored for software roles.' },
               ].map((item) => (
                 <div key={item.title} className="group relative backdrop-blur-xl p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between overflow-hidden"
                      style={{
@@ -143,15 +143,15 @@ export function HomePage() {
                   <div className="w-14 h-14 rounded-2xl bg-primary/15 border border-primary/30 flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(139,92,246,0.2)]">
                     <span className="material-symbols-outlined text-primary text-3xl">map</span>
                   </div>
-                  <div className="font-mono text-xs text-primary font-semibold mb-3 tracking-wider">PROVEN METHODOLOGY</div>
-                  <h3 className="text-3xl font-bold mb-4 tracking-tighter">Adaptive Curriculums</h3>
+                  <div className="font-mono text-xs text-primary font-semibold mb-3 tracking-wider">STRUCTURED ROADMAPS</div>
+                  <h3 className="text-3xl font-bold mb-4 tracking-tighter">Curated Learning Paths</h3>
                   <p className="text-on-surface-variant text-sm leading-relaxed opacity-85">
-                    Our neural engine maps your current technical proficiency against target role requirements, generating a path focused exclusively on your knowledge gaps. Over 500+ hours of curriculum content covering 40+ technologies.
+                    Navigate structured paths covering Data Structures, Algorithms, System Design, Frontend, Backend, and DevOps. Track your progress with personalized skill analytics and milestone badges.
                   </p>
                 </div>
                 <div className="relative z-10 mt-8 pt-6 border-t border-white/10">
                   <Link to="/learning-paths" className="inline-flex items-center gap-2 text-primary font-mono text-xs font-semibold tracking-wider group-hover:translate-x-1 transition-transform">
-                    EXPLORE MODULES <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                    EXPLORE PATHS <span className="material-symbols-outlined text-sm">arrow_forward</span>
                   </Link>
                 </div>
               </div>
@@ -161,10 +161,10 @@ export function HomePage() {
             <AnimateOnScroll direction="right">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
-                  { icon: 'code', title: 'Real-time Critique', desc: 'Complexity analysis as you type.', accent: '#8B5CF6' },
-                  { icon: 'draw', title: 'Design Sandbox', desc: 'Interactive canvas for scaling.', accent: '#4CD7F6' },
-                  { icon: 'mic', title: 'Voice AI Coaching', desc: 'Simulated live feedback loops.', accent: '#FFB869' },
-                  { icon: 'analytics', title: 'Progress Analytics', desc: 'Detailed dimension mapping.', accent: '#10B981' },
+                  { icon: 'code', title: 'Live Code Analyzer', desc: 'Syntax linting & O(N) complexity checks.', accent: '#8B5CF6' },
+                  { icon: 'smart_toy', title: 'Interactive AI Tutor', desc: 'Ask questions & get instant coding hints.', accent: '#4CD7F6' },
+                  { icon: 'swords', title: 'Live Coding Duels', desc: 'Compete 1v1 with peers on speed & accuracy.', accent: '#FFB869' },
+                  { icon: 'description', title: 'Resume ATS Optimizer', desc: 'Tailor your CV for top software roles.', accent: '#10B981' },
                 ].map((f) => (
                   <div key={f.title} className="group relative p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1 overflow-hidden"
                        style={{
@@ -194,19 +194,19 @@ export function HomePage() {
           <AnimateOnScroll direction="up">
             <div className="text-center mb-14">
               <div className="font-mono text-xs text-primary/80 mb-3 tracking-widest uppercase">WORKFLOW</div>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-3 tracking-tighter">How it works</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold mb-3 tracking-tighter">How DevPrep AI Works</h2>
               <p className="text-on-surface-variant max-w-xl mx-auto text-sm sm:text-base">
-                Four simple steps to interview mastery through our procedural AI pipeline.
+                Four simple steps to transform your technical preparation into verified job offers.
               </p>
             </div>
           </AnimateOnScroll>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
             {[
-              { step: '01', icon: 'person_add', title: 'Create Account', desc: 'Sign up free and set your target companies, role, and experience level.' },
-              { step: '02', icon: 'route', title: 'Pick a Roadmap', desc: 'Choose from 40+ curated paths or let AI build a personalized plan.' },
-              { step: '03', icon: 'psychology', title: 'Learn & Practice', desc: 'Study with AI tutor, solve coding labs, and take adaptive quizzes daily.' },
-              { step: '04', icon: 'work_history', title: 'Crush the Interview', desc: 'Simulate real interviews with company-specific questions and time pressure.' },
+              { step: '01', icon: 'person_add', title: 'Create Account', desc: 'Select your target CS track, technologies, and career milestones.' },
+              { step: '02', icon: 'route', title: 'Choose a Path', desc: 'Enroll in structured learning paths or generate custom AI practice sets.' },
+              { step: '03', icon: 'psychology', title: 'Practice & Analyze', desc: 'Solve challenges, analyze code, and practice with our 24/7 AI tutor.' },
+              { step: '04', icon: 'military_tech', title: 'Duel & Optimize', desc: 'Test skills in 1v1 duels, optimize your resume, and ace technical interviews.' },
             ].map((s, i) => (
               <AnimateOnScroll key={s.step} delay={i * 120} direction="up">
                 <div className="flex flex-col items-center text-center relative group">
@@ -418,10 +418,10 @@ export function HomePage() {
                         aiStatus: true,
                       },
                       {
-                        metric: 'Mock Interview Feedback',
-                        icon: 'mic',
+                        metric: 'Technical Interview Feedback',
+                        icon: 'smart_toy',
                         traditional: 'Peer or None',
-                        ai: 'Voice-Native AI Mentor',
+                        ai: '24/7 AI Tutor & Guidance',
                         aiStatus: true,
                       },
                       {
