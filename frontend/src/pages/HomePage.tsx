@@ -18,7 +18,7 @@ export function HomePage() {
     <div className="min-h-[calc(100vh-64px)] flex flex-col font-sans selection:bg-primary/30 selection:text-white" style={{ background: 'var(--color-surface-container-lowest)', color: 'var(--color-on-surface)' }}>
 
       {/* ═══════ 1. Hero Section ═══════ */}
-      <section className="relative min-h-[85vh] pt-16 pb-20 flex flex-col items-center justify-center overflow-hidden"
+      <section className="relative h-[calc(100vh-64px)] min-h-[650px] pt-16 pb-20 flex flex-col items-center justify-center overflow-hidden"
                style={{ background: 'var(--color-surface-container-lowest)' }}>
         {/* Full Hero Background Image */}
         <div className="absolute inset-0 z-0 pointer-events-none flex items-end justify-center">
