@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useState, type FormEvent } from 'react'
+import { useState } from 'react'
 import { AnimateOnScroll } from '@/components/common/AnimateOnScroll'
 import heroImg from '@/assets/hero.jpg'
 
@@ -13,99 +13,43 @@ const faqs = [
 
 export function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
-  const [searchQuery, setSearchQuery] = useState('')
-
-  const handleSearch = (e: FormEvent) => {
-    e.preventDefault()
-    if (searchQuery.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`
-    }
-  }
 
   return (
     <div className="min-h-[calc(100vh-64px)] flex flex-col font-sans selection:bg-primary/30 selection:text-white" style={{ background: 'var(--color-surface-container-lowest)', color: 'var(--color-on-surface)' }}>
 
       {/* ═══════ 1. Hero Section ═══════ */}
-      <section className="relative py-12 overflow-hidden bg-black sm:pb-16 lg:pb-20 xl:pb-24">
-        <div className="px-4 mx-auto relative sm:px-6 lg:px-8 max-w-7xl">
-          <div className="grid items-center grid-cols-1 gap-y-12 lg:grid-cols-2 gap-x-16">
-            <div>
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-400 font-mono text-xs mb-6 backdrop-blur-md">
-                <span className="material-symbols-outlined text-[14px]">bolt</span>
-                ENGINEERING EXCELLENCE FOR STUDENTS
-              </div>
+      <section className="relative min-h-[85vh] pt-16 pb-20 flex flex-col items-center justify-center overflow-hidden"
+               style={{ background: 'var(--color-surface-container-lowest)' }}>
+        {/* Full Hero Background Image */}
+        <div className="absolute inset-0 z-0 pointer-events-none flex items-end justify-center">
+          <img src={heroImg} alt="Hero Background" className="w-full h-[75%] object-cover object-top opacity-40 translate-y-14" />
+          <div className="absolute inset-0 bg-gradient-to-b from-surface-container-lowest via-surface-container-lowest/30 to-surface-container-lowest" />
+        </div>
 
-              <h1 className="text-4xl font-extrabold text-white sm:text-5xl lg:text-6xl xl:text-7xl tracking-tighter leading-[1.1]">
-                The AI-Engineered Path to <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-indigo-400">Software Career Success</span>
-              </h1>
-              
-              <p className="mt-4 text-base sm:text-lg font-normal text-gray-400 sm:mt-6 leading-relaxed">
-                Empowering Computer Science & Software Engineering students with AI-powered DSA practice, system design simulation, and interactive interview coaching.
-              </p>
+        <div className="container mx-auto px-6 text-center relative z-10 max-w-5xl">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary font-mono text-xs mb-8 backdrop-blur-md">
+            <span className="material-symbols-outlined text-[14px]">bolt</span>
+            ENGINEERING EXCELLENCE FOR STUDENTS
+          </div>
 
-              <form onSubmit={handleSearch} className="relative mt-8 rounded-full sm:mt-10">
-                <div className="relative">
-                  <div className="absolute rounded-full -inset-px bg-gradient-to-r from-cyan-500 to-purple-500"></div>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-6 pointer-events-none">
-                      <svg className="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                      </svg>
-                    </div>
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Try Java Developer, React Dev, System Design..."
-                      className="block w-full py-4 pr-36 text-white placeholder-gray-500 bg-black border border-transparent rounded-full pl-14 sm:py-5 focus:border-transparent focus:ring-0 text-sm sm:text-base outline-none"
-                    />
-                  </div>
-                </div>
-                <div className="sm:absolute flex sm:right-1.5 sm:inset-y-1.5 mt-3 sm:mt-0">
-                  <button type="submit" className="inline-flex items-center justify-center w-full px-6 py-4 sm:py-3 text-xs sm:text-sm font-semibold tracking-widest text-black uppercase transition-all duration-200 bg-white rounded-full sm:w-auto hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(34,211,238,0.5)]">
-                    Find Tracks
-                  </button>
-                </div>
-              </form>
+          <h1 className="font-extrabold text-4xl sm:text-5xl md:text-6xl max-w-5xl mx-auto leading-[1.1] mb-6 tracking-tighter">
+            The AI-Engineered Path to <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#d0bcff]">Software Career Success</span>
+          </h1>
 
-              <div className="mt-8 sm:mt-10">
-                <p className="text-base font-semibold text-white">Trusted by 15,000+ CS & SE Students</p>
+          <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl mx-auto mb-10 opacity-80 leading-relaxed">
+            Empowering Computer Science & Software Engineering students with AI-powered DSA practice, system design simulation, and interactive interview coaching.
+          </p>
 
-                <div className="flex items-center mt-3">
-                  <div className="flex text-amber-400 gap-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <span key={star} className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                    ))}
-                  </div>
-                  <span className="ml-3 text-sm font-bold text-white"> 4.9/5 </span>
-                  <span className="ml-1 text-sm font-normal text-gray-400"> (14k Verified Reviews) </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="relative">
-              {/* Background Glow */}
-              <div className="absolute inset-0">
-                <svg className="blur-3xl filter opacity-60" style={{ filter: 'blur(64px)' }} width="444" height="536" viewBox="0 0 444 536" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M225.919 112.719C343.98 64.6648 389.388 -70.487 437.442 47.574C485.496 165.635 253.266 481.381 135.205 529.435C17.1445 577.488 57.9596 339.654 9.9057 221.593C-38.1482 103.532 107.858 160.773 225.919 112.719Z" fill="url(#hero-gradient)" />
-                  <defs>
-                    <linearGradient id="hero-gradient" x1="82.7339" y1="550.792" x2="-39.945" y2="118.965" gradientUnits="userSpaceOnUse">
-                      <stop offset="0%" stopColor="#06b6d4" />
-                      <stop offset="100%" stopColor="#a855f7" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </div>
-
-              {/* Foreground Hero Image */}
-              <div className="relative z-10 p-2 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl overflow-hidden group">
-                <img
-                  className="w-full h-auto max-w-lg mx-auto rounded-2xl object-cover transform group-hover:scale-102 transition-transform duration-500"
-                  src={heroImg}
-                  alt="Students Preparing for Tech Interviews"
-                />
-              </div>
-            </div>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link to="/register"
+                  className="px-10 py-4 rounded-full font-semibold text-base text-white w-full sm:w-auto transition-all shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:shadow-[0_0_45px_rgba(139,92,246,0.5)] hover:-translate-y-0.5 active:translate-y-0"
+                  style={{ background: '#8B5CF6' }}>
+              Get Started
+            </Link>
+            <Link to="/learning-paths"
+                  className="bg-white/5 border border-white/10 backdrop-blur-md px-10 py-4 rounded-full font-semibold text-base text-on-surface w-full sm:w-auto hover:bg-white/10 transition-colors">
+              View Systems
+            </Link>
           </div>
         </div>
       </section>
