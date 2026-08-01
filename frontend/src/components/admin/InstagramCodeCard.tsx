@@ -1,57 +1,50 @@
-import type { CSSProperties, ReactNode } from 'react'
+import type { CSSProperties } from 'react'
 import logo from '@/assets/logo.png'
-
-export interface InstagramCardOption {
-  letter: string
-  text: string
-}
-
-interface InstagramQuestionCardProps {
-  quizTitle: string
-  topicTitle: string
-  index: number
-  total: number
-  question: string
-  options: string[]
-  style?: CSSProperties
-}
 
 const SANS = "'Inter', system-ui, -apple-system, sans-serif"
 const MONO = "'JetBrains Mono', monospace"
 
-const GRADIENT = 'linear-gradient(160deg, #050810 0%, #0a1826 50%, #0d2432 100%)'
-const LETTERS = ['A', 'B', 'C', 'D']
+const GRADIENT = 'linear-gradient(160deg, #050810 0%, #0a1f1a 50%, #0d2b21 100%)'
+const ACCENT = '#7fd88f'
 
 function pad(n: number): string {
   return String(n).padStart(2, '0')
 }
 
-function highlightCode(text: string): ReactNode[] {
-  const parts = text.split(/(`[^`]+`)/g)
-  return parts.map((part, i) => {
-    if (part.startsWith('`') && part.endsWith('`')) {
-      return (
-        <span key={i} style={{ color: '#7ee3a0' }}>
-          {part.slice(1, -1)}
-        </span>
-      )
-    }
-    return <span key={i}>{part}</span>
-  })
+function cleanQuestion(text: string): string {
+  return text
+    .replace(/\*\*\*(.*?)\*\*\*/g, '$1')
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/__(.*?)__/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\s+/g, ' ')
+    .trim()
 }
 
-export function InstagramQuestionCard({
-  quizTitle,
+function truncateQuestion(text: string, max = 150): string {
+  return text.length > max ? `${text.slice(0, max).trimEnd()}…` : text
+}
+
+interface InstagramCodeCardProps {
+  topicTitle: string
+  index: number
+  total: number
+  question: string
+  code: string[]
+  style?: CSSProperties
+}
+
+export function InstagramCodeCard({
   topicTitle,
   index,
   total,
   question,
-  options,
+  code,
   style,
-}: InstagramQuestionCardProps) {
-  const label = topicTitle || quizTitle
+}: InstagramCodeCardProps) {
   const number = pad(index + 1)
   const totalStr = pad(total)
+  const displayQuestion = truncateQuestion(cleanQuestion(question))
 
   return (
     <div
@@ -93,7 +86,7 @@ export function InstagramQuestionCard({
           width: 700,
           height: 700,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(89,194,255,0.16), transparent 70%)',
+          background: 'radial-gradient(circle, rgba(127,216,143,0.12), transparent 70%)',
           zIndex: 0,
         }}
       />
@@ -104,9 +97,10 @@ export function InstagramQuestionCard({
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          padding: '80px 64px 40px',
+          padding: '80px 64px 36px',
           position: 'relative',
           zIndex: 1,
+          minHeight: 0,
         }}
       >
         <div
@@ -114,70 +108,64 @@ export function InstagramQuestionCard({
             fontFamily: MONO,
             fontSize: 22,
             fontWeight: 700,
-            color: '#7dd3fc',
+            color: ACCENT,
             letterSpacing: 3,
             textTransform: 'uppercase',
-            marginBottom: 26,
+            marginBottom: 22,
           }}
         >
-          {label}&nbsp;·&nbsp;Quiz
+          {topicTitle}&nbsp;·&nbsp;Code
         </div>
 
         <div
           style={{
-            fontSize: 56,
-            lineHeight: 1.32,
+            fontSize: 34,
+            lineHeight: 1.35,
             fontWeight: 800,
             color: '#f7f9fc',
-            marginBottom: 44,
+            marginBottom: 32,
             letterSpacing: -0.5,
-            maxWidth: '90%',
+            maxWidth: '92%',
             display: '-webkit-box',
-            WebkitLineClamp: 3,
+            WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
-            paddingBottom: 12,
+            paddingBottom: 8,
           }}
         >
-          {highlightCode(question)}
+          {displayQuestion}
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {options.map((text, i) => (
-            <div
+        <div
+          style={{
+            flex: 1,
+            minHeight: 0,
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 18,
+          }}
+        >
+          {code.map((block, i) => (
+            <pre
               key={i}
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 26,
-                background: 'rgba(255,255,255,0.045)',
+                fontFamily: MONO,
+                fontSize: 30,
+                lineHeight: 1.55,
+                color: '#dbe5df',
+                background: 'rgba(255,255,255,0.035)',
                 border: '1px solid rgba(255,255,255,0.09)',
-                borderRadius: 18,
-                padding: '22px 30px',
+                borderRadius: 16,
+                padding: '28px 32px',
+                margin: 0,
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+                overflow: 'hidden',
               }}
             >
-              <div
-                style={{
-                  fontFamily: MONO,
-                  fontSize: 22,
-                  fontWeight: 800,
-                  color: '#7dd3fc',
-                  flexShrink: 0,
-                }}
-              >
-                {LETTERS[i] ?? String(i + 1)}
-              </div>
-              <span
-                style={{
-                  fontSize: 30,
-                  lineHeight: 1.3,
-                  fontWeight: 500,
-                  color: '#e9edf5',
-                }}
-              >
-                {text}
-              </span>
-            </div>
+              {block}
+            </pre>
           ))}
         </div>
       </div>

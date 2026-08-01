@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react'
+import type { CSSProperties } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import logo from '@/assets/logo.png'
@@ -18,22 +18,9 @@ function cleanQuestion(text: string): string {
     .replace(/\*\*\*(.*?)\*\*\*/g, '$1')
     .replace(/\*\*(.*?)\*\*/g, '$1')
     .replace(/__(.*?)__/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
     .replace(/\s+/g, ' ')
     .trim()
-}
-
-function highlightCode(text: string): ReactNode[] {
-  const parts = text.split(/(`[^`]+`)/g)
-  return parts.map((part, i) => {
-    if (part.startsWith('`') && part.endsWith('`')) {
-      return (
-        <span key={i} style={{ color: ACCENT }}>
-          {part.slice(1, -1)}
-        </span>
-      )
-    }
-    return <span key={i}>{part}</span>
-  })
 }
 
 function questionFontSize(text: string): number {
@@ -115,22 +102,6 @@ export function InstagramInterviewCard({
           zIndex: 0,
         }}
       />
-      <div
-        style={{
-          fontFamily: MONO,
-          position: 'absolute',
-          top: 36,
-          right: 48,
-          fontSize: 24,
-          fontWeight: 700,
-          color: 'rgba(255,255,255,0.35)',
-          letterSpacing: 1,
-          zIndex: 2,
-        }}
-      >
-        {number}
-        <span style={{ color: 'rgba(255,255,255,0.12)' }}>/{totalStr}</span>
-      </div>
 
       <div
         style={{
@@ -169,7 +140,7 @@ export function InstagramInterviewCard({
             maxWidth: '92%',
           }}
         >
-          {highlightCode(displayQuestion)}
+          {displayQuestion}
         </div>
 
         <div
@@ -222,18 +193,25 @@ export function InstagramInterviewCard({
                   },
                   code({ children }) {
                     return (
-                      <code
+                      <code style={{ fontFamily: MONO, fontSize: '0.9em', color: 'inherit' }}>
+                        {children}
+                      </code>
+                    )
+                  },
+                  blockquote({ children }) {
+                    return (
+                      <p
                         style={{
-                          fontFamily: MONO,
-                          fontSize: '0.85em',
-                          background: 'rgba(127,216,143,0.12)',
-                          color: ACCENT,
-                          padding: '2px 8px',
-                          borderRadius: 6,
+                          margin: '0 0 14px',
+                          fontSize: 24,
+                          fontStyle: 'italic',
+                          color: 'rgba(255,255,255,0.55)',
+                          borderLeft: '3px solid rgba(127,216,143,0.35)',
+                          paddingLeft: 18,
                         }}
                       >
                         {children}
-                      </code>
+                      </p>
                     )
                   },
                   table({ children }) {
