@@ -281,12 +281,12 @@ function InstagramPreview({
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {cards.map((card, i) => (
             <div key={i} className="rounded-xl overflow-hidden" style={{ border: '1px solid var(--color-border-muted)' }}>
-              <div className="relative" style={{ paddingTop: '100%' }}>
+              <div className="relative" style={{ paddingTop: '125%' }}>
                 <div
                   className="absolute inset-0 flex items-center justify-center overflow-hidden"
                   style={{ background: 'var(--color-surface-container)' }}
                 >
-                  <div style={{ transform: 'scale(0.2)', transformOrigin: 'top left', width: 1080, height: 1080 }}>
+                  <div style={{ transform: 'scale(0.2)', transformOrigin: 'top left', width: 1080, height: 1350 }}>
                     {card}
                   </div>
                 </div>

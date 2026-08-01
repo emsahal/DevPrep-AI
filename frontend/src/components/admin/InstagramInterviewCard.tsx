@@ -1,14 +1,13 @@
-import type { CSSProperties } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
+import logo from '@/assets/logo.png'
 
-const GRADIENT = 'linear-gradient(135deg, #064e3b 0%, #065f46 55%, #0f766e 100%)'
+const SANS = "'Inter', system-ui, -apple-system, sans-serif"
+const MONO = "'JetBrains Mono', monospace"
 
-interface InstagramInterviewCardProps {
-  topicTitle: string
-  index: number
-  total: number
-  question: string
-  answer: string
-  style?: CSSProperties
+const GRADIENT = 'linear-gradient(160deg, #050810 0%, #0a1f1a 50%, #0d2b21 100%)'
+
+function pad(n: number): string {
+  return String(n).padStart(2, '0')
 }
 
 function stripMarkdown(text: string): string {
@@ -28,6 +27,29 @@ function stripMarkdown(text: string): string {
     .trim()
 }
 
+function highlightCode(text: string): ReactNode[] {
+  const parts = text.split(/(`[^`]+`)/g)
+  return parts.map((part, i) => {
+    if (part.startsWith('`') && part.endsWith('`')) {
+      return (
+        <span key={i} style={{ color: '#7fd88f' }}>
+          {part.slice(1, -1)}
+        </span>
+      )
+    }
+    return <span key={i}>{part}</span>
+  })
+}
+
+interface InstagramInterviewCardProps {
+  topicTitle: string
+  index: number
+  total: number
+  question: string
+  answer: string
+  style?: CSSProperties
+}
+
 export function InstagramInterviewCard({
   topicTitle,
   index,
@@ -36,118 +58,173 @@ export function InstagramInterviewCard({
   answer,
   style,
 }: InstagramInterviewCardProps) {
-  const cleanQuestion = stripMarkdown(question)
+  const number = pad(index + 1)
+  const totalStr = pad(total)
   const cleanAnswer = stripMarkdown(answer)
 
   return (
     <div
       style={{
         width: 1080,
-        height: 1080,
+        height: 1350,
         background: GRADIENT,
-        color: '#ffffff',
+        color: '#e6e8ef',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        fontFamily: "'Geist', system-ui, -apple-system, sans-serif",
         position: 'relative',
+        fontFamily: SANS,
         ...style,
       }}
     >
-      <div style={{ padding: '48px 60px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div
-            style={{
-              width: 34,
-              height: 34,
-              borderRadius: 10,
-              background: '#2dd4bf',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 20,
-              fontWeight: 800,
-              color: '#064e3b',
-            }}
-          >
-            I
-          </div>
-          <span style={{ fontSize: 26, fontWeight: 700, letterSpacing: 0.5 }}>Interview Prep</span>
-        </div>
-        <span
-          style={{
-            fontSize: 30,
-            fontWeight: 800,
-            color: '#2dd4bf',
-            background: 'rgba(45,212,191,0.15)',
-            padding: '12px 24px',
-            borderRadius: 999,
-          }}
-        >
-          {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
-        </span>
+      <div
+        style={{
+          fontFamily: MONO,
+          position: 'absolute',
+          top: -70,
+          right: -30,
+          fontSize: 480,
+          fontWeight: 800,
+          color: 'rgba(255,255,255,0.045)',
+          lineHeight: 1,
+          letterSpacing: -20,
+          zIndex: 0,
+          userSelect: 'none',
+        }}
+      >
+        {number}
+      </div>
+      <div
+        style={{
+          position: 'absolute',
+          bottom: -100,
+          right: -180,
+          width: 700,
+          height: 700,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(127,216,143,0.16), transparent 70%)',
+          zIndex: 0,
+        }}
+      />
+      <div
+        style={{
+          fontFamily: MONO,
+          position: 'absolute',
+          top: 44,
+          right: 48,
+          fontSize: 24,
+          fontWeight: 700,
+          color: 'rgba(255,255,255,0.35)',
+          letterSpacing: 1,
+          zIndex: 2,
+        }}
+      >
+        {number}
+        <span style={{ color: 'rgba(255,255,255,0.12)' }}>/{totalStr}</span>
       </div>
 
-      <div style={{ padding: '24px 60px 0', fontSize: 24, fontWeight: 500, color: '#99f6e4' }}>
-        {topicTitle}
-      </div>
-
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '24px 60px', minHeight: 0 }}>
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          padding: '80px 64px 40px',
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
         <div
           style={{
-            fontSize: 44,
-            lineHeight: 1.3,
+            fontFamily: MONO,
+            fontSize: 22,
+            fontWeight: 700,
+            color: '#7fd88f',
+            letterSpacing: 3,
+            textTransform: 'uppercase',
+            marginBottom: 26,
+          }}
+        >
+          {topicTitle}&nbsp;·&nbsp;Interview Prep
+        </div>
+
+        <div
+          style={{
+            fontSize: 54,
+            lineHeight: 1.26,
             fontWeight: 800,
-            color: '#ffffff',
+            color: '#f7f9fc',
+            marginBottom: 64,
+            letterSpacing: -0.5,
+            maxWidth: '92%',
             display: '-webkit-box',
             WebkitLineClamp: 4,
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
           }}
         >
-          {cleanQuestion}
+          {highlightCode(question)}
         </div>
 
-        <div
-          style={{
-            marginTop: 28,
-            background: 'rgba(255,255,255,0.1)',
-            border: '1px solid rgba(255,255,255,0.2)',
-            borderRadius: 22,
-            padding: '26px 30px',
-          }}
-        >
-          <div style={{ fontSize: 20, fontWeight: 700, color: '#5eead4', marginBottom: 12, letterSpacing: 1 }}>
-            ✓ ANSWER
-          </div>
+        <div style={{ position: 'relative', paddingLeft: 44, borderLeft: '3px solid rgba(127,216,143,0.5)' }}>
           <div
             style={{
-              fontSize: 30,
-              lineHeight: 1.45,
-              fontWeight: 500,
-              color: '#f0fdfa',
+              position: 'absolute',
+              left: -6,
+              top: -46,
+              fontSize: 130,
+              fontWeight: 800,
+              color: 'rgba(127,216,143,0.22)',
+              fontFamily: 'Georgia, serif',
+              lineHeight: 1,
+            }}
+          >
+            &ldquo;
+          </div>
+          <p
+            style={{
+              fontSize: 34,
+              lineHeight: 1.55,
+              color: '#e9edf5',
+              fontWeight: 400,
+              marginTop: 8,
               display: '-webkit-box',
-              WebkitLineClamp: 8,
+              WebkitLineClamp: 9,
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
             }}
           >
             {cleanAnswer || 'See the full explanation on DevPrep.'}
-          </div>
+          </p>
         </div>
       </div>
 
       <div
         style={{
+          fontFamily: MONO,
+          flexShrink: 0,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '34px 60px 52px',
-          borderTop: '1px solid rgba(255,255,255,0.15)',
+          padding: '32px 64px',
+          borderTop: '1px solid rgba(255,255,255,0.08)',
+          position: 'relative',
+          zIndex: 1,
         }}
       >
-        <span style={{ fontSize: 24, fontWeight: 600, color: '#5eead4' }}>@devprep.ai</span>
-        <span style={{ fontSize: 24, fontWeight: 500, color: '#99f6e4' }}>Question {index + 1}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <img
+            src={logo}
+            alt="DevPrep AI logo"
+            style={{ width: 40, height: 40, objectFit: 'contain', borderRadius: 10 }}
+          />
+          <span style={{ fontSize: 24, fontWeight: 700, color: 'rgba(255,255,255,0.55)' }}>
+            devpreps.tech
+          </span>
+        </div>
+        <span style={{ fontSize: 22, color: 'rgba(255,255,255,0.3)', letterSpacing: 1 }}>
+          {number} / {totalStr}
+        </span>
       </div>
     </div>
   )

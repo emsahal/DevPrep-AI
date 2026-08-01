@@ -1,4 +1,5 @@
-import type { CSSProperties } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
+import logo from '@/assets/logo.png'
 
 export interface InstagramCardOption {
   letter: string
@@ -15,9 +16,29 @@ interface InstagramQuestionCardProps {
   style?: CSSProperties
 }
 
-const GRADIENT = 'linear-gradient(135deg, #1e1b4b 0%, #312e81 55%, #5b21b6 100%)'
+const SANS = "'Inter', system-ui, -apple-system, sans-serif"
+const MONO = "'JetBrains Mono', monospace"
 
+const GRADIENT = 'linear-gradient(160deg, #050810 0%, #0a1826 50%, #0d2432 100%)'
 const LETTERS = ['A', 'B', 'C', 'D']
+
+function pad(n: number): string {
+  return String(n).padStart(2, '0')
+}
+
+function highlightCode(text: string): ReactNode[] {
+  const parts = text.split(/(`[^`]+`)/g)
+  return parts.map((part, i) => {
+    if (part.startsWith('`') && part.endsWith('`')) {
+      return (
+        <span key={i} style={{ color: '#7ee3a0' }}>
+          {part.slice(1, -1)}
+        </span>
+      )
+    }
+    return <span key={i}>{part}</span>
+  })
+}
 
 export function InstagramQuestionCard({
   quizTitle,
@@ -28,81 +49,69 @@ export function InstagramQuestionCard({
   options,
   style,
 }: InstagramQuestionCardProps) {
-  const optionsData: InstagramCardOption[] = options.map((text, i) => ({
-    letter: LETTERS[i] ?? String(i + 1),
-    text,
-  }))
+  const label = topicTitle || quizTitle
+  const number = pad(index + 1)
+  const totalStr = pad(total)
 
   return (
     <div
       style={{
         width: 1080,
-        height: 1080,
+        height: 1350,
         background: GRADIENT,
-        color: '#ffffff',
+        color: '#e6e8ef',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        fontFamily: "'Geist', system-ui, -apple-system, sans-serif",
         position: 'relative',
+        fontFamily: SANS,
         ...style,
       }}
     >
       <div
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '48px 60px 0',
+          fontFamily: MONO,
+          position: 'absolute',
+          top: -70,
+          right: -30,
+          fontSize: 480,
+          fontWeight: 800,
+          color: 'rgba(255,255,255,0.045)',
+          lineHeight: 1,
+          letterSpacing: -20,
+          zIndex: 0,
+          userSelect: 'none',
         }}
       >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 14,
-            background: 'rgba(255,255,255,0.12)',
-            padding: '12px 22px',
-            borderRadius: 999,
-            border: '1px solid rgba(255,255,255,0.25)',
-          }}
-        >
-          <div
-            style={{
-              width: 34,
-              height: 34,
-              borderRadius: 10,
-              background: '#a78bfa',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 20,
-              fontWeight: 800,
-              color: '#1e1b4b',
-            }}
-          >
-            D
-          </div>
-          <span style={{ fontSize: 26, fontWeight: 700, letterSpacing: 0.5 }}>DevPrep</span>
-        </div>
-        <span
-          style={{
-            fontSize: 30,
-            fontWeight: 800,
-            color: '#a78bfa',
-            background: 'rgba(167,139,250,0.15)',
-            padding: '12px 24px',
-            borderRadius: 999,
-          }}
-        >
-          {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
-        </span>
+        {number}
       </div>
-
-      <div style={{ padding: '36px 60px 0' }}>
-        <div style={{ fontSize: 24, fontWeight: 500, color: '#c7d2fe' }}>
-          {topicTitle || quizTitle}
-        </div>
+      <div
+        style={{
+          position: 'absolute',
+          top: 120,
+          left: -200,
+          width: 700,
+          height: 700,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(89,194,255,0.16), transparent 70%)',
+          zIndex: 0,
+        }}
+      />
+      <div
+        style={{
+          fontFamily: MONO,
+          position: 'absolute',
+          top: 44,
+          right: 48,
+          fontSize: 24,
+          fontWeight: 700,
+          color: 'rgba(255,255,255,0.35)',
+          letterSpacing: 1,
+          zIndex: 2,
+        }}
+      >
+        {number}
+        <span style={{ color: 'rgba(255,255,255,0.12)' }}>/{totalStr}</span>
       </div>
 
       <div
@@ -111,69 +120,81 @@ export function InstagramQuestionCard({
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          padding: '20px 60px',
-          minHeight: 0,
+          padding: '80px 64px 40px',
+          position: 'relative',
+          zIndex: 1,
         }}
       >
         <div
           style={{
-            fontSize: 46,
-            lineHeight: 1.3,
+            fontFamily: MONO,
+            fontSize: 22,
             fontWeight: 700,
-            marginBottom: 28,
+            color: '#7dd3fc',
+            letterSpacing: 3,
+            textTransform: 'uppercase',
+            marginBottom: 26,
+          }}
+        >
+          {label}&nbsp;·&nbsp;Quiz
+        </div>
+
+        <div
+          style={{
+            fontSize: 56,
+            lineHeight: 1.24,
+            fontWeight: 800,
+            color: '#f7f9fc',
+            marginBottom: 56,
+            letterSpacing: -0.5,
+            maxWidth: '90%',
             display: '-webkit-box',
-            WebkitLineClamp: 6,
+            WebkitLineClamp: 4,
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
           }}
         >
-          {question}
+          {highlightCode(question)}
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-          {optionsData.map((opt) => (
+          {options.map((text, i) => (
             <div
-              key={opt.letter}
+              key={i}
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 20,
-                background: 'rgba(255,255,255,0.09)',
-                border: '1px solid rgba(255,255,255,0.18)',
-                borderRadius: 20,
-                padding: '20px 26px',
+                gap: 26,
+                background: 'rgba(255,255,255,0.045)',
+                border: '1px solid rgba(255,255,255,0.09)',
+                borderRadius: 18,
+                padding: '26px 32px',
               }}
             >
               <div
                 style={{
-                  width: 54,
-                  height: 54,
-                  borderRadius: 14,
-                  background: '#a78bfa',
-                  color: '#1e1b4b',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  fontFamily: MONO,
+                  fontSize: 22,
                   fontWeight: 800,
-                  fontSize: 28,
+                  color: '#7dd3fc',
                   flexShrink: 0,
                 }}
               >
-                {opt.letter}
+                {LETTERS[i] ?? String(i + 1)}
               </div>
-              <div
+              <span
                 style={{
                   fontSize: 32,
-                  lineHeight: 1.3,
                   fontWeight: 500,
+                  color: '#e9edf5',
                   display: '-webkit-box',
                   WebkitLineClamp: 2,
                   WebkitBoxOrient: 'vertical',
                   overflow: 'hidden',
                 }}
               >
-                {opt.text}
-              </div>
+                {text}
+              </span>
             </div>
           ))}
         </div>
@@ -181,18 +202,29 @@ export function InstagramQuestionCard({
 
       <div
         style={{
+          fontFamily: MONO,
+          flexShrink: 0,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '34px 60px 52px',
-          borderTop: '1px solid rgba(255,255,255,0.15)',
+          padding: '32px 64px',
+          borderTop: '1px solid rgba(255,255,255,0.08)',
+          position: 'relative',
+          zIndex: 1,
         }}
       >
-        <span style={{ fontSize: 24, fontWeight: 600, color: '#c4b5fd' }}>
-          @devprep.ai
-        </span>
-        <span style={{ fontSize: 24, fontWeight: 500, color: '#a5b4fc' }}>
-          Question {index + 1}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <img
+            src={logo}
+            alt="DevPrep AI logo"
+            style={{ width: 40, height: 40, objectFit: 'contain', borderRadius: 10 }}
+          />
+          <span style={{ fontSize: 24, fontWeight: 700, color: 'rgba(255,255,255,0.55)' }}>
+            devpreps.tech
+          </span>
+        </div>
+        <span style={{ fontSize: 22, color: 'rgba(255,255,255,0.3)', letterSpacing: 1 }}>
+          {number} / {totalStr}
         </span>
       </div>
     </div>
