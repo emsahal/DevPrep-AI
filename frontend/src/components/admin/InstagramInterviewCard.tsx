@@ -26,14 +26,11 @@ function cleanQuestion(text: string): string {
 function questionFontSize(text: string): number {
   const len = text.length
   if (len <= 60) return 52
-  if (len <= 100) return 46
-  if (len <= 140) return 40
-  if (len <= 190) return 36
-  return 32
-}
-
-function truncateQuestion(text: string, max = 210): string {
-  return text.length > max ? `${text.slice(0, max).trimEnd()}…` : text
+  if (len <= 100) return 44
+  if (len <= 140) return 38
+  if (len <= 190) return 34
+  if (len <= 250) return 28
+  return 24
 }
 
 interface InstagramInterviewCardProps {
@@ -55,7 +52,7 @@ export function InstagramInterviewCard({
 }: InstagramInterviewCardProps) {
   const number = pad(index + 1)
   const totalStr = pad(total)
-  const displayQuestion = truncateQuestion(cleanQuestion(question))
+  const displayQuestion = cleanQuestion(question)
   const hasAnswer = !!answer.trim()
 
   return (
@@ -137,7 +134,7 @@ export function InstagramInterviewCard({
             color: '#f7f9fc',
             marginBottom: 30,
             letterSpacing: -0.5,
-            maxWidth: '92%',
+            width: '100%',
           }}
         >
           {displayQuestion}
@@ -307,7 +304,16 @@ export function InstagramInterviewCard({
             alt="DevPrep AI logo"
             style={{ width: 40, height: 40, objectFit: 'contain', borderRadius: 10 }}
           />
-          <span style={{ fontSize: 24, fontWeight: 700, color: 'rgba(255,255,255,0.55)' }}>
+          <span
+            style={{
+              fontSize: 24,
+              fontWeight: 700,
+              color: 'rgba(255,255,255,0.55)',
+              lineHeight: 1,
+              display: 'inline-flex',
+              alignItems: 'center',
+            }}
+          >
             devpreps.tech
           </span>
         </div>
