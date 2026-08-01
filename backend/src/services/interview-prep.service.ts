@@ -11,6 +11,28 @@ function extractEnglish(content: string): string {
 }
 
 export class InterviewPrepService {
+  async getQuestionsBySlug(slug: string) {
+    const filePath = path.join(PREP_DIR, `${slug}.md`)
+    if (!fs.existsSync(filePath)) return null
+    const content = fs.readFileSync(filePath, 'utf8')
+    const englishContent = extractEnglish(content)
+    const name = slug.replace(/_/g, ' ')
+
+    const questions = englishContent.split(/^## \d+\./m).slice(1).map((block, i) => {
+      const trimmed = block.trim()
+      const firstLineEnd = trimmed.indexOf('\n')
+      const question = firstLineEnd === -1 ? trimmed : trimmed.slice(0, firstLineEnd)
+      const answer = firstLineEnd === -1 ? '' : trimmed.slice(firstLineEnd)
+      return {
+        number: i + 1,
+        question: question.replace(/^##\s*\d+\.\s*/, '').trim(),
+        answer: answer.trim(),
+      }
+    })
+
+    return { slug, name, questionCount: questions.length, questions }
+  }
+
   async getTopics() {
     const files = fs.readdirSync(PREP_DIR).filter(f => f.endsWith('.md') && f !== 'README.md')
     return files.map(f => {

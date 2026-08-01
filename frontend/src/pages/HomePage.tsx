@@ -43,7 +43,7 @@ export function HomePage() {
             </Link>
             <Link to="/learning-paths"
                   className="bg-white/5 border border-white/10 backdrop-blur-md px-10 py-4 rounded-full font-semibold text-base text-on-surface w-full sm:w-auto hover:bg-white/10 transition-colors">
-              View Systems
+              Browse Learning Paths
             </Link>
           </div>
         </div>

@@ -16,6 +16,7 @@ import gamificationRoutes from './gamification.routes'
 import notificationRoutes from './notification.routes'
 import dsaCheckRoutes from './dsa-check.routes'
 import resumeOptimizerRoutes from './resume-optimizer.routes'
+import adminRoutes from './admin.routes'
 
 const router = Router()
 
@@ -36,5 +37,6 @@ router.use('/gamification', gamificationRoutes)
 router.use('/notifications', notificationRoutes)
 router.use('/dsa-check', dsaCheckRoutes)
 router.use('/resume-optimizer', resumeOptimizerRoutes)
+router.use('/admin', adminRoutes)
 
 export default router

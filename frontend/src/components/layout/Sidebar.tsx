@@ -41,6 +41,8 @@ const SECTIONS = [
   },
 ]
 
+const ADMIN_EMAIL = 'sarcasticsahal@gmail.com'
+
 function SectionHeading({ label }: { label: string }) {
   return (
     <p className="text-[10px] font-bold uppercase tracking-wider px-3 pt-4 pb-1"
@@ -53,6 +55,7 @@ function SectionHeading({ label }: { label: string }) {
 export function Sidebar() {
   const location = useLocation()
   const { user, logout } = useAuthStore()
+  const isAdmin = user?.email?.toLowerCase() === ADMIN_EMAIL
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-60 flex flex-col pt-16 pb-4 z-40 hidden lg:flex"
@@ -62,8 +65,7 @@ export function Sidebar() {
         {SECTIONS.map((section, si) => (
           <div key={si}>
             {section.label && <SectionHeading label={section.label} />}
-            {section.items.map(({ to, icon, label, tag }: { to: string; icon: string; label: string; tag?: string }) => {
-              const active = location.pathname === to || (to !== '/' && location.pathname.startsWith(to))
+            {section.items.map(({ to, icon, label, tag }: { to: string; icon: string; label: string; tag?: string }) => {              const active = location.pathname === to || (to !== '/' && location.pathname.startsWith(to))
               return (
                 <Link
                   key={to}
@@ -90,6 +92,23 @@ export function Sidebar() {
             })}
           </div>
         ))}
+        {isAdmin && (
+          <div>
+            <SectionHeading label="Admin" />
+            <Link
+              to="/admin"
+              className={`flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150 ${
+                location.pathname === '/admin' ? 'bg-primary/10 text-primary' : 'text-on-surface-variant'
+              }`}
+            >
+              <span className={`material-symbols-outlined text-[20px] leading-none ${location.pathname === '/admin' ? 'text-primary' : ''}`}
+                    style={{ fontVariationSettings: location.pathname === '/admin' ? "'FILL' 1" : "'FILL' 0" }}>
+                admin_panel_settings
+              </span>
+              <span className="flex-1" style={{ fontFamily: 'var(--font-sans)' }}>Post Studio</span>
+            </Link>
+          </div>
+        )}
       </nav>
 
       {/* User */}
