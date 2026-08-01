@@ -5,7 +5,9 @@ import { useAuthStore } from '@/store/authStore'
 import { InstagramQuestionCard } from '@/components/admin/InstagramQuestionCard'
 import { InstagramAnswersCard } from '@/components/admin/InstagramAnswersCard'
 import { InstagramInterviewCard } from '@/components/admin/InstagramInterviewCard'
+import { InstagramCodeCard } from '@/components/admin/InstagramCodeCard'
 import { captureToDataUrl, generateInstagramZip, triggerDownload } from '@/utils/instagramGenerator'
+import { extractCodeBlocks } from '@/utils/interviewMarkdown'
 import { materialIconName } from '@/components/common/MaterialIcon'
 
 const ADMIN_EMAIL = 'sarcasticsahal@gmail.com'
@@ -14,6 +16,10 @@ type Tab = 'quiz' | 'interview'
 
 function slugify(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+}
+
+function pad(n: number): string {
+  return String(n).padStart(2, '0')
 }
 
 export function AdminPage() {
@@ -55,6 +61,23 @@ export function AdminPage() {
 
   const quizQuestions = useMemo(() => quizDetail?.questions ?? [], [quizDetail])
   const interviewQuestions = useMemo(() => interviewDetail?.questions ?? [], [interviewDetail])
+
+  const interviewRenderItems = useMemo(
+    () =>
+      interviewQuestions.map((q) => {
+        const formatted = formattedInterview?.questions.find((f) => f.number === q.number)
+        const question = formatted?.question || q.question
+        const answer = formatted?.answer || q.answer
+        const { code, cleaned } = extractCodeBlocks(answer)
+        return { q, question, answer: cleaned, code }
+      }),
+    [interviewQuestions, formattedInterview]
+  )
+
+  const totalInterviewCards = interviewRenderItems.reduce(
+    (n, it) => n + 1 + (it.code.length ? 1 : 0),
+    0
+  )
 
   const handleFormatInterview = async () => {
     if (!selectedInterviewSlug || isFormatting) return
@@ -246,7 +269,7 @@ export function AdminPage() {
             {selectedInterviewSlug && interviewDetail && interviewQuestions.length > 0 && (
               <div className="flex items-center justify-between mt-4 flex-wrap gap-3">
                 <div className="text-xs" style={{ color: 'var(--color-on-surface-variant)' }}>
-                  {interviewQuestions.length} question images
+                  {totalInterviewCards} images
                   {formattedInterview ? ' · AI-formatted' : ''}
                 </div>
                 <div className="flex items-center gap-2">
@@ -276,26 +299,48 @@ export function AdminPage() {
             )}
           </div>
 
-          {interviewQuestions.length > 0 && (
-            <InstagramPreview
-              cards={interviewQuestions.map((q, i) => {
-                const formatted = formattedInterview?.questions.find((f) => f.number === q.number)
-                return (
-                  <InstagramInterviewCard
-                    key={q.number}
+          {interviewRenderItems.length > 0 && (() => {
+            const cards: React.ReactNode[] = []
+            const names: string[] = []
+            let idx = 1
+            for (const it of interviewRenderItems) {
+              const q = it.q
+              cards.push(
+                <InstagramInterviewCard
+                  key={`a-${q.number}`}
+                  topicTitle={interviewDetail!.name}
+                  index={idx - 1}
+                  total={totalInterviewCards}
+                  question={it.question}
+                  answer={it.answer}
+                />
+              )
+              names.push(`${pad(idx)}-${slugify(it.question).slice(0, 30)}.png`)
+              idx += 1
+              if (it.code.length > 0) {
+                cards.push(
+                  <InstagramCodeCard
+                    key={`c-${q.number}`}
                     topicTitle={interviewDetail!.name}
-                    index={i}
-                    total={interviewQuestions.length}
-                    question={formatted?.question || q.question}
-                    answer={formatted?.answer || q.answer}
+                    index={idx - 1}
+                    total={totalInterviewCards}
+                    question={it.question}
+                    code={it.code}
                   />
                 )
-              })}
-              names={interviewQuestions.map((q, i) => `${String(i + 1).padStart(2, '0')}-${slugify(q.question).slice(0, 30)}.png`)}
-              captureRef={captureContainerRef}
-              captureKey={`${selectedInterviewSlug}-${formattedInterview ? 'ai' : 'raw'}`}
-            />
-          )}
+                names.push(`${pad(idx)}-${slugify(it.question).slice(0, 30)}-code.png`)
+                idx += 1
+              }
+            }
+            return (
+              <InstagramPreview
+                cards={cards}
+                names={names}
+                captureRef={captureContainerRef}
+                captureKey={`${selectedInterviewSlug}-${formattedInterview ? 'ai' : 'raw'}`}
+              />
+            )
+          })()}
         </div>
       )}
     </div>
