@@ -49,6 +49,12 @@ export interface AdminInterviewDetail {
   questions: AdminInterviewQuestion[]
 }
 
+export interface AdminFormattedInterviewDetail {
+  slug: string
+  name: string
+  questions: Array<{ number: number; question: string; answer: string }>
+}
+
 export const adminService = {
   async getQuizzes(): Promise<AdminQuiz[]> {
     const { data } = await api.get('/admin/quizzes')
@@ -67,6 +73,11 @@ export const adminService = {
 
   async getInterviewQuestions(slug: string): Promise<AdminInterviewDetail> {
     const { data } = await api.get(`/admin/interview-prep/${slug}`)
+    return data
+  },
+
+  async formatInterviewAnswers(slug: string): Promise<AdminFormattedInterviewDetail> {
+    const { data } = await api.get(`/admin/interview-prep/${slug}/format`)
     return data
   },
 }

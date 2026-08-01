@@ -6,9 +6,27 @@ export interface InstagramItem {
   name: string
 }
 
-export async function captureToDataUrl(element: HTMLElement): Promise<string> {
+async function prepareElementForCapture(element: HTMLElement): Promise<void> {
+  await Promise.all(Array.from(element.querySelectorAll('img')).map((img) => {
+    if (img.complete && img.naturalWidth > 0) return Promise.resolve()
+    return new Promise<void>((resolve) => {
+      const onLoad = () => { cleanup(); resolve() }
+      const onError = () => { cleanup(); resolve() }
+      const cleanup = () => { img.removeEventListener('load', onLoad); img.removeEventListener('error', onError) }
+      img.addEventListener('load', onLoad)
+      img.addEventListener('error', onError)
+      if (img.complete && img.naturalWidth > 0) { cleanup(); resolve() }
+    })
+  }))
+  if (document.fonts?.ready) {
+    await document.fonts.ready
+  }
+}
+
+export async function captureToDataUrl(element: HTMLElement, scale = 1): Promise<string> {
+  await prepareElementForCapture(element)
   const canvas = await html2canvas(element, {
-    scale: 1,
+    scale,
     useCORS: true,
     allowTaint: false,
     backgroundColor: null,

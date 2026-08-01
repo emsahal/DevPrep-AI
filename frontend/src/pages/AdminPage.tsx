@@ -1,11 +1,11 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { adminService } from '@/services/adminService'
+import { adminService, type AdminFormattedInterviewDetail } from '@/services/adminService'
 import { useAuthStore } from '@/store/authStore'
 import { InstagramQuestionCard } from '@/components/admin/InstagramQuestionCard'
 import { InstagramAnswersCard } from '@/components/admin/InstagramAnswersCard'
 import { InstagramInterviewCard } from '@/components/admin/InstagramInterviewCard'
-import { generateInstagramZip, triggerDownload } from '@/utils/instagramGenerator'
+import { captureToDataUrl, generateInstagramZip, triggerDownload } from '@/utils/instagramGenerator'
 import { materialIconName } from '@/components/common/MaterialIcon'
 
 const ADMIN_EMAIL = 'sarcasticsahal@gmail.com'
@@ -50,8 +50,22 @@ export function AdminPage() {
     enabled: isAdmin && !!selectedInterviewSlug,
   })
 
+  const [formattedInterview, setFormattedInterview] = useState<AdminFormattedInterviewDetail | null>(null)
+  const [isFormatting, setIsFormatting] = useState(false)
+
   const quizQuestions = useMemo(() => quizDetail?.questions ?? [], [quizDetail])
   const interviewQuestions = useMemo(() => interviewDetail?.questions ?? [], [interviewDetail])
+
+  const handleFormatInterview = async () => {
+    if (!selectedInterviewSlug || isFormatting) return
+    setIsFormatting(true)
+    try {
+      const formatted = await adminService.formatInterviewAnswers(selectedInterviewSlug)
+      setFormattedInterview(formatted)
+    } finally {
+      setIsFormatting(false)
+    }
+  }
 
   const handleDownloadQuiz = async () => {
     if (!quizDetail || !captureContainerRef.current || quizQuestions.length === 0) return
@@ -200,6 +214,7 @@ export function AdminPage() {
                 'answers.png',
               ])}
               captureRef={captureContainerRef}
+              captureKey={selectedQuizId}
             />
           )}
         </div>
@@ -213,7 +228,10 @@ export function AdminPage() {
             </label>
             <select
               value={selectedInterviewSlug}
-              onChange={(e) => setSelectedInterviewSlug(e.target.value)}
+              onChange={(e) => {
+                setSelectedInterviewSlug(e.target.value)
+                setFormattedInterview(null)
+              }}
               className="w-full rounded-xl px-3 py-2.5 text-sm outline-none"
               style={{ background: 'var(--color-surface-container-high)', color: 'var(--color-on-surface)', border: '1px solid var(--color-border-muted)', fontFamily: 'var(--font-sans)' }}
             >
@@ -229,34 +247,53 @@ export function AdminPage() {
               <div className="flex items-center justify-between mt-4 flex-wrap gap-3">
                 <div className="text-xs" style={{ color: 'var(--color-on-surface-variant)' }}>
                   {interviewQuestions.length} question images
+                  {formattedInterview ? ' · AI-formatted' : ''}
                 </div>
-                <button
-                  onClick={handleDownloadInterview}
-                  disabled={isGenerating}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-60"
-                  style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}
-                >
-                  <span className="material-symbols-outlined text-[18px]">{isGenerating ? 'progress_activity' : 'file_download'}</span>
-                  {isGenerating ? 'Generating…' : 'Download ZIP'}
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleFormatInterview}
+                    disabled={isFormatting || !!formattedInterview}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-60"
+                    style={{
+                      background: formattedInterview ? 'var(--color-success)' : 'var(--color-surface-container-high)',
+                      color: formattedInterview ? '#ffffff' : 'var(--color-on-surface-variant)',
+                    }}
+                  >
+                    <span className="material-symbols-outlined text-[18px]">{isFormatting ? 'progress_activity' : formattedInterview ? 'check_circle' : 'auto_awesome'}</span>
+                    {isFormatting ? 'Formatting…' : formattedInterview ? 'Formatted' : 'Format with AI'}
+                  </button>
+                  <button
+                    onClick={handleDownloadInterview}
+                    disabled={isGenerating}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-60"
+                    style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}
+                  >
+                    <span className="material-symbols-outlined text-[18px]">{isGenerating ? 'progress_activity' : 'file_download'}</span>
+                    {isGenerating ? 'Generating…' : 'Download ZIP'}
+                  </button>
+                </div>
               </div>
             )}
           </div>
 
           {interviewQuestions.length > 0 && (
             <InstagramPreview
-              cards={interviewQuestions.map((q, i) => (
-                <InstagramInterviewCard
-                  key={q.number}
-                  topicTitle={interviewDetail!.name}
-                  index={i}
-                  total={interviewQuestions.length}
-                  question={q.question}
-                  answer={q.answer}
-                />
-              ))}
+              cards={interviewQuestions.map((q, i) => {
+                const formatted = formattedInterview?.questions.find((f) => f.number === q.number)
+                return (
+                  <InstagramInterviewCard
+                    key={q.number}
+                    topicTitle={interviewDetail!.name}
+                    index={i}
+                    total={interviewQuestions.length}
+                    question={formatted?.question || q.question}
+                    answer={formatted?.answer || q.answer}
+                  />
+                )
+              })}
               names={interviewQuestions.map((q, i) => `${String(i + 1).padStart(2, '0')}-${slugify(q.question).slice(0, 30)}.png`)}
               captureRef={captureContainerRef}
+              captureKey={`${selectedInterviewSlug}-${formattedInterview ? 'ai' : 'raw'}`}
             />
           )}
         </div>
@@ -269,26 +306,63 @@ function InstagramPreview({
   cards,
   names,
   captureRef,
+  captureKey,
 }: {
   cards: React.ReactNode[]
   names: string[]
   captureRef: React.RefObject<HTMLDivElement | null>
+  captureKey: string
 }) {
+  const [thumbs, setThumbs] = useState<(string | null)[]>([])
+
+  useEffect(() => {
+    let cancelled = false
+    const container = captureRef.current
+    if (!container || cards.length === 0) {
+      setThumbs([])
+      return
+    }
+    setThumbs(cards.map(() => null))
+    const nodes = Array.from(container.querySelectorAll<HTMLElement>('[data-card]'))
+    const captured: (string | null)[] = []
+    let settled = 0
+    nodes.forEach((node, i) => {
+      captureToDataUrl(node, 0.35)
+        .then((url) => { captured[i] = url })
+        .catch(() => { captured[i] = null })
+        .finally(() => {
+          settled += 1
+          if (!cancelled && settled === nodes.length) setThumbs(captured)
+        })
+    })
+    return () => { cancelled = true }
+  }, [captureKey, cards.length, captureRef])
+
   return (
     <>
       <div className="bento-card p-5">
         <h2 className="font-bold text-lg mb-3" style={{ color: 'var(--color-on-surface)' }}>Preview</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {cards.map((card, i) => (
+          {cards.map((_, i) => (
             <div key={i} className="rounded-xl overflow-hidden" style={{ border: '1px solid var(--color-border-muted)' }}>
-              <div className="relative" style={{ paddingTop: '100%' }}>
+              <div className="relative" style={{ paddingTop: '125%' }}>
                 <div
                   className="absolute inset-0 flex items-center justify-center overflow-hidden"
                   style={{ background: 'var(--color-surface-container)' }}
                 >
-                  <div style={{ transform: 'scale(0.2)', transformOrigin: 'top left', width: 1080, height: 1080 }}>
-                    {card}
-                  </div>
+                  {thumbs[i] ? (
+                    <img
+                      src={thumbs[i]}
+                      alt={names[i]}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="flex items-center gap-2 text-xs" style={{ color: 'var(--color-outline)' }}>
+                      <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
+                      Rendering…
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="px-3 py-2 text-[11px] truncate" style={{ color: 'var(--color-outline)', borderTop: '1px solid var(--color-border-subtle)' }}>
