@@ -101,7 +101,7 @@ export function InstagramQuestionCard({
         style={{
           fontFamily: MONO,
           position: 'absolute',
-          top: 44,
+          top: 36,
           right: 48,
           fontSize: 24,
           fontWeight: 700,
@@ -145,11 +145,11 @@ export function InstagramQuestionCard({
             lineHeight: 1.24,
             fontWeight: 800,
             color: '#f7f9fc',
-            marginBottom: 56,
+            marginBottom: 44,
             letterSpacing: -0.5,
             maxWidth: '90%',
             display: '-webkit-box',
-            WebkitLineClamp: 4,
+            WebkitLineClamp: 3,
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
           }}
@@ -157,7 +157,7 @@ export function InstagramQuestionCard({
           {highlightCode(question)}
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {options.map((text, i) => (
             <div
               key={i}
@@ -168,7 +168,7 @@ export function InstagramQuestionCard({
                 background: 'rgba(255,255,255,0.045)',
                 border: '1px solid rgba(255,255,255,0.09)',
                 borderRadius: 18,
-                padding: '26px 32px',
+                padding: '22px 30px',
               }}
             >
               <div
@@ -184,13 +184,10 @@ export function InstagramQuestionCard({
               </div>
               <span
                 style={{
-                  fontSize: 32,
+                  fontSize: 30,
+                  lineHeight: 1.3,
                   fontWeight: 500,
                   color: '#e9edf5',
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden',
                 }}
               >
                 {text}

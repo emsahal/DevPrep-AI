@@ -52,15 +52,13 @@ export function InstagramAnswersCard({
         style={{
           fontFamily: MONO,
           position: 'absolute',
-          top: -70,
-          right: -30,
-          fontSize: 480,
-          fontWeight: 800,
-          color: 'rgba(255,255,255,0.045)',
-          lineHeight: 1,
-          letterSpacing: -20,
-          zIndex: 0,
-          userSelect: 'none',
+          top: 36,
+          right: 48,
+          fontSize: 24,
+          fontWeight: 700,
+          color: 'rgba(255,255,255,0.35)',
+          letterSpacing: 1,
+          zIndex: 2,
         }}
       >
         ✓

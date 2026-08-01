@@ -1,28 +1,23 @@
 import type { CSSProperties, ReactNode } from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import logo from '@/assets/logo.png'
 
 const SANS = "'Inter', system-ui, -apple-system, sans-serif"
 const MONO = "'JetBrains Mono', monospace"
 
 const GRADIENT = 'linear-gradient(160deg, #050810 0%, #0a1f1a 50%, #0d2b21 100%)'
+const ACCENT = '#7fd88f'
 
 function pad(n: number): string {
   return String(n).padStart(2, '0')
 }
 
-function stripMarkdown(text: string): string {
+function cleanQuestion(text: string): string {
   return text
-    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/\*\*\*(.*?)\*\*\*/g, '$1')
     .replace(/\*\*(.*?)\*\*/g, '$1')
     .replace(/__(.*?)__/g, '$1')
-    .replace(/`([^`]*)`/g, '$1')
-    .replace(/!\[.*?\]\(.*?\)/g, '')
-    .replace(/\[([^\]]*)\]\(.*?\)/g, '$1')
-    .replace(/^>\s?/gm, '')
-    .replace(/^\s*[-*]\s+/gm, '• ')
-    .replace(/^\s*\d+\.\s+/gm, '')
-    .replace(/\|/g, ' ')
-    .replace(/---+/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()
 }
@@ -32,13 +27,26 @@ function highlightCode(text: string): ReactNode[] {
   return parts.map((part, i) => {
     if (part.startsWith('`') && part.endsWith('`')) {
       return (
-        <span key={i} style={{ color: '#7fd88f' }}>
+        <span key={i} style={{ color: ACCENT }}>
           {part.slice(1, -1)}
         </span>
       )
     }
     return <span key={i}>{part}</span>
   })
+}
+
+function questionFontSize(text: string): number {
+  const len = text.length
+  if (len <= 60) return 52
+  if (len <= 100) return 46
+  if (len <= 140) return 40
+  if (len <= 190) return 36
+  return 32
+}
+
+function truncateQuestion(text: string, max = 210): string {
+  return text.length > max ? `${text.slice(0, max).trimEnd()}…` : text
 }
 
 interface InstagramInterviewCardProps {
@@ -60,7 +68,8 @@ export function InstagramInterviewCard({
 }: InstagramInterviewCardProps) {
   const number = pad(index + 1)
   const totalStr = pad(total)
-  const cleanAnswer = stripMarkdown(answer)
+  const displayQuestion = truncateQuestion(cleanQuestion(question))
+  const hasAnswer = !!answer.trim()
 
   return (
     <div
@@ -110,7 +119,7 @@ export function InstagramInterviewCard({
         style={{
           fontFamily: MONO,
           position: 'absolute',
-          top: 44,
+          top: 36,
           right: 48,
           fontSize: 24,
           fontWeight: 700,
@@ -129,9 +138,10 @@ export function InstagramInterviewCard({
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          padding: '80px 64px 40px',
+          padding: '80px 64px 36px',
           position: 'relative',
           zIndex: 1,
+          minHeight: 0,
         }}
       >
         <div
@@ -139,10 +149,10 @@ export function InstagramInterviewCard({
             fontFamily: MONO,
             fontSize: 22,
             fontWeight: 700,
-            color: '#7fd88f',
+            color: ACCENT,
             letterSpacing: 3,
             textTransform: 'uppercase',
-            marginBottom: 26,
+            marginBottom: 22,
           }}
         >
           {topicTitle}&nbsp;·&nbsp;Interview Prep
@@ -150,29 +160,34 @@ export function InstagramInterviewCard({
 
         <div
           style={{
-            fontSize: 54,
-            lineHeight: 1.26,
+            fontSize: questionFontSize(displayQuestion),
+            lineHeight: 1.3,
             fontWeight: 800,
             color: '#f7f9fc',
-            marginBottom: 64,
+            marginBottom: 30,
             letterSpacing: -0.5,
             maxWidth: '92%',
-            display: '-webkit-box',
-            WebkitLineClamp: 4,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
           }}
         >
-          {highlightCode(question)}
+          {highlightCode(displayQuestion)}
         </div>
 
-        <div style={{ position: 'relative', paddingLeft: 44, borderLeft: '3px solid rgba(127,216,143,0.5)' }}>
+        <div
+          style={{
+            flex: 1,
+            minHeight: 0,
+            overflow: 'hidden',
+            position: 'relative',
+            paddingLeft: 22,
+            borderLeft: '3px solid rgba(127,216,143,0.45)',
+          }}
+        >
           <div
             style={{
               position: 'absolute',
               left: -6,
-              top: -46,
-              fontSize: 130,
+              top: -18,
+              fontSize: 110,
               fontWeight: 800,
               color: 'rgba(127,216,143,0.22)',
               fontFamily: 'Georgia, serif',
@@ -181,21 +196,117 @@ export function InstagramInterviewCard({
           >
             &ldquo;
           </div>
-          <p
-            style={{
-              fontSize: 34,
-              lineHeight: 1.55,
-              color: '#e9edf5',
-              fontWeight: 400,
-              marginTop: 8,
-              display: '-webkit-box',
-              WebkitLineClamp: 9,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-            }}
-          >
-            {cleanAnswer || 'See the full explanation on DevPrep.'}
-          </p>
+          <div style={{ maxWidth: '100%', overflow: 'hidden', paddingTop: 40 }}>
+            {hasAnswer ? (
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  p({ children }) {
+                    return (
+                      <p style={{ margin: '0 0 12px', fontSize: 27, lineHeight: 1.5, color: '#e9edf5', fontWeight: 400 }}>
+                        {children}
+                      </p>
+                    )
+                  },
+                  ul({ children }) {
+                    return <ul style={{ margin: '0 0 12px', paddingLeft: 24, listStyleType: 'disc' }}>{children}</ul>
+                  },
+                  ol({ children }) {
+                    return <ol style={{ margin: '0 0 12px', paddingLeft: 24, listStyleType: 'decimal' }}>{children}</ol>
+                  },
+                  li({ children }) {
+                    return <li style={{ margin: '0 0 8px', fontSize: 26, lineHeight: 1.45, color: '#e9edf5' }}>{children}</li>
+                  },
+                  strong({ children }) {
+                    return <strong style={{ color: ACCENT, fontWeight: 700 }}>{children}</strong>
+                  },
+                  code({ children }) {
+                    return (
+                      <code
+                        style={{
+                          fontFamily: MONO,
+                          fontSize: '0.85em',
+                          background: 'rgba(127,216,143,0.12)',
+                          color: ACCENT,
+                          padding: '2px 8px',
+                          borderRadius: 6,
+                        }}
+                      >
+                        {children}
+                      </code>
+                    )
+                  },
+                  table({ children }) {
+                    return (
+                      <table style={{ width: '100%', borderCollapse: 'collapse', margin: '0 0 14px', tableLayout: 'fixed' }}>
+                        {children}
+                      </table>
+                    )
+                  },
+                  thead({ children }) {
+                    return <thead>{children}</thead>
+                  },
+                  tbody({ children }) {
+                    return <tbody>{children}</tbody>
+                  },
+                  tr({ children }) {
+                    return <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.14)' }}>{children}</tr>
+                  },
+                  th({ children }) {
+                    return (
+                      <th
+                        style={{
+                          textAlign: 'left',
+                          padding: '8px 12px',
+                          fontSize: 22,
+                          fontWeight: 800,
+                          color: ACCENT,
+                          background: 'rgba(127,216,143,0.12)',
+                          borderBottom: '2px solid rgba(127,216,143,0.4)',
+                        }}
+                      >
+                        {children}
+                      </th>
+                    )
+                  },
+                  td({ children }) {
+                    return (
+                      <td
+                        style={{
+                          textAlign: 'left',
+                          padding: '8px 12px',
+                          fontSize: 21,
+                          lineHeight: 1.35,
+                          color: '#e9edf5',
+                          verticalAlign: 'top',
+                        }}
+                      >
+                        {children}
+                      </td>
+                    )
+                  },
+                  h1({ children }) {
+                    return <p style={{ margin: '0 0 12px', fontSize: 29, fontWeight: 800, color: '#f7f9fc' }}>{children}</p>
+                  },
+                  h2({ children }) {
+                    return <p style={{ margin: '0 0 12px', fontSize: 28, fontWeight: 800, color: '#f7f9fc' }}>{children}</p>
+                  },
+                  h3({ children }) {
+                    return <p style={{ margin: '0 0 12px', fontSize: 27, fontWeight: 700, color: '#f7f9fc' }}>{children}</p>
+                  },
+                  a({ children }) {
+                    return <span style={{ color: ACCENT }}>{children}</span>
+                  },
+                }}
+              >
+                {answer}
+              </ReactMarkdown>
+            ) : (
+              <p style={{ margin: 0, fontSize: 27, lineHeight: 1.5, color: '#e9edf5' }}>
+                See the full explanation on DevPrep.
+              </p>
+            )}
+          </div>
         </div>
       </div>
 
