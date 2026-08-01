@@ -3,485 +3,202 @@ import { useState } from 'react'
 import { AnimateOnScroll } from '@/components/common/AnimateOnScroll'
 
 const faqs = [
-  { q: 'Is DevPrep AI free to use?', a: 'Yes, we offer a generous free tier with access to roadmaps, quizzes, and limited AI tutor sessions. Premium plans unlock unlimited AI interactions, advanced code labs, and priority support.' },
-  { q: 'How does the AI tutor work?', a: 'Our AI tutor uses GPT-4o to provide real-time explanations, code reviews, and hints. You can ask questions about any topic, get code walkthroughs, or request personalized study plans.' },
-  { q: 'What topics are covered?', a: 'From data structures and algorithms to system design, frontend frameworks, and DevOps — we cover 40+ technologies with 500+ hours of curated content updated quarterly.' },
-  { q: 'Can I practice company-specific questions?', a: 'Absolutely. Our platform includes curated question banks from top tech companies (FAANG, fintech, startups) with company-specific mock interviews and grading rubrics.' },
-  { q: 'How are quizzes and roadmaps created?', a: 'Content is crafted by senior engineers from top companies and refined by AI. Each question includes detailed explanations, and roadmaps adapt to your progress automatically.' },
+  { q: 'Is there a free trial?', a: 'Yes. Our platform allows complete diagnostic assessments and access to introductory modules across all CS paths at no cost.' },
+  { q: 'How realistic are the mock practice sessions?', a: 'Our AI Tutor provides structured, step-by-step technical interviewing questions, instant rubrics, and real-time code analysis.' },
+  { q: 'What programming languages are supported?', a: 'Full support for C++, Java, Python, Go, JavaScript, TypeScript, and Rust, including language-specific optimization feedback and idiom checks.' },
+  { q: 'How does the AI tutor work?', a: 'Our AI tutor provides real-time explanations, code reviews, and hints. You can ask questions about any topic, get code walkthroughs, or request personalized study plans.' },
+  { q: 'Can I practice company-specific questions?', a: 'Absolutely. Our platform includes curated question banks and practice topics covering core computer science subjects and interview patterns.' },
 ]
 
 export function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
 
   return (
-    <div className="min-h-[calc(100vh-64px)] flex flex-col">
+    <div className="min-h-[calc(100vh-64px)] flex flex-col font-sans selection:bg-primary/30 selection:text-white" style={{ background: 'var(--color-surface-container-lowest)', color: 'var(--color-on-surface)' }}>
 
-      {/* ═══════ 1. Hero — glow + centered ═══════ */}
-      <section className="relative flex-1 flex flex-col items-center justify-center text-center px-6 py-28 overflow-hidden">
-        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full blur-3xl opacity-15 pointer-events-none"
-             style={{ background: 'radial-gradient(circle, var(--color-primary), transparent)' }} />
-        <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full blur-3xl opacity-10 pointer-events-none"
-             style={{ background: 'radial-gradient(circle, var(--color-secondary), transparent)' }} />
-        <div className="absolute top-1/3 right-1/4 w-48 h-48 rounded-full blur-3xl opacity-8 pointer-events-none"
-             style={{ background: 'radial-gradient(circle, var(--color-tertiary), transparent)' }} />
+      {/* ═══════ 1. Hero Section ═══════ */}
+      <section className="relative h-[calc(100vh-64px)] min-h-[650px] pt-16 pb-20 flex flex-col items-center justify-center overflow-hidden"
+               style={{ background: 'var(--color-surface-container-lowest)' }}>
+        {/* Pure Gradient Background Effects */}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-gradient-to-tr from-[#8B5CF6]/20 via-[#d0bcff]/15 to-transparent rounded-full blur-[120px]" />
+          <div className="absolute top-1/3 left-1/3 w-[350px] h-[350px] bg-cyan-500/10 rounded-full blur-[100px]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-surface-container-lowest/60 via-transparent to-surface-container-lowest" />
+        </div>
 
-        <div className="relative z-10 max-w-3xl animate-fade-up">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-8"
-               style={{ background: 'rgba(208,188,255,0.1)', border: '1px solid rgba(208,188,255,0.25)', color: 'var(--color-primary)' }}>
-            <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
-            Powered by GPT-4o · 50,000+ developers
-          </div>
-
-          <h1 className="font-extrabold mb-6 leading-tight tracking-tight"
-              style={{ fontFamily: 'var(--font-sans)', fontSize: 'clamp(2.5rem,6vw,4.5rem)', color: 'var(--color-on-surface)' }}>
-            Ace Your Technical<br />
-            <span style={{ color: 'var(--color-primary)' }}>Interview</span> with AI
+        <div className="container mx-auto px-6 text-center relative z-10 max-w-5xl">
+          <h1 className="font-extrabold text-4xl sm:text-5xl md:text-6xl max-w-5xl mx-auto leading-[1.1] mb-6 tracking-tighter">
+            The AI-Engineered Path to <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#d0bcff]">Software Career Success</span>
           </h1>
-          <p className="text-base max-w-xl mx-auto mb-10" style={{ color: 'var(--color-on-surface-variant)' }}>
-            Structured roadmaps, AI-powered coding labs, and a personal tutor that adapts to your skill level. Go from beginner to job-ready in weeks.
+
+          <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl mx-auto mb-10 opacity-80 leading-relaxed">
+            Empowering Computer Science & Software Engineering students with AI-powered DSA practice, system design simulation, and interactive interview coaching.
           </p>
-          <div className="flex flex-col sm:flex-row items-center gap-4 justify-center">
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to="/register"
-                  className="px-7 py-3.5 rounded-xl font-bold text-base transition-all hover:opacity-90 active:scale-95"
-                  style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
-              Start for Free →
+                  className="px-10 py-4 rounded-full font-semibold text-base text-white w-full sm:w-auto transition-all shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:shadow-[0_0_45px_rgba(139,92,246,0.5)] hover:-translate-y-0.5 active:translate-y-0"
+                  style={{ background: '#8B5CF6' }}>
+              Get Started
             </Link>
             <Link to="/learning-paths"
-                  className="px-7 py-3.5 rounded-xl font-bold text-base transition-all hover:border-primary"
-                  style={{ border: '1px solid var(--color-border-muted)', color: 'var(--color-on-surface-variant)' }}>
-              Browse Roadmaps
+                  className="bg-white/5 border border-white/10 backdrop-blur-md px-10 py-4 rounded-full font-semibold text-base text-on-surface w-full sm:w-auto hover:bg-white/10 transition-colors">
+              Browse Learning Paths
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ═══════ 2. Platform Overview — window showcase ═══════ */}
-      <section className="relative px-6 py-28 overflow-hidden"
-               style={{
-                 background: 'linear-gradient(180deg, rgba(208,188,255,0.02) 0%, transparent 40%, transparent 100%)',
-               }}>
-        {/* Dot-grid background */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl h-full opacity-[0.03]"
-               style={{
-                 backgroundImage: 'radial-gradient(circle, var(--color-primary) 1px, transparent 1px)',
-                 backgroundSize: '40px 40px',
-               }} />
-        </div>
-
-        <div className="max-w-5xl mx-auto relative z-10">
-          <AnimateOnScroll>
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold mb-4"
-                   style={{ background: 'rgba(208,188,255,0.1)', color: 'var(--color-primary)' }}>
-                <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>overview</span>
-                PLATFORM OVERVIEW
+      {/* ═══════ 2. Platform Overview ═══════ */}
+      <section className="py-16" style={{ background: 'var(--color-surface-container-low)' }}>
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="flex flex-col gap-8">
+            
+            {/* Top Header */}
+            <AnimateOnScroll direction="left">
+              <div className="max-w-2xl">
+                <div className="text-primary font-mono text-xs mb-2 tracking-widest uppercase">THE ECOSYSTEM</div>
+                <h2 className="text-2xl sm:text-3xl font-bold leading-tight mb-3 tracking-tighter">
+                  Complete Preparation <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#d0bcff]">Ecosystem</span>
+                </h2>
+                <p className="text-on-surface-variant text-xs sm:text-sm opacity-80 leading-relaxed">
+                  Everything you need to master technical interview loops, from DS&A practice to AI-driven feedback and competitive duels.
+                </p>
               </div>
-              <h2 className="text-2xl font-bold mb-3" style={{ color: 'var(--color-on-surface)' }}>
-                Everything DevPrep AI offers
-              </h2>
-              <p className="text-sm max-w-xl mx-auto" style={{ color: 'var(--color-on-surface-variant)' }}>
-                Eight integrated tools — from roadmaps to resume optimization — working together to make you interview-ready.
+            </AnimateOnScroll>
+
+            {/* Bottom 3-in-a-row Cards Grid */}
+            <AnimateOnScroll className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" direction="right">
+              {[
+                { icon: 'smart_toy', title: '24/7 AI Tutor', desc: 'Step-by-step guidance, code walkthroughs, and instant problem explanations.' },
+                { icon: 'code', title: 'Code Analyzer', desc: 'Language-specific linting, complexity heatmaps, and automated test generation.' },
+                { icon: 'quiz', title: 'Adaptive Quizzes', desc: 'Topic-based practice tests with instant rubrics & detailed explanations.' },
+                { icon: 'style', title: 'Spaced Flashcards', desc: 'Master key CS formulas, algorithms, and concepts with SM-2 retention.' },
+                { icon: 'swords', title: '1v1 Coding Duels', desc: 'Challenge peers in real-time competitive DSA battles & climb the leaderboard.' },
+                { icon: 'description', title: 'Resume Optimizer', desc: 'AI keyword extraction and ATS scoring tailored for software roles.' },
+              ].map((item) => (
+                <div key={item.title} className="group relative backdrop-blur-xl p-5 rounded-xl border transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between overflow-hidden"
+                     style={{
+                       background: 'linear-gradient(135deg, rgba(28,27,27,0.7) 0%, rgba(18,18,18,0.9) 100%)',
+                       borderColor: 'rgba(139,92,246,0.2)',
+                       boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
+                     }}>
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/25 transition-all duration-500 pointer-events-none" />
+                  <div className="relative z-10">
+                    <div className="w-9 h-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-300">
+                      <span className="material-symbols-outlined text-primary text-lg">{item.icon}</span>
+                    </div>
+                    <h4 className="font-semibold text-xs sm:text-sm mb-1.5 group-hover:text-primary transition-colors" style={{ color: 'var(--color-on-surface)' }}>{item.title}</h4>
+                    <p className="text-[11px] sm:text-xs text-on-surface-variant/75 leading-relaxed">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </AnimateOnScroll>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ 3. Core Features ═══════ */}
+      <section className="py-24" style={{ background: 'var(--color-surface-container-lowest)' }}>
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            {/* Large Feature */}
+            <AnimateOnScroll className="h-full" direction="left">
+              <div className="relative p-8 sm:p-10 rounded-3xl border h-full flex flex-col justify-between overflow-hidden shadow-2xl group"
+                   style={{
+                     background: 'linear-gradient(145deg, rgba(139,92,246,0.12) 0%, rgba(20,20,20,0.85) 60%, rgba(10,10,10,0.95) 100%)',
+                     borderColor: 'rgba(139,92,246,0.3)',
+                   }}>
+                <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-primary/15 rounded-full blur-3xl group-hover:bg-primary/30 transition-all duration-700 pointer-events-none" />
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-2xl bg-primary/15 border border-primary/30 flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(139,92,246,0.2)]">
+                    <span className="material-symbols-outlined text-primary text-3xl">map</span>
+                  </div>
+                  <div className="font-mono text-xs text-primary font-semibold mb-3 tracking-wider">STRUCTURED ROADMAPS</div>
+                  <h3 className="text-3xl font-bold mb-4 tracking-tighter">Curated Learning Paths</h3>
+                  <p className="text-on-surface-variant text-sm leading-relaxed opacity-85">
+                    Navigate structured paths covering Data Structures, Algorithms, System Design, Frontend, Backend, and DevOps. Track your progress with personalized skill analytics and milestone badges.
+                  </p>
+                </div>
+                <div className="relative z-10 mt-8 pt-6 border-t border-white/10">
+                  <Link to="/learning-paths" className="inline-flex items-center gap-2 text-primary font-mono text-xs font-semibold tracking-wider group-hover:translate-x-1 transition-transform">
+                    EXPLORE PATHS <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                  </Link>
+                </div>
+              </div>
+            </AnimateOnScroll>
+
+            {/* Feature Grid */}
+            <AnimateOnScroll direction="right">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                  { icon: 'code', title: 'Live Code Analyzer', desc: 'Syntax linting & O(N) complexity checks.', accent: '#8B5CF6' },
+                  { icon: 'smart_toy', title: 'Interactive AI Tutor', desc: 'Ask questions & get instant coding hints.', accent: '#4CD7F6' },
+                  { icon: 'swords', title: 'Live Coding Duels', desc: 'Compete 1v1 with peers on speed & accuracy.', accent: '#FFB869' },
+                  { icon: 'description', title: 'Resume ATS Optimizer', desc: 'Tailor your CV for top software roles.', accent: '#10B981' },
+                ].map((f) => (
+                  <div key={f.title} className="group relative p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1 overflow-hidden"
+                       style={{
+                         background: 'linear-gradient(135deg, rgba(32,31,31,0.6) 0%, rgba(18,18,18,0.85) 100%)',
+                         borderColor: 'rgba(255,255,255,0.08)',
+                       }}>
+                    <div className="absolute top-0 right-0 w-20 h-20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full blur-xl pointer-events-none"
+                         style={{ background: `${f.accent}20` }} />
+                    <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110"
+                         style={{ background: `${f.accent}15`, border: `1px solid ${f.accent}30` }}>
+                      <span className="material-symbols-outlined text-xl" style={{ color: f.accent }}>{f.icon}</span>
+                    </div>
+                    <h4 className="font-semibold text-sm mb-1" style={{ color: 'var(--color-on-surface)' }}>{f.title}</h4>
+                    <p className="text-xs text-on-surface-variant opacity-75 leading-relaxed">{f.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </AnimateOnScroll>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ 4. How it Works (Previous Step Layout Preserved) ═══════ */}
+      <section className="py-24 border-y border-white/5" style={{ background: 'var(--color-surface-container-low)' }}>
+        <div className="container mx-auto px-6 max-w-5xl">
+          <AnimateOnScroll direction="up">
+            <div className="text-center mb-14">
+              <div className="font-mono text-xs text-primary/80 mb-3 tracking-widest uppercase">WORKFLOW</div>
+              <h2 className="text-3xl sm:text-4xl font-bold mb-3 tracking-tighter">How DevPrep AI Works</h2>
+              <p className="text-on-surface-variant max-w-xl mx-auto text-sm sm:text-base">
+                Four simple steps to transform your technical preparation into verified job offers.
               </p>
             </div>
           </AnimateOnScroll>
 
-          <AnimateOnScroll delay={200}>
-            <div className="relative flex flex-col items-center">
-              {/* Glow behind window */}
-              <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-[70%] h-36 blur-[80px] opacity-15 pointer-events-none rounded-full"
-                   style={{ background: 'radial-gradient(ellipse, var(--color-primary), transparent)' }} />
-
-              {/* ── Window Frame ── */}
-              <div className="relative w-full max-w-4xl rounded-[14px] overflow-hidden z-10 shadow-2xl"
-                   style={{
-                     background: 'var(--color-surface-container-lowest)',
-                     border: '1px solid var(--color-border-subtle)',
-                     boxShadow: '0 25px 60px rgba(0,0,0,0.25)',
-                   }}>
-                {/* Window chrome */}
-                <div className="flex items-center gap-2 px-5 py-3.5 select-none"
-                     style={{
-                       background: 'var(--color-surface-container)',
-                       borderBottom: '1px solid var(--color-border-subtle)',
-                     }}>
-                  <div className="w-3 h-3 rounded-full" style={{ background: '#EF4444' }} />
-                  <div className="w-3 h-3 rounded-full" style={{ background: '#F59E0B' }} />
-                  <div className="w-3 h-3 rounded-full" style={{ background: '#10B981' }} />
-                  <div className="ml-3 flex-1 max-w-xs rounded-lg py-1.5 px-3 text-xs text-center truncate"
-                       style={{ background: 'var(--color-surface-container-high)', color: 'var(--color-outline)' }}>
-                    app.devprep.ai/features
-                  </div>
-                  <div className="w-5 h-5 flex items-center justify-center rounded" style={{ color: 'var(--color-outline)' }}>
-                    <span className="material-symbols-outlined text-[16px]">more_vert</span>
-                  </div>
-                </div>
-
-                {/* ── Window Content: Feature Showcase ── */}
-                <div className="p-6 md:p-8">
-                  {/* Welcome bar */}
-                  <div className="flex items-center justify-between mb-8 pb-6"
-                       style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
-                    <div>
-                      <h3 className="text-lg font-bold" style={{ color: 'var(--color-on-surface)' }}>
-                        Welcome to DevPrep AI
-                      </h3>
-                      <p className="text-xs mt-1" style={{ color: 'var(--color-on-surface-variant)' }}>
-                        Your personalized interview preparation suite
-                      </p>
-                    </div>
-                    <div className="hidden sm:flex items-center gap-2 text-xs px-4 py-2 rounded-lg font-semibold"
-                         style={{ background: 'rgba(208,188,255,0.1)', color: 'var(--color-primary)' }}>
-                      <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
-                      AI-Powered
-                    </div>
-                  </div>
-
-                  {/* Feature grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {[
-                      { icon: 'map',         title: 'Guided Roadmaps',    desc: 'Curated learning paths by senior engineers',       color: 'var(--color-primary)' },
-                      { icon: 'smart_toy',   title: 'AI Tutor',           desc: 'Real-time explanations, reviews & hints',           color: 'var(--color-secondary)' },
-                      { icon: 'data_object', title: 'Live Code Lab',      desc: 'Write, run & analyze code with AI feedback',        color: 'var(--color-tertiary)' },
-                      { icon: 'quiz',        title: 'Adaptive Quizzes',   desc: 'Dynamic difficulty that matches your skill level',  color: 'var(--color-success)' },
-                      { icon: 'style',       title: 'Flashcard Decks',    desc: 'Spaced repetition for maximum retention',          color: 'var(--color-warning)' },
-                      { icon: 'leaderboard', title: 'Progress Tracking',  desc: 'Streaks, benchmarks & peer comparisons',           color: '#FF6B6B' },
-                      { icon: 'description', title: 'Resume Optimizer',   desc: 'ATS scores, templates & gap analysis',             color: 'var(--color-primary)' },
-                      { icon: 'mail',        title: 'Cover Letters',      desc: 'AI-generated letters tailored to each role',       color: 'var(--color-secondary)' },
-                    ].map((f) => (
-                      <div key={f.title}
-                           className="group rounded-xl p-4 transition-all duration-200 hover:-translate-y-0.5"
-                           style={{
-                             background: `${f.color}06`,
-                             border: '1px solid',
-                             borderColor: `${f.color}12`,
-                           }}>
-                        <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-3 transition-transform group-hover:scale-110"
-                             style={{ background: `${f.color}14` }}>
-                          <span className="material-symbols-outlined text-lg" style={{ color: f.color, fontVariationSettings: "'FILL' 1" }}>{f.icon}</span>
-                        </div>
-                        <h4 className="text-sm font-semibold mb-1" style={{ color: 'var(--color-on-surface)' }}>{f.title}</h4>
-                        <p className="text-xs leading-relaxed" style={{ color: 'var(--color-on-surface-variant)' }}>{f.desc}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Bottom stats bar */}
-                  <div className="mt-8 pt-6 flex flex-wrap items-center justify-center gap-6 md:gap-10 text-center"
-                       style={{ borderTop: '1px solid var(--color-border-subtle)' }}>
-                    {[
-                      { value: '500+', label: 'Hours of content' },
-                      { value: '40+',  label: 'Technologies' },
-                      { value: '50K+', label: 'Active developers' },
-                      { value: '95%',  label: 'Satisfaction rate' },
-                    ].map((s) => (
-                      <div key={s.label}>
-                        <div className="text-lg font-extrabold" style={{ color: 'var(--color-primary)' }}>{s.value}</div>
-                        <div className="text-xs" style={{ color: 'var(--color-on-surface-variant)' }}>{s.label}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </AnimateOnScroll>
-        </div>
-      </section>
-
-      {/* ═══════ 3. Features — colored icon grid ═══════ */}
-      <section className="px-6 py-20 max-w-6xl mx-auto w-full">
-        <AnimateOnScroll>
-          <h2 className="text-2xl font-bold text-center mb-4" style={{ color: 'var(--color-on-surface)' }}>
-            Everything you need to prepare
-          </h2>
-        </AnimateOnScroll>
-        <AnimateOnScroll delay={100}>
-          <p className="text-sm text-center mb-12 max-w-lg mx-auto" style={{ color: 'var(--color-on-surface-variant)' }}>
-            Six integrated tools that work together to take you from zero to interview-ready.
-          </p>
-        </AnimateOnScroll>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {[
-            { icon: 'map',         color: 'var(--color-primary)',   title: 'Guided Roadmaps',    desc: 'Curated learning paths built by senior engineers at top tech companies.' },
-            { icon: 'smart_toy',   color: 'var(--color-secondary)', title: 'AI Tutor',           desc: 'Get instant explanations, code reviews, and personalized hints from your AI mentor.' },
-            { icon: 'data_object', color: 'var(--color-tertiary)',  title: 'Live Code Lab',      desc: 'Write, run, and analyze code with real-time AI feedback on complexity and edge cases.' },
-            { icon: 'quiz',        color: 'var(--color-success)',   title: 'Adaptive Quizzes',   desc: 'Dynamic assessments that adjust difficulty based on your performance history.' },
-            { icon: 'style',       color: 'var(--color-warning)',   title: 'Flashcard Decks',    desc: 'Spaced-repetition flashcards engineered for maximum knowledge retention.' },
-            { icon: 'leaderboard', color: 'var(--color-error)',     title: 'Progress Tracking',  desc: 'Detailed analytics, streak tracking, and skill benchmarks against your peer group.' },
-          ].map((f, i) => (
-            <AnimateOnScroll key={f.title} delay={i * 80}>
-              <div className="bento-card ai-glow-border group p-6">
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110"
-                     style={{ background: `${f.color}15` }}>
-                  <span className="material-symbols-outlined text-2xl" style={{ color: f.color, fontVariationSettings: "'FILL' 0" }}>{f.icon}</span>
-                </div>
-                <h3 className="font-semibold mb-2" style={{ color: 'var(--color-on-surface)' }}>{f.title}</h3>
-                <p className="text-sm" style={{ color: 'var(--color-on-surface-variant)' }}>{f.desc}</p>
-              </div>
-            </AnimateOnScroll>
-          ))}
-        </div>
-      </section>
-
-      {/* ═══════ 3. AI Tools — Coding Practice + Resume Optimizer merged ═══════ */}
-      <section className="px-6 py-20 max-w-6xl mx-auto w-full">
-        <AnimateOnScroll>
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold mb-4"
-                 style={{ background: 'rgba(208,188,255,0.1)', color: 'var(--color-primary)' }}>
-              <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
-              AI-POWERED TOOLS
-            </div>
-            <h2 className="text-2xl font-bold" style={{ color: 'var(--color-on-surface)' }}>
-              Supercharge your job search
-            </h2>
-            <p className="text-sm mt-2" style={{ color: 'var(--color-on-surface-variant)' }}>
-              Two powerful AI tools to help you land your next role
-            </p>
-          </div>
-        </AnimateOnScroll>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Coding Practice */}
-          <AnimateOnScroll>
-            <div className="relative overflow-hidden rounded-2xl p-8"
-                 style={{
-                   background: 'linear-gradient(135deg, rgba(76,215,246,0.08) 0%, rgba(76,215,246,0.02) 100%)',
-                   border: '1px solid rgba(76,215,246,0.15)',
-                 }}>
-              <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-10"
-                   style={{ background: 'radial-gradient(circle, var(--color-secondary), transparent)' }} />
-              <div className="relative z-10">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                     style={{ background: 'rgba(76,215,246,0.15)' }}>
-                  <span className="material-symbols-outlined text-[24px]" style={{ color: 'var(--color-secondary)', fontVariationSettings: "'FILL' 1" }}>data_object</span>
-                </div>
-                <h3 className="text-lg font-bold mb-2" style={{ color: 'var(--color-on-surface)' }}>Coding Practice</h3>
-                <p className="text-sm mb-5 leading-relaxed" style={{ color: 'var(--color-on-surface-variant)' }}>
-                  Solve real DSA problems with AI-powered evaluation. Get instant feedback on correctness, edge cases, and complexity.
-                </p>
-                <div className="flex flex-wrap gap-2 mb-5">
-                  {['150+ Questions', '5 Levels', '2 Languages', 'Instant AI Check'].map((tag) => (
-                    <span key={tag} className="text-xs px-2.5 py-1 rounded-lg"
-                          style={{ background: 'rgba(76,215,246,0.1)', color: 'var(--color-secondary)' }}>
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <Link to="/code-analyzer"
-                  className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-bold transition-all hover:opacity-90"
-                  style={{ background: 'var(--color-secondary)', color: 'var(--color-on-secondary)' }}>
-                  Start Coding
-                  <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 0" }}>arrow_forward</span>
-                </Link>
-              </div>
-            </div>
-          </AnimateOnScroll>
-
-          {/* Resume Optimizer */}
-          <AnimateOnScroll delay={120}>
-            <div className="relative overflow-hidden rounded-2xl p-8"
-                 style={{
-                   background: 'linear-gradient(135deg, rgba(208,188,255,0.08) 0%, rgba(208,188,255,0.02) 100%)',
-                   border: '1px solid rgba(208,188,255,0.15)',
-                 }}>
-              <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-10"
-                   style={{ background: 'radial-gradient(circle, var(--color-primary), transparent)' }} />
-              <div className="relative z-10">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                     style={{ background: 'rgba(208,188,255,0.15)' }}>
-                  <span className="material-symbols-outlined text-[24px]" style={{ color: 'var(--color-primary)', fontVariationSettings: "'FILL' 1" }}>description</span>
-                </div>
-                <h3 className="text-lg font-bold mb-2" style={{ color: 'var(--color-on-surface)' }}>Resume Optimizer</h3>
-                <p className="text-sm mb-5 leading-relaxed" style={{ color: 'var(--color-on-surface-variant)' }}>
-                  Upload your resume and job description. Get an ATS-optimized resume, cover letter, and detailed gap analysis.
-                </p>
-                <div className="flex flex-wrap gap-2 mb-5">
-                  {['ATS Score', '5 Templates', 'Cover Letter', 'DOCX Export'].map((tag) => (
-                    <span key={tag} className="text-xs px-2.5 py-1 rounded-lg"
-                          style={{ background: 'rgba(208,188,255,0.1)', color: 'var(--color-primary)' }}>
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <Link to="/resume-optimizer"
-                  className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-bold transition-all hover:opacity-90"
-                  style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
-                  Optimize Resume
-                  <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 0" }}>arrow_forward</span>
-                </Link>
-              </div>
-            </div>
-          </AnimateOnScroll>
-        </div>
-      </section>
-
-      {/* ═══════ 4. Why DevPrep AI — side-by-side cards ═══════ */}
-      <section className="px-6 py-20 max-w-5xl mx-auto w-full">
-        <AnimateOnScroll>
-          <h2 className="text-2xl font-bold text-center mb-4" style={{ color: 'var(--color-on-surface)' }}>
-            Why DevPrep AI?
-          </h2>
-        </AnimateOnScroll>
-        <AnimateOnScroll delay={100}>
-          <p className="text-sm text-center mb-12 max-w-lg mx-auto" style={{ color: 'var(--color-on-surface-variant)' }}>
-            See how AI-powered preparation stacks up against the old way.
-          </p>
-        </AnimateOnScroll>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <AnimateOnScroll>
-            <div className="rounded-2xl p-7" style={{ background: 'rgba(239,68,68,0.04)', border: '1px solid rgba(239,68,68,0.12)' }}>
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(239,68,68,0.12)' }}>
-                  <span className="material-symbols-outlined text-xl" style={{ color: 'var(--color-error)', fontVariationSettings: "'FILL' 1" }}>close</span>
-                </div>
-                <h3 className="font-semibold" style={{ color: 'var(--color-on-surface)' }}>Traditional Prep</h3>
-              </div>
-              <ul className="space-y-3">
-                {[
-                  'Scattered resources across dozens of sites',
-                  'No feedback on your code quality',
-                  'Static study plans that ignore your gaps',
-                  'Hours wasted searching for explanations',
-                  'No way to simulate real interview pressure',
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-2.5 text-sm" style={{ color: 'var(--color-on-surface-variant)' }}>
-                    <span className="material-symbols-outlined text-[16px] mt-0.5" style={{ color: 'var(--color-error)', fontVariationSettings: "'FILL' 1" }}>close_small</span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </AnimateOnScroll>
-          <AnimateOnScroll delay={150}>
-            <div className="rounded-2xl p-7" style={{ background: 'rgba(16,185,129,0.04)', border: '1px solid rgba(16,185,129,0.12)' }}>
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(16,185,129,0.12)' }}>
-                  <span className="material-symbols-outlined text-xl" style={{ color: 'var(--color-success)', fontVariationSettings: "'FILL' 1" }}>check</span>
-                </div>
-                <h3 className="font-semibold" style={{ color: 'var(--color-on-surface)' }}>DevPrep AI</h3>
-              </div>
-              <ul className="space-y-3">
-                {[
-                  'All-in-one platform: roadmaps, labs, quizzes',
-                  'Real-time AI code reviews & feedback',
-                  'Adaptive plans that target your weak spots',
-                  'Instant AI explanations for any question',
-                  'Mock interviews with company-specific questions',
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-2.5 text-sm" style={{ color: 'var(--color-on-surface-variant)' }}>
-                    <span className="material-symbols-outlined text-[16px] mt-0.5" style={{ color: 'var(--color-success)', fontVariationSettings: "'FILL' 1" }}>check_small</span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </AnimateOnScroll>
-        </div>
-      </section>
-
-      {/* ═══════ 5. Start in Minutes — dashboard mockup ═══════ */}
-      <section className="px-6 py-20 max-w-6xl mx-auto w-full">
-        <AnimateOnScroll>
-          <h2 className="text-2xl font-bold text-center mb-4" style={{ color: 'var(--color-on-surface)' }}>
-            Start in minutes
-          </h2>
-        </AnimateOnScroll>
-        <AnimateOnScroll delay={100}>
-          <p className="text-sm text-center mb-12 max-w-lg mx-auto" style={{ color: 'var(--color-on-surface-variant)' }}>
-            Everything you need, right when you open your dashboard.
-          </p>
-        </AnimateOnScroll>
-        <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid var(--color-border-subtle)' }}>
-          {/* Mock browser chrome */}
-          <div className="flex items-center gap-2 px-5 py-3" style={{ background: 'var(--color-surface-container)', borderBottom: '1px solid var(--color-border-subtle)' }}>
-            <div className="w-3 h-3 rounded-full" style={{ background: '#EF4444' }} />
-            <div className="w-3 h-3 rounded-full" style={{ background: '#F59E0B' }} />
-            <div className="w-3 h-3 rounded-full" style={{ background: '#10B981' }} />
-            <div className="ml-4 flex-1 max-w-md rounded-lg py-1.5 px-3 text-xs" style={{ background: 'var(--color-surface-container-high)', color: 'var(--color-outline)' }}>
-              app.devprep.ai/dashboard
-            </div>
-          </div>
-          {/* Dashboard content */}
-          <div className="p-6 md:p-8" style={{ background: 'var(--color-surface-container-lowest)' }}>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              <div className="md:col-span-2 space-y-5">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(208,188,255,0.12)' }}>
-                    <span className="material-symbols-outlined text-xl" style={{ color: 'var(--color-primary)', fontVariationSettings: "'FILL' 1" }}>dashboard_customize</span>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-sm" style={{ color: 'var(--color-on-surface)' }}>Your personalized dashboard</h3>
-                    <p className="text-xs" style={{ color: 'var(--color-on-surface-variant)' }}>At a glance: streak, milestones, recent scores, and AI suggestions.</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {[
-                    { value: '87%', label: 'Avg. quiz score', color: 'var(--color-primary)' },
-                    { value: '12', label: 'Day streak', color: 'var(--color-success)' },
-                    { value: '4', label: 'Roadmaps', color: 'var(--color-warning)' },
-                    { value: '23', label: 'Code labs', color: 'var(--color-tertiary)' },
-                  ].map((s) => (
-                    <div key={s.label} className="rounded-xl p-4 text-center" style={{ background: 'var(--color-surface-container)' }}>
-                      <div className="text-xl font-extrabold" style={{ color: s.color }}>{s.value}</div>
-                      <div className="text-xs mt-0.5" style={{ color: 'var(--color-outline)' }}>{s.label}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="space-y-3">
-                {[
-                  { icon: 'trending_up', color: 'var(--color-success)', title: 'Track progress', desc: 'Skill benchmarks, XP, and weekly growth charts.' },
-                  { icon: 'psychology', color: 'var(--color-warning)', title: 'AI at your side', desc: 'Ask anything, get instant answers with examples.' },
-                  { icon: 'group', color: 'var(--color-tertiary)', title: 'Join community', desc: 'Compare scores with 50K+ peers on leaderboard.' },
-                ].map((item) => (
-                  <div key={item.title} className="flex items-start gap-3 p-3 rounded-xl" style={{ background: 'var(--color-surface-container)' }}>
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${item.color}15` }}>
-                      <span className="material-symbols-outlined text-[16px]" style={{ color: item.color, fontVariationSettings: "'FILL' 1" }}>{item.icon}</span>
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold" style={{ color: 'var(--color-on-surface)' }}>{item.title}</p>
-                      <p className="text-xs" style={{ color: 'var(--color-on-surface-variant)' }}>{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════ 6. For Everyone — timeline style ═══════ */}
-      <section className="px-6 py-20 max-w-4xl mx-auto w-full">
-        <AnimateOnScroll>
-          <h2 className="text-2xl font-bold text-center mb-4" style={{ color: 'var(--color-on-surface)' }}>
-            Built for every stage of your career
-          </h2>
-        </AnimateOnScroll>
-        <AnimateOnScroll delay={100}>
-          <p className="text-sm text-center mb-14 max-w-lg mx-auto" style={{ color: 'var(--color-on-surface-variant)' }}>
-            Whether you're writing your first for-loop or preparing for Staff Engineer — DevPrep AI meets you where you are.
-          </p>
-        </AnimateOnScroll>
-        <div className="relative">
-          <div className="absolute left-8 top-0 bottom-0 w-px" style={{ background: 'linear-gradient(180deg, var(--color-primary), var(--color-secondary), var(--color-tertiary))' }} />
-          <div className="space-y-10">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
             {[
-              { icon: 'school', color: 'var(--color-primary)', title: 'Students', desc: 'Build a strong CS foundation with guided curricula and instant AI tutoring for homework and interview prep.' },
-              { icon: 'rocket_launch', color: 'var(--color-success)', title: 'Bootcamp Grads', desc: 'Fill the gaps bootcamps leave behind. Master DS&A, system design, and ace the technical screen.' },
-              { icon: 'code', color: 'var(--color-warning)', title: 'Experienced Engineers', desc: 'Level up for senior roles. System design deep-dives, advanced algorithms, and staff-level mock interviews.' },
-              { icon: 'switch_access', color: 'var(--color-tertiary)', title: 'Career Switchers', desc: 'Transition into tech with a structured path. No fluff — just the skills employers actually ask about.' },
-            ].map((p, i) => (
-              <AnimateOnScroll key={p.title} delay={i * 100}>
-                <div className="flex items-start gap-6 pl-0">
-                  <div className="relative z-10 w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0"
-                       style={{ background: 'var(--color-surface-container-lowest)', border: `2px solid ${p.color}` }}>
-                    <span className="material-symbols-outlined text-2xl" style={{ color: p.color, fontVariationSettings: "'FILL' 1" }}>{p.icon}</span>
+              { step: '01', icon: 'person_add', title: 'Create Account', desc: 'Select your target CS track, technologies, and career milestones.' },
+              { step: '02', icon: 'route', title: 'Choose a Path', desc: 'Enroll in structured learning paths or generate custom AI practice sets.' },
+              { step: '03', icon: 'psychology', title: 'Practice & Analyze', desc: 'Solve challenges, analyze code, and practice with our 24/7 AI tutor.' },
+              { step: '04', icon: 'military_tech', title: 'Duel & Optimize', desc: 'Test skills in 1v1 duels, optimize your resume, and ace technical interviews.' },
+            ].map((s, i) => (
+              <AnimateOnScroll key={s.step} delay={i * 120} direction="up">
+                <div className="flex flex-col items-center text-center relative group">
+                  {i < 3 && (
+                    <div className="hidden md:block absolute top-8 left-[60%] w-[calc(100%-40px)] h-[2px]"
+                         style={{ background: 'linear-gradient(90deg, #8B5CF6, rgba(139,92,246,0.15))' }} />
+                  )}
+                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 relative z-10 transition-transform duration-300 group-hover:scale-110 shadow-[0_4px_20px_rgba(0,0,0,0.4)]"
+                       style={{
+                         background: 'linear-gradient(135deg, rgba(35,30,45,0.9) 0%, rgba(20,20,25,0.95) 100%)',
+                         border: '1px solid rgba(139,92,246,0.3)',
+                       }}>
+                    <span className="material-symbols-outlined text-2xl" style={{ color: 'var(--color-primary)', fontVariationSettings: "'FILL' 1" }}>{s.icon}</span>
                   </div>
-                  <div className="flex-1 pt-3">
-                    <h3 className="text-lg font-bold mb-1" style={{ color: 'var(--color-on-surface)' }}>{p.title}</h3>
-                    <p className="text-sm leading-relaxed" style={{ color: 'var(--color-on-surface-variant)' }}>{p.desc}</p>
+                  <div className="text-xs font-mono font-semibold mb-2 px-3 py-1 rounded-full border border-primary/20" style={{ background: 'rgba(139,92,246,0.12)', color: 'var(--color-primary)' }}>
+                    Step {s.step}
                   </div>
+                  <h3 className="font-semibold mb-2" style={{ color: 'var(--color-on-surface)' }}>{s.title}</h3>
+                  <p className="text-xs sm:text-sm text-on-surface-variant opacity-80 leading-relaxed max-w-xs">{s.desc}</p>
                 </div>
               </AnimateOnScroll>
             ))}
@@ -489,169 +206,477 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* ═══════ 7. How It Works — horizontal steps ═══════ */}
-      <section className="px-6 py-20 max-w-5xl mx-auto w-full">
-        <AnimateOnScroll>
-          <h2 className="text-2xl font-bold text-center mb-4" style={{ color: 'var(--color-on-surface)' }}>
-            How it works
-          </h2>
-        </AnimateOnScroll>
-        <AnimateOnScroll delay={100}>
-          <p className="text-sm text-center mb-14 max-w-lg mx-auto" style={{ color: 'var(--color-on-surface-variant)' }}>
-            Four simple steps to interview mastery.
-          </p>
-        </AnimateOnScroll>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
-          {[
-            { step: '01', icon: 'person_add', title: 'Create Account', desc: 'Sign up free and set your target companies, role, and experience level.' },
-            { step: '02', icon: 'route', title: 'Pick a Roadmap', desc: 'Choose from 40+ curated paths or let AI build a personalized plan.' },
-            { step: '03', icon: 'psychology', title: 'Learn & Practice', desc: 'Study with AI tutor, solve coding labs, and take adaptive quizzes daily.' },
-            { step: '04', icon: 'work_history', title: 'Crush the Interview', desc: 'Simulate real interviews with company-specific questions and time pressure.' },
-          ].map((s, i) => (
-            <AnimateOnScroll key={s.step} delay={i * 120}>
-              <div className="flex flex-col items-center text-center relative">
-                {i < 3 && (
-                  <div className="hidden md:block absolute top-8 left-[60%] w-[calc(100%-40px)] h-[2px]"
-                       style={{ background: 'linear-gradient(90deg, var(--color-primary), var(--color-border-muted))' }} />
-                )}
-                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 relative z-10"
-                     style={{ background: 'var(--color-surface-container)', border: '1px solid var(--color-border-muted)' }}>
-                  <span className="material-symbols-outlined text-2xl" style={{ color: 'var(--color-primary)', fontVariationSettings: "'FILL' 1" }}>{s.icon}</span>
-                </div>
-                <div className="text-xs font-bold mb-2 px-3 py-1 rounded-full" style={{ background: 'rgba(208,188,255,0.1)', color: 'var(--color-primary)' }}>
-                  Step {s.step}
-                </div>
-                <h3 className="font-semibold mb-2" style={{ color: 'var(--color-on-surface)' }}>{s.title}</h3>
-                <p className="text-sm max-w-xs" style={{ color: 'var(--color-on-surface-variant)' }}>{s.desc}</p>
+      {/* ═══════ 5. Live Code Lab ═══════ */}
+      <section className="py-24" style={{ background: 'var(--color-surface-container-lowest)' }}>
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="flex flex-col lg:flex-row-reverse items-center gap-12">
+            <AnimateOnScroll className="lg:w-1/2 space-y-6" direction="right">
+              <div className="text-primary font-mono text-xs tracking-widest uppercase">LIVE CODE LAB</div>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter leading-tight">
+                Real-time feedback for high-stakes coding
+              </h2>
+              <p className="text-on-surface-variant text-sm sm:text-base opacity-80 leading-relaxed">
+                Experience a production-grade IDE environment with integrated AI that analyzes your algorithmic efficiency, space complexity, and edge-case handling as you type.
+              </p>
+              <ul className="space-y-3 pt-2">
+                {[
+                  'Language-specific linting & optimization',
+                  'Automated unit test generation',
+                  'Complexity heatmaps',
+                ].map((item) => (
+                  <li key={item} className="flex items-center gap-3 text-sm font-medium">
+                    <span className="material-symbols-outlined text-primary">check_circle</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <div className="pt-4">
+                <Link to="/code-analyzer" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] transition-all" style={{ background: '#8B5CF6', color: '#FFF' }}>
+                  Try Code Lab <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                </Link>
               </div>
             </AnimateOnScroll>
-          ))}
+
+            <AnimateOnScroll className="lg:w-1/2 w-full" direction="left">
+              <div className="rounded-2xl overflow-hidden border shadow-2xl"
+                   style={{
+                     background: 'linear-gradient(145deg, rgba(25,25,30,0.9) 0%, rgba(12,12,15,0.95) 100%)',
+                     borderColor: 'rgba(139,92,246,0.25)',
+                   }}>
+                <div className="h-9 px-4 flex items-center gap-2 border-b border-white/5" style={{ background: 'rgba(35,35,40,0.6)' }}>
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-green-500/50"></div>
+                  <span className="ml-2 font-mono text-[11px] text-on-surface-variant/50">shortest_path.py</span>
+                </div>
+                <div className="p-6 font-mono text-xs leading-relaxed">
+                  <div className="text-primary/40 mb-2">// Optimizing Dijkstra's Algorithm</div>
+                  <div className="text-primary/90">
+                    <span className="text-blue-400">def</span> <span className="text-yellow-400">shortest_path</span>(graph, start):<br />
+                    &nbsp;&nbsp;distances = &#123;node: float('inf') for node in graph&#125;<br />
+                    &nbsp;&nbsp;pq = [(0, start)]<br />
+                    &nbsp;&nbsp;...
+                  </div>
+                  <div className="mt-5 p-4 rounded-xl border-l-2 border-primary" style={{ background: 'rgba(139,92,246,0.08)' }}>
+                    <div className="text-primary font-bold mb-1 flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-sm">auto_awesome</span> AI Suggestion:
+                    </div>
+                    <div className="text-on-surface-variant text-[11px]">
+                      Consider using a Min-Heap data structure to maintain O((V + E) log V) time complexity for sparse graphs.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </AnimateOnScroll>
+          </div>
         </div>
       </section>
 
-      {/* ═══════ 8. Testimonials — scrollable rows ═══════ */}
-      <section className="px-6 py-20 max-w-6xl mx-auto w-full">
-        <AnimateOnScroll>
-          <h2 className="text-2xl font-bold text-center mb-4" style={{ color: 'var(--color-on-surface)' }}>
-            Loved by engineers
-          </h2>
-        </AnimateOnScroll>
-        <AnimateOnScroll delay={100}>
-          <p className="text-sm text-center mb-12 max-w-lg mx-auto" style={{ color: 'var(--color-on-surface-variant)' }}>
-            Hear from developers who landed their dream roles.
-          </p>
-        </AnimateOnScroll>
-        <div className="flex gap-5 overflow-x-auto pb-4 no-scrollbar snap-x snap-mandatory">
-          {[
-            { name: 'Sarah Chen', role: 'SWE @ Google', avatar: 'S', quote: 'The AI tutor saved me weeks of grinding. Instead of hunting through docs, I just asked and got instant, accurate explanations tailored to my gap.' },
-            { name: 'James Park', role: 'SWE @ Stripe', avatar: 'J', quote: 'I failed two onsites before finding this. The company-specific mocks and code labs with AI feedback were the game-changer for my third attempt.' },
-            { name: 'Priya Patel', role: 'SWE @ Microsoft', avatar: 'P', quote: 'The adaptive quizzes exposed blind spots I didn\'t even know I had. Three months of daily practice, and I went from mid-tier to FAANG offer.' },
-          ].map((t, i) => (
-            <AnimateOnScroll key={t.name} delay={i * 100}>
-              <div className="min-w-[340px] md:min-w-[380px] rounded-2xl p-7 snap-start flex flex-col"
-                   style={{ background: 'var(--color-surface-container)', border: '1px solid var(--color-border-subtle)' }}>
-                <div className="flex-1">
-                  <div className="flex items-center gap-1 mb-4">
-                    {[...Array(5)].map((_, j) => (
-                      <span key={j} className="material-symbols-outlined text-[16px]" style={{ color: 'var(--color-warning)', fontVariationSettings: '"FILL" 1' }}>star</span>
-                    ))}
-                  </div>
-                  <p className="text-sm mb-6 leading-relaxed" style={{ color: 'var(--color-on-surface-variant)' }}>"{t.quote}"</p>
-                </div>
-                <div className="flex items-center gap-3 pt-4 border-t" style={{ borderColor: 'var(--color-border-subtle)' }}>
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold"
-                       style={{ background: 'var(--color-primary-container)', color: 'var(--color-on-primary-container)' }}>
-                    {t.avatar}
+      {/* ═══════ 6. AI Powered Tools Preview ═══════ */}
+      <section className="py-24" style={{ background: 'var(--color-surface-container-low)' }}>
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="flex flex-col lg:flex-row gap-12 items-center">
+            <AnimateOnScroll className="lg:w-1/2 space-y-8" direction="left">
+              <div>
+                <div className="text-primary font-mono text-xs tracking-widest uppercase mb-3">AI-POWERED TOOLS</div>
+                <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter leading-tight mb-4">
+                  Master the Modern Technical Loop
+                </h2>
+              </div>
+              <div className="space-y-6">
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 shrink-0 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-primary text-xl">integration_instructions</span>
                   </div>
                   <div>
-                    <div className="text-sm font-semibold" style={{ color: 'var(--color-on-surface)' }}>{t.name}</div>
-                    <div className="text-xs" style={{ color: 'var(--color-on-surface-variant)' }}>{t.role}</div>
+                    <h4 className="font-semibold text-base mb-1">Advanced Coding Practice</h4>
+                    <p className="text-on-surface-variant text-sm opacity-75">Multi-file environment with language-specific linting and automated unit test generation.</p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 shrink-0 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-primary text-xl">description</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-base mb-1">Resume Optimizer</h4>
+                    <p className="text-on-surface-variant text-sm opacity-75">AI scanning to ensure your experience highlights hit the specific keywords top recruiters look for.</p>
                   </div>
                 </div>
               </div>
             </AnimateOnScroll>
-          ))}
-        </div>
-      </section>
 
-      {/* ═══════ 9. FAQ — accordion ═══════ */}
-      <section className="px-6 py-20 max-w-3xl mx-auto w-full">
-        <AnimateOnScroll>
-          <h2 className="text-2xl font-bold text-center mb-4" style={{ color: 'var(--color-on-surface)' }}>
-            Frequently asked questions
-          </h2>
-        </AnimateOnScroll>
-        <AnimateOnScroll delay={100}>
-          <p className="text-sm text-center mb-12 max-w-lg mx-auto" style={{ color: 'var(--color-on-surface-variant)' }}>
-            Everything you need to know about DevPrep AI.
-          </p>
-        </AnimateOnScroll>
-        <div className="space-y-2">
-          {faqs.map((faq, i) => (
-            <AnimateOnScroll key={i} delay={i * 60}>
-              <div className="overflow-hidden rounded-xl transition-all duration-200"
-                   style={{ background: openFaq === i ? 'rgba(208,188,255,0.04)' : 'var(--color-surface-container)', border: '1px solid var(--color-border-subtle)' }}>
-                <button
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full flex items-center justify-between p-4 text-left transition-all"
-                  style={{ color: 'var(--color-on-surface)' }}
-                >
-                  <span className="text-sm font-semibold pr-4">{faq.q}</span>
-                  <span className={`material-symbols-outlined text-[20px] transition-all duration-200 flex-shrink-0`}
-                        style={{
-                          color: 'var(--color-primary)',
-                          transform: openFaq === i ? 'rotate(180deg)' : 'rotate(0deg)',
-                          fontVariationSettings: "'FILL' 1",
-                        }}>
-                    expand_more
-                  </span>
-                </button>
-                <div className="overflow-hidden transition-all duration-300"
-                     style={{ maxHeight: openFaq === i ? '200px' : '0px' }}>
-                  <div className="px-4 pb-4 text-sm leading-relaxed" style={{ color: 'var(--color-on-surface-variant)' }}>
-                    {faq.a}
+            <AnimateOnScroll className="lg:w-1/2 w-full" direction="right">
+              <div className="rounded-2xl overflow-hidden border shadow-2xl aspect-video flex flex-col"
+                   style={{
+                     background: 'linear-gradient(145deg, rgba(25,25,30,0.9) 0%, rgba(12,12,15,0.95) 100%)',
+                     borderColor: 'rgba(139,92,246,0.25)',
+                   }}>
+                <div className="h-8 px-4 flex items-center gap-2 border-b border-white/5" style={{ background: 'rgba(35,35,40,0.6)' }}>
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
+                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-500/50"></div>
+                  </div>
+                  <div className="mx-auto font-mono text-[10px] text-on-surface-variant/50">devprep.ai/dashboard/algorithms</div>
+                </div>
+                <div className="p-6 flex flex-1">
+                  <div className="w-1/3 border-r border-white/5 pr-4 space-y-3">
+                    <div className="h-4 w-2/3 bg-white/5 rounded"></div>
+                    <div className="h-2 w-full bg-white/5 rounded"></div>
+                    <div className="h-2 w-full bg-white/5 rounded"></div>
+                    <div className="h-2 w-4/5 bg-white/5 rounded"></div>
+                  </div>
+                  <div className="flex-1 pl-4 font-mono text-xs text-primary/80">
+                    <div className="mb-2">class <span className="text-blue-400">LRUCache</span>:</div>
+                    <div className="pl-4">def <span className="text-yellow-400">__init__</span>(self, capacity: int):</div>
+                    <div className="pl-8">self.cap = capacity</div>
+                    <div className="pl-8">self.cache = OrderedDict()</div>
+                    <div className="mt-4 animate-pulse">|</div>
                   </div>
                 </div>
               </div>
             </AnimateOnScroll>
-          ))}
+          </div>
         </div>
       </section>
 
-      {/* ═══════ 10. Final CTA — gradient card ═══════ */}
-      <section className="px-6 py-24 max-w-4xl mx-auto w-full text-center">
-        <AnimateOnScroll>
-          <div className="relative overflow-hidden rounded-3xl p-12 md:p-16"
-               style={{
-                 background: 'linear-gradient(135deg, rgba(208,188,255,0.1) 0%, rgba(76,215,246,0.05) 50%, rgba(255,184,105,0.05) 100%)',
-                 border: '1px solid rgba(208,188,255,0.15)',
-               }}>
-            <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full blur-3xl opacity-20 pointer-events-none"
-                 style={{ background: 'radial-gradient(circle, var(--color-primary), transparent)' }} />
-            <div className="absolute -bottom-20 -left-20 w-60 h-60 rounded-full blur-3xl opacity-10 pointer-events-none"
-                 style={{ background: 'radial-gradient(circle, var(--color-secondary), transparent)' }} />
-            <div className="relative z-10">
-              <h2 className="text-3xl font-extrabold mb-4" style={{ color: 'var(--color-on-surface)' }}>
-                Ready to ace your interview?
+      {/* ═══════ 7. 2-Column Comparison Section ═══════ */}
+      <section className="py-20" style={{ background: 'var(--color-surface-container-lowest)' }}>
+        <div className="container mx-auto px-6 max-w-5xl">
+          <AnimateOnScroll direction="up">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary font-mono text-xs mb-3 backdrop-blur-md">
+                <span className="material-symbols-outlined text-[14px]">compare_arrows</span>
+                FEATURE COMPARISON
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter">
+                Engineered for <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#d0bcff]">Proven Results</span>
               </h2>
-              <p className="text-sm max-w-lg mx-auto mb-8" style={{ color: 'var(--color-on-surface-variant)' }}>
-                Join 50,000+ developers who are already preparing smarter with DevPrep AI. Start free, upgrade when you need more.
+              <p className="text-on-surface-variant text-xs sm:text-sm opacity-80 max-w-lg mx-auto mt-2">
+                See what is included in DevPrep AI compared to traditional unguided self-study.
               </p>
-              <div className="flex flex-col sm:flex-row items-center gap-4 justify-center">
-                <Link to="/register"
-                      className="px-8 py-3.5 rounded-xl font-bold text-base transition-all hover:opacity-90 active:scale-95"
-                      style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
-                  Create Free Account →
-                </Link>
-                <Link to="/quizzes"
-                      className="px-8 py-3.5 rounded-xl font-bold text-base transition-all"
-                      style={{ border: '1px solid var(--color-border-muted)', color: 'var(--color-on-surface-variant)' }}>
-                  Try a Quiz
-                </Link>
+            </div>
+          </AnimateOnScroll>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Column 1: Traditional Prep */}
+            <AnimateOnScroll direction="left" delay={0}>
+              <div className="p-8 rounded-3xl border border-white/10 h-full flex flex-col justify-between"
+                   style={{ background: 'linear-gradient(145deg, rgba(25,25,30,0.6) 0%, rgba(15,15,18,0.85) 100%)' }}>
+                <div>
+                  <div className="text-xs font-mono text-on-surface-variant/60 uppercase tracking-widest mb-3">TRADITIONAL METHOD</div>
+                  <h3 className="text-2xl font-bold mb-4 opacity-75">Standard Self-Study</h3>
+                  <p className="text-xs text-on-surface-variant/70 leading-relaxed mb-6">
+                    Relying on static PDF cards, manual note-taking, and unguided practice sets without real-time AI assistance.
+                  </p>
+                  <ul className="space-y-4 text-xs text-on-surface-variant/70 border-t border-white/5 pt-6">
+                    <li className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-red-400 text-lg shrink-0">cancel</span>
+                      <span>No 24/7 AI tutor for instant code explanations</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-red-400 text-lg shrink-0">cancel</span>
+                      <span>No real-time linting & complexity heatmaps</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-red-400 text-lg shrink-0">cancel</span>
+                      <span>No 1v1 peer coding duels or leaderboards</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-red-400 text-lg shrink-0">cancel</span>
+                      <span>No automated ATS resume optimization</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-red-400 text-lg shrink-0">cancel</span>
+                      <span>No spaced repetition flashcard algorithm</span>
+                    </li>
+                  </ul>
+                </div>
+                <div className="mt-8 pt-4 border-t border-white/5 text-xs font-mono text-white/30 text-center">LIMITATIONS OF STATIC STUDY</div>
+              </div>
+            </AnimateOnScroll>
+
+            {/* Column 2: DEVPREP AI (Highlighted) */}
+            <AnimateOnScroll direction="right" delay={100}>
+              <div className="relative p-8 rounded-3xl border border-primary/40 h-full flex flex-col justify-between shadow-[0_0_40px_rgba(139,92,246,0.2)] overflow-hidden"
+                   style={{ background: 'linear-gradient(145deg, rgba(139,92,246,0.15) 0%, rgba(20,20,28,0.95) 100%)' }}>
+                <div className="absolute top-0 right-0 bg-primary px-4 py-1 rounded-bl-2xl text-[10px] font-bold text-black uppercase tracking-wider shadow-md">
+                  Complete Platform
+                </div>
+                <div>
+                  <div className="inline-flex items-center gap-1.5 text-xs font-mono text-primary font-bold uppercase tracking-widest mb-3">
+                    <span className="material-symbols-outlined text-sm">auto_awesome</span> DEVPREP AI PLATFORM
+                  </div>
+                  <h3 className="text-2xl font-bold mb-4 text-white">Full AI Interview Suite</h3>
+                  <p className="text-xs text-on-surface-variant opacity-90 leading-relaxed mb-6">
+                    All-in-one AI ecosystem designed specifically to train, analyze, and elevate computer science candidates.
+                  </p>
+                  <ul className="space-y-4 text-xs text-on-surface font-semibold border-t border-primary/20 pt-6">
+                    <li className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-emerald-400 text-lg shrink-0">check_circle</span>
+                      <span>24/7 AI Tutor with instant code walkthroughs</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-emerald-400 text-lg shrink-0">check_circle</span>
+                      <span>Interactive Code Analyzer & test generation</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-emerald-400 text-lg shrink-0">check_circle</span>
+                      <span>Real-time 1v1 Peer Coding Duels & Rankings</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-emerald-400 text-lg shrink-0">check_circle</span>
+                      <span>Automated ATS Resume Optimizer for Tech CVs</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-emerald-400 text-lg shrink-0">check_circle</span>
+                      <span>SM-2 Spaced Repetition Flashcards & Quizzes</span>
+                    </li>
+                  </ul>
+                </div>
+                <div className="mt-8 pt-4 border-t border-primary/20 text-xs font-mono text-primary font-bold text-center">ALL-IN-ONE SOLUTION</div>
+              </div>
+            </AnimateOnScroll>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ 8. Neural Engine ═══════ */}
+      <section className="py-24" style={{ background: 'var(--color-surface-container-low)' }}>
+        <div className="container mx-auto px-6 max-w-5xl">
+          <AnimateOnScroll>
+            <div className="max-w-3xl mx-auto text-center mb-14">
+              <div className="text-primary font-mono text-xs tracking-widest uppercase mb-3">THE NEURAL ENGINE</div>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter mb-4">Proprietary AI Architecture</h2>
+              <p className="text-on-surface-variant text-sm sm:text-base opacity-80">
+                Our engine doesn't just predict answers; it models the cognitive load of an interviewer to provide the most realistic preparation experience possible.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { step: '01', title: 'Cognitive Mapping', desc: 'Analyzes your problem-solving patterns to identify subconscious biases in your logic.' },
+                { step: '02', title: 'Dynamic Scaling', desc: 'Adjusts problem difficulty in real-time based on your latency and accuracy metrics.' },
+                { step: '03', title: 'Sentiment Analysis', desc: 'Evaluates your verbal confidence and technical communication clarity during mock loops.' },
+              ].map((item) => (
+                <div key={item.step} className="group relative p-8 rounded-2xl border transition-all duration-300 hover:-translate-y-1 overflow-hidden"
+                     style={{
+                       background: 'linear-gradient(135deg, rgba(30,30,35,0.7) 0%, rgba(18,18,22,0.9) 100%)',
+                       borderColor: 'rgba(139,92,246,0.2)',
+                     }}>
+                  <div className="text-primary font-bold text-xl mb-2 group-hover:scale-110 transition-transform origin-left">{item.step}</div>
+                  <h4 className="font-semibold text-base mb-2">{item.title}</h4>
+                  <p className="text-on-surface-variant text-xs sm:text-sm opacity-75 leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </AnimateOnScroll>
+        </div>
+      </section>
+
+      {/* ═══════ 9. Career Stages ═══════ */}
+      <section className="py-24" style={{ background: 'var(--color-surface-container-low)' }}>
+        <div className="container mx-auto px-6 max-w-5xl">
+          <AnimateOnScroll>
+            <div className="text-center mb-14">
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter mb-3">Built for every stage of your learning journey.</h2>
+              <p className="text-on-surface-variant text-sm sm:text-base opacity-75 max-w-xl mx-auto">
+                Tailored preparation tracks designed to meet the specific demands of your next career move.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Stage 1 */}
+              <div className="p-8 rounded-2xl border flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1"
+                   style={{
+                     background: 'linear-gradient(145deg, rgba(25,25,30,0.8) 0%, rgba(15,15,18,0.95) 100%)',
+                     borderColor: 'rgba(255,255,255,0.08)',
+                   }}>
+                <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6">
+                  <span className="material-symbols-outlined text-primary text-3xl">school</span>
+                </div>
+                <h3 className="font-bold text-xl mb-3">BSCS & BSSE Students</h3>
+                <p className="text-on-surface-variant text-xs sm:text-sm leading-relaxed mb-6">Master core CS fundamentals, DS&A, and the rigors of internship loops at top tech firms.</p>
+                <div className="mt-auto w-full pt-4 border-t border-white/5 text-[11px] font-mono text-white/40">FOUNDATION TRACK</div>
+              </div>
+
+              {/* Stage 2 */}
+              <div className="p-8 rounded-2xl border relative flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1 shadow-[0_0_30px_rgba(139,92,246,0.15)]"
+                   style={{
+                     background: 'linear-gradient(145deg, rgba(139,92,246,0.12) 0%, rgba(20,20,25,0.95) 100%)',
+                     borderColor: 'rgba(139,92,246,0.4)',
+                   }}>
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary px-3 py-0.5 rounded-full text-[10px] font-bold text-black tracking-widest uppercase shadow-md">Popular</div>
+                <div className="w-14 h-14 rounded-2xl bg-primary/20 border border-primary/40 flex items-center justify-center mb-6">
+                  <span className="material-symbols-outlined text-primary text-3xl">terminal</span>
+                </div>
+                <h3 className="font-bold text-xl mb-3">Fresh Graduates</h3>
+                <p className="text-on-surface-variant text-xs sm:text-sm leading-relaxed mb-6">Bridging the gap to professional software engineering with intensive technical polishing and interview simulation.</p>
+                <div className="mt-auto w-full pt-4 border-t border-white/10 text-[11px] font-mono text-primary/80 font-semibold">ACCELERATED TRACK</div>
+              </div>
+
+              {/* Stage 3 */}
+              <div className="p-8 rounded-2xl border flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1"
+                   style={{
+                     background: 'linear-gradient(145deg, rgba(25,25,30,0.8) 0%, rgba(15,15,18,0.95) 100%)',
+                     borderColor: 'rgba(255,255,255,0.08)',
+                   }}>
+                <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6">
+                  <span className="material-symbols-outlined text-tertiary text-3xl">architecture</span>
+                </div>
+                <h3 className="font-bold text-xl mb-3">Senior Engineers</h3>
+                <p className="text-on-surface-variant text-xs sm:text-sm leading-relaxed mb-6">High-level focus on System Design, Leadership Principles, and cross-functional technical communication.</p>
+                <div className="mt-auto w-full pt-4 border-t border-white/5 text-[11px] font-mono text-white/40">EXECUTIVE TRACK</div>
               </div>
             </div>
+          </AnimateOnScroll>
+        </div>
+      </section>
+
+      {/* ═══════ 10. Process Section ═══════ */}
+      <section className="py-24" style={{ background: 'var(--color-surface-container-lowest)' }}>
+        <div className="container mx-auto px-6 max-w-5xl flex flex-col md:flex-row gap-12">
+          <AnimateOnScroll className="md:w-1/3" direction="left">
+            <div className="text-primary font-mono text-xs tracking-widest uppercase mb-3">METHODOLOGY</div>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter mb-4">The Engineering Process</h2>
+            <p className="text-on-surface-variant text-sm opacity-80 leading-relaxed mb-6">
+              Our proprietary methodology for turning candidates into top-percentile hires through iterative AI loops.
+            </p>
+          </AnimateOnScroll>
+          <AnimateOnScroll className="md:w-2/3 space-y-8 border-l border-white/10 pl-6 sm:pl-8" direction="right">
+            {[
+              { num: '01 / DIAGNOSTICS', title: 'Deep Skill Assessment', desc: 'AI-driven benchmarking of your current technical stack and interview readiness across 12 dimensions.' },
+              { num: '02 / EXECUTION', title: 'Targeted Prep Sprints', desc: 'Rapid iteration on weak points with adaptive problem sets that increase in complexity as you improve.' },
+              { num: '03 / SIMULATION', title: 'Mock Interview Loops', desc: 'High-pressure simulations with our LLM-powered interviewers, trained on verified tech interview transcripts.' },
+              { num: '04 / DEPLOYMENT', title: 'Final Polish & Placement', desc: 'Confidence calibration and negotiation coaching for your final onboarding phase.' },
+            ].map((node) => (
+              <div key={node.num} className="relative">
+                <div className="text-primary font-mono text-[11px] mb-1 tracking-widest">{node.num}</div>
+                <h4 className="font-semibold text-lg mb-1">{node.title}</h4>
+                <p className="text-on-surface-variant text-xs sm:text-sm opacity-75 max-w-lg leading-relaxed">{node.desc}</p>
+              </div>
+            ))}
+          </AnimateOnScroll>
+        </div>
+      </section>
+
+      {/* ═══════ 11. Testimonials ═══════ */}
+      <section className="py-24" style={{ background: 'var(--color-surface-container-low)' }}>
+        <div className="container mx-auto px-6 max-w-6xl">
+          <AnimateOnScroll direction="up">
+            <div className="text-center mb-14">
+              <div className="text-primary font-mono text-xs tracking-widest uppercase mb-3">SOCIAL PROOF</div>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter">Verified Tech Placements</h2>
+            </div>
+          </AnimateOnScroll>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <AnimateOnScroll direction="left" delay={0}>
+              <div className="p-6 rounded-2xl border h-full transition-all duration-300 hover:-translate-y-1"
+                   style={{
+                     background: 'linear-gradient(145deg, rgba(28,27,35,0.7) 0%, rgba(18,18,22,0.9) 100%)',
+                     borderColor: 'rgba(255,255,255,0.08)',
+                   }}>
+                <p className="text-on-surface-variant text-xs sm:text-sm leading-relaxed mb-6 italic">
+                  "The system design feedback was incredibly detailed. It pointed out flaws in my database sharding logic that I never would have noticed myself."
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary">AR</div>
+                  <div>
+                    <div className="text-sm font-semibold">Alex Rivera</div>
+                    <div className="text-[10px] font-mono text-primary uppercase">SDE II @ Stripe</div>
+                  </div>
+                </div>
+              </div>
+            </AnimateOnScroll>
+
+            <AnimateOnScroll direction="up" delay={100}>
+              <div className="p-6 rounded-2xl border h-full transition-all duration-300 hover:-translate-y-1 shadow-[0_0_25px_rgba(139,92,246,0.1)]"
+                   style={{
+                     background: 'linear-gradient(145deg, rgba(139,92,246,0.12) 0%, rgba(20,20,25,0.9) 100%)',
+                     borderColor: 'rgba(139,92,246,0.3)',
+                   }}>
+                <p className="text-on-surface text-xs sm:text-sm leading-relaxed mb-6 italic">
+                  "DevPrep AI helped me transition smoothly to a top software role in just 3 months. The roadmap kept me focused on what actually matters in interviews."
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary/30 flex items-center justify-center font-bold text-primary">SC</div>
+                  <div>
+                    <div className="text-sm font-semibold">Sarah Chen</div>
+                    <div className="text-[10px] font-mono text-primary uppercase">Software Engineer</div>
+                  </div>
+                </div>
+              </div>
+            </AnimateOnScroll>
+
+            <AnimateOnScroll direction="right" delay={200}>
+              <div className="p-6 rounded-2xl border h-full transition-all duration-300 hover:-translate-y-1"
+                   style={{
+                     background: 'linear-gradient(145deg, rgba(28,27,35,0.7) 0%, rgba(18,18,22,0.9) 100%)',
+                     borderColor: 'rgba(255,255,255,0.08)',
+                   }}>
+                <p className="text-on-surface-variant text-xs sm:text-sm leading-relaxed mb-6 italic">
+                  "The AI tutor doesn't just give the answer; it guides you to find it. Essential for mastering senior-level technical communication."
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary">MT</div>
+                  <div>
+                    <div className="text-sm font-semibold">Marcus Thorne</div>
+                    <div className="text-[10px] font-mono text-primary uppercase">Lead Architect @ Vercel</div>
+                  </div>
+                </div>
+              </div>
+            </AnimateOnScroll>
           </div>
-        </AnimateOnScroll>
+        </div>
+      </section>
+
+      {/* ═══════ 12. FAQ (Accordion) ═══════ */}
+      <section className="py-24" style={{ background: 'var(--color-surface-container-lowest)' }}>
+        <div className="container mx-auto px-6 max-w-3xl">
+          <AnimateOnScroll>
+            <div className="text-center mb-14">
+              <div className="text-primary font-mono text-xs tracking-widest uppercase mb-3">SUPPORT</div>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter">Engineering Logistics (FAQ)</h2>
+            </div>
+            <div className="space-y-3">
+              {faqs.map((faq, i) => (
+                <div key={i} className="overflow-hidden rounded-xl border border-white/5"
+                     style={{ background: openFaq === i ? 'rgba(208,188,255,0.04)' : 'var(--color-surface-container)' }}>
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full flex items-center justify-between p-5 text-left transition-colors hover:text-primary font-semibold text-sm"
+                  >
+                    <span>{faq.q}</span>
+                    <span className="material-symbols-outlined text-[20px] transition-transform duration-200"
+                          style={{ transform: openFaq === i ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+                      expand_more
+                    </span>
+                  </button>
+                  {openFaq === i && (
+                    <div className="px-5 pb-5 text-xs sm:text-sm text-on-surface-variant leading-relaxed border-t border-white/5 pt-3">
+                      {faq.a}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </AnimateOnScroll>
+        </div>
+      </section>
+
+      {/* ═══════ 13. Final CTA ═══════ */}
+      <section className="py-24 border-t border-white/5 text-center" style={{ background: 'var(--color-surface-container-low)' }}>
+        <div className="container mx-auto px-6 max-w-3xl">
+          <AnimateOnScroll>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tighter mb-4">Ready to secure your offer?</h2>
+            <p className="text-on-surface-variant text-sm sm:text-base mb-8 opacity-80">
+              Join 15,000+ engineers from top institutions and bootcamps who have leveled up their technical careers.
+            </p>
+            <Link to="/register"
+                  className="inline-block px-10 py-4 rounded-full font-semibold text-base text-white shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:shadow-[0_0_45px_rgba(139,92,246,0.5)] transition-all"
+                  style={{ background: '#8B5CF6' }}>
+              Start Your First Sprint
+            </Link>
+          </AnimateOnScroll>
+        </div>
       </section>
 
     </div>

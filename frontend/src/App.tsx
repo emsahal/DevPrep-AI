@@ -27,6 +27,7 @@ import { InterviewPrepTopicPage } from '@/pages/InterviewPrepTopicPage'
 import { ProfilePage } from '@/pages/ProfilePage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { ResumeOptimizerPage } from '@/pages/ResumeOptimizerPage'
+import { AdminPage } from '@/pages/AdminPage'
 import { useAuthStore } from '@/store/authStore'
 import { ThemeProvider } from '@/providers/ThemeProvider'
 import { QueryProvider } from '@/providers/QueryProvider'
@@ -43,6 +44,14 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuthStore()
   if (isLoading) return null
   if (isAuthenticated) return <Navigate to="/dashboard" replace />
+  return <>{children}</>
+}
+
+function AdminRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, isLoading, user } = useAuthStore()
+  if (isLoading) return null
+  if (!isAuthenticated) return <Navigate to="/login" replace />
+  if (user?.email?.toLowerCase() !== 'sarcasticsahal@gmail.com') return <Navigate to="/dashboard" replace />
   return <>{children}</>
 }
 
@@ -86,6 +95,7 @@ export default function App() {
               <Route path="/resume-optimizer" element={<ProtectedRoute><ResumeOptimizerPage /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+              <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
             </Route>
           </Routes>
         </BrowserRouter>
