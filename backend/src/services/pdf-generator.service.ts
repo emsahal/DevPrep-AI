@@ -1,6 +1,27 @@
 import PDFDocument from 'pdfkit'
 import logger from '@/utils/logger'
 
+// Safety-net Title Case for role names and skill categories during PDF rendering
+const PDF_TECH_TERMS: Record<string, string> = {
+  'javascript': 'JavaScript', 'typescript': 'TypeScript', 'react.js': 'React.js',
+  'react': 'React', 'node.js': 'Node.js', 'next.js': 'Next.js', 'vue.js': 'Vue.js',
+  'mongodb': 'MongoDB', 'postgresql': 'PostgreSQL', 'graphql': 'GraphQL',
+  'rest': 'REST', 'api': 'API', 'apis': 'APIs', 'css': 'CSS', 'html': 'HTML',
+  'aws': 'AWS', 'gcp': 'GCP', 'ci/cd': 'CI/CD', 'devops': 'DevOps', 'ui/ux': 'UI/UX',
+}
+const PDF_LOWERCASE_WORDS = new Set(['a', 'an', 'the', 'and', 'or', 'of', 'in', 'at', 'for', 'to', 'with', 'on', 'by'])
+
+function pdfTitleCase(str: string): string {
+  if (!str || typeof str !== 'string') return str
+  return str.split(' ').map((word, i) => {
+    if (!word) return word
+    const lower = word.toLowerCase()
+    if (PDF_TECH_TERMS[lower]) return PDF_TECH_TERMS[lower]
+    if (i > 0 && PDF_LOWERCASE_WORDS.has(lower)) return lower
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+  }).join(' ')
+}
+
 const NAVY = '#1F3864'
 const DARK = '#1a1a1a'
 const GRAY = '#333333'
@@ -177,7 +198,7 @@ export class PdfGeneratorService {
               entryHeader(doc, exp.company || '', exp.dateRange || '', fonts)
             }
             if (exp.role || exp.location) {
-              entrySub(doc, exp.role || '', exp.location || '', fonts)
+              entrySub(doc, exp.role ? pdfTitleCase(exp.role) : '', exp.location || '', fonts)
             }
             if (exp.bullets?.length) {
               bulletList(doc, exp.bullets, fonts)
@@ -219,7 +240,7 @@ export class PdfGeneratorService {
           sectionHeader(doc, 'Skills', fonts)
           for (const sk of data.skills) {
             if (needsPageBreak(doc, 20)) doc.addPage()
-            const label = `${sk.category}: `
+            const label = `${pdfTitleCase(sk.category || '')}: `
             const items = (sk.items || []).join(', ')
             doc.font(fonts.bold).fontSize(10.5).fillColor(NAVY)
             doc.text(label, { width: CONTENT_WIDTH, continued: true })

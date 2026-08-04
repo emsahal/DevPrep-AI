@@ -4,6 +4,31 @@ import prisma from '@/utils/prisma'
 import { v4 as uuidv4 } from 'uuid'
 import logger from '@/utils/logger'
 
+const ROMAN_URDU_TRIGGERS = [
+  'roman urdu', 'roman-urdu', 'romanurdu',
+  'urdu mein', 'urdu me', 'urdu mai',
+  'roman mein', 'roman me', 'roman mai',
+  'respond in urdu', 'reply in urdu', 'answer in urdu',
+  'urdu men jawab', 'urdu mein bata', 'urdu me bata',
+]
+
+function detectLanguagePreference(messages: Array<{ role: string; content: string }>): string | null {
+  // Scan messages in reverse to find the most recent language preference
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const msg = messages[i]
+    if (msg.role !== 'user') continue
+    const lower = msg.content.toLowerCase()
+    if (ROMAN_URDU_TRIGGERS.some(trigger => lower.includes(trigger))) {
+      return 'Roman Urdu'
+    }
+    // Check if user explicitly asked for English
+    if (lower.includes('respond in english') || lower.includes('reply in english') || lower.includes('switch to english')) {
+      return 'English'
+    }
+  }
+  return null
+}
+
 export class AITutorService {
   async generateResponse(
     userId: string,
@@ -32,8 +57,15 @@ export class AITutorService {
       take: 20,
     })
 
+    // Detect language preference from conversation history
+    const langPref = detectLanguagePreference(recentHistory.map(m => ({ role: m.role, content: m.content })))
+    let finalSystemPrompt = systemPrompt
+    if (langPref === 'Roman Urdu') {
+      finalSystemPrompt += '\n\nIMPORTANT: The user has requested responses in Roman Urdu. You MUST respond in easy Roman Urdu for this and ALL subsequent messages. Do NOT switch back to English unless the user explicitly asks.'
+    }
+
     const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
-      { role: 'system', content: systemPrompt },
+      { role: 'system', content: finalSystemPrompt },
     ]
 
     for (const msg of recentHistory) {
@@ -92,8 +124,15 @@ export class AITutorService {
       take: 20,
     })
 
+    // Detect language preference from conversation history
+    const langPref = detectLanguagePreference(recentHistory.map(m => ({ role: m.role, content: m.content })))
+    let finalSystemPrompt = systemPrompt
+    if (langPref === 'Roman Urdu') {
+      finalSystemPrompt += '\n\nIMPORTANT: The user has requested responses in Roman Urdu. You MUST respond in easy Roman Urdu for this and ALL subsequent messages. Do NOT switch back to English unless the user explicitly asks.'
+    }
+
     const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
-      { role: 'system', content: systemPrompt },
+      { role: 'system', content: finalSystemPrompt },
     ]
 
     for (const msg of recentHistory) {
@@ -150,11 +189,22 @@ export class AITutorService {
         content: h.content,
         createdAt: h.createdAt,
       })),
-      sessions: sessions.map((s) => ({
-        sessionId: s.sessionId,
-        messageCount: s._count.id,
-        createdAt: s._min.createdAt,
-      })),
+      sessions: await Promise.all(
+        sessions.map(async (s) => {
+          // Fetch first user message to use as session title
+          const firstMsg = await prisma.chatHistory.findFirst({
+            where: { userId, sessionId: s.sessionId, role: 'user' },
+            orderBy: { createdAt: 'asc' },
+            select: { content: true },
+          })
+          return {
+            sessionId: s.sessionId,
+            messageCount: s._count.id,
+            createdAt: s._min.createdAt,
+            title: firstMsg?.content?.substring(0, 60) || 'New Chat',
+          }
+        })
+      ),
     }
   }
 

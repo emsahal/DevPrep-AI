@@ -29,6 +29,7 @@ export interface ChatHistoryResponse {
     sessionId: string
     messageCount: number
     createdAt: string
+    title: string
   }>
 }
 
