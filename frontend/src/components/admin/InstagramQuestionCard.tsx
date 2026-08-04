@@ -27,17 +27,70 @@ function pad(n: number): string {
 }
 
 function highlightCode(text: string): ReactNode[] {
-  const parts = text.split(/(`[^`]+`)/g)
+  const cleaned = text.replace(/```/g, '')
+  const parts = cleaned.split(/(`[^`]+`)/g)
   return parts.map((part, i) => {
     if (part.startsWith('`') && part.endsWith('`')) {
       return (
-        <span key={i} style={{ color: '#7ee3a0' }}>
+        <span
+          key={i}
+          style={{
+            fontFamily: MONO,
+            color: '#7ee3a0',
+            background: 'rgba(126, 227, 160, 0.12)',
+            padding: '2px 10px',
+            borderRadius: 8,
+            fontSize: '0.9em',
+            display: 'inline-block',
+          }}
+        >
           {part.slice(1, -1)}
         </span>
       )
     }
     return <span key={i}>{part}</span>
   })
+}
+
+function renderQuestion(text: string): ReactNode {
+  const codeBlockMatch = text.match(/```(?:\w+)?\s*([\s\S]*?)```/)
+  if (codeBlockMatch) {
+    const mainQuestion = text.replace(/```(?:\w+)?\s*[\s\S]*?```/, '').trim()
+    const codeSnippet = codeBlockMatch[1].trim()
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div>{highlightCode(mainQuestion)}</div>
+        <div
+          style={{
+            fontFamily: MONO,
+            fontSize: 28,
+            lineHeight: 1.4,
+            background: 'rgba(126, 227, 160, 0.08)',
+            border: '1px solid rgba(126, 227, 160, 0.25)',
+            color: '#7ee3a0',
+            padding: '16px 22px',
+            borderRadius: 14,
+            whiteSpace: 'pre-wrap',
+            wordBreak: 'break-word',
+          }}
+        >
+          {codeSnippet}
+        </div>
+      </div>
+    )
+  }
+
+  return highlightCode(text)
+}
+
+function getQuestionFontSize(text: string): number {
+  const len = text.length
+  if (len <= 50) return 52
+  if (len <= 85) return 44
+  if (len <= 120) return 38
+  if (len <= 165) return 34
+  return 30
 }
 
 export function InstagramQuestionCard({
@@ -125,21 +178,16 @@ export function InstagramQuestionCard({
 
         <div
           style={{
-            fontSize: 56,
-            lineHeight: 1.32,
+            fontSize: getQuestionFontSize(question),
+            lineHeight: 1.3,
             fontWeight: 800,
             color: '#f7f9fc',
-            marginBottom: 44,
+            marginBottom: 32,
             letterSpacing: -0.5,
-            maxWidth: '90%',
-            display: '-webkit-box',
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-            paddingBottom: 12,
+            width: '100%',
           }}
         >
-          {highlightCode(question)}
+          {renderQuestion(question)}
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -153,26 +201,33 @@ export function InstagramQuestionCard({
                 background: 'rgba(255,255,255,0.045)',
                 border: '1px solid rgba(255,255,255,0.09)',
                 borderRadius: 18,
-                padding: '22px 30px',
+                padding: '20px 30px',
+                minHeight: 76,
               }}
             >
               <div
                 style={{
                   fontFamily: MONO,
-                  fontSize: 22,
+                  fontSize: 24,
                   fontWeight: 800,
                   color: '#7dd3fc',
                   flexShrink: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  lineHeight: 1,
                 }}
               >
                 {LETTERS[i] ?? String(i + 1)}
               </div>
               <span
                 style={{
-                  fontSize: 30,
-                  lineHeight: 1.3,
+                  fontSize: 28,
+                  lineHeight: 1.25,
                   fontWeight: 500,
                   color: '#e9edf5',
+                  display: 'flex',
+                  alignItems: 'center',
                 }}
               >
                 {text}
@@ -201,7 +256,16 @@ export function InstagramQuestionCard({
             alt="DevPrep AI logo"
             style={{ width: 40, height: 40, objectFit: 'contain', borderRadius: 10 }}
           />
-          <span style={{ fontSize: 24, fontWeight: 700, color: 'rgba(255,255,255,0.55)' }}>
+          <span
+            style={{
+              fontSize: 24,
+              fontWeight: 700,
+              color: 'rgba(255,255,255,0.55)',
+              lineHeight: 1,
+              display: 'inline-flex',
+              alignItems: 'center',
+            }}
+          >
             devpreps.tech
           </span>
         </div>

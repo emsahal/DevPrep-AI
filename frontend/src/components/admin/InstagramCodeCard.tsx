@@ -189,7 +189,16 @@ export function InstagramCodeCard({
             alt="DevPrep AI logo"
             style={{ width: 40, height: 40, objectFit: 'contain', borderRadius: 10 }}
           />
-          <span style={{ fontSize: 24, fontWeight: 700, color: 'rgba(255,255,255,0.55)' }}>
+          <span
+            style={{
+              fontSize: 24,
+              fontWeight: 700,
+              color: 'rgba(255,255,255,0.55)',
+              lineHeight: 1,
+              display: 'inline-flex',
+              alignItems: 'center',
+            }}
+          >
             devpreps.tech
           </span>
         </div>

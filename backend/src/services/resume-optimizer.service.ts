@@ -22,6 +22,86 @@ interface AIResponse {
 const FREE_CREDITS = 3
 const CREDIT_COST_PER_OPTIMIZATION = 1
 
+// Known tech terms that should preserve their specific casing
+const TECH_TERM_MAP: Record<string, string> = {
+  'javascript': 'JavaScript',
+  'typescript': 'TypeScript',
+  'react.js': 'React.js',
+  'react': 'React',
+  'node.js': 'Node.js',
+  'next.js': 'Next.js',
+  'vue.js': 'Vue.js',
+  'mongodb': 'MongoDB',
+  'postgresql': 'PostgreSQL',
+  'graphql': 'GraphQL',
+  'rest': 'REST',
+  'api': 'API',
+  'apis': 'APIs',
+  'css': 'CSS',
+  'html': 'HTML',
+  'aws': 'AWS',
+  'gcp': 'GCP',
+  'ci/cd': 'CI/CD',
+  'devops': 'DevOps',
+  'ui/ux': 'UI/UX',
+}
+
+const LOWERCASE_WORDS = new Set(['a', 'an', 'the', 'and', 'or', 'of', 'in', 'at', 'for', 'to', 'with', 'on', 'by'])
+
+/**
+ * Converts a string to proper Title Case, respecting tech terms and lowercase prepositions/articles.
+ */
+function titleCaseStr(str: string): string {
+  if (!str || typeof str !== 'string') return str
+  return str
+    .split(' ')
+    .map((word, index) => {
+      if (!word) return word
+      const lower = word.toLowerCase()
+      // Check known tech terms first
+      if (TECH_TERM_MAP[lower]) return TECH_TERM_MAP[lower]
+      // Keep lowercase prepositions/articles unless it's the first word
+      if (index > 0 && LOWERCASE_WORDS.has(lower)) return lower
+      // Capitalize first letter, keep rest lowercase
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    })
+    .join(' ')
+}
+
+/**
+ * Applies Title Case normalization to specific resume fields:
+ * experience[].role, skills[].category, projects[].name
+ */
+function applyTitleCaseToResumeData(data: any): any {
+  if (!data) return data
+
+  if (Array.isArray(data.experience)) {
+    for (const exp of data.experience) {
+      if (exp.role && typeof exp.role === 'string') {
+        exp.role = titleCaseStr(exp.role)
+      }
+    }
+  }
+
+  if (Array.isArray(data.skills)) {
+    for (const sk of data.skills) {
+      if (sk.category && typeof sk.category === 'string') {
+        sk.category = titleCaseStr(sk.category)
+      }
+    }
+  }
+
+  if (Array.isArray(data.projects)) {
+    for (const proj of data.projects) {
+      if (proj.name && typeof proj.name === 'string') {
+        proj.name = titleCaseStr(proj.name)
+      }
+    }
+  }
+
+  return data
+}
+
 async function callAI(messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>, maxTokens = 4096): Promise<string> {
   const response: AIResponse = await nvidiaAI.generate(messages, { maxTokens, temperature: 0.3 })
   let content = response.content.trim()
@@ -216,6 +296,8 @@ export class ResumeOptimizerService {
       ...optimizedData,
       personalInfo: originalParsed.personalInfo || optimizedData.personalInfo || {},
     }
+
+    applyTitleCaseToResumeData(merged)
 
     const sections: string[] = []
     if (merged.summary) sections.push(merged.summary)

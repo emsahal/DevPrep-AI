@@ -59,6 +59,23 @@ CRITICAL RULES:
 - Do NOT shorten the summary — keep it at its original length
 - Keep personalInfo exactly as it was in the original
 
+FORMATTING RULES:
+- Use proper Title Case for ALL job titles, roles, and position names (e.g., "Full Stack Developer" NOT "full stack developer", "Senior Software Engineer" NOT "senior software engineer")
+- Use proper Title Case for ALL company names (e.g., "Google" NOT "google")
+- Use proper casing for ALL technology and tool names (e.g., "React" NOT "react", "JavaScript" NOT "javascript", "Node.js" NOT "node.js", "TypeScript" NOT "typescript", "MongoDB" NOT "mongodb", "PostgreSQL" NOT "postgresql")
+- Use proper Title Case for ALL skill category names (e.g., "Frontend Development" NOT "frontend development", "Programming Languages" NOT "programming languages")
+- Use proper Title Case for ALL project names
+
+KEYWORD INTEGRATION RULES:
+- You will receive a GAP ANALYSIS that lists missingSkills, missingKeywords, and improvementSuggestions
+- ACTIVELY INTEGRATE the missing skills and keywords from the gap analysis INTO the resume content
+- Weave missing keywords naturally into existing bullet points where they are relevant to the described work
+- Add missing skills to the summary where they genuinely relate to the candidate's profile
+- Add missing technical skills to the appropriate skills categories
+- Apply ALL improvementSuggestions from the gap analysis into the optimized output
+- Every missingKeyword and missingSkill should appear somewhere in the optimized resume if it can be truthfully integrated
+- Do NOT just list keywords — integrate them meaningfully into context (e.g., change "Built a web app" to "Built a full-stack web app using React and Node.js with CI/CD pipeline")
+
 Return ONLY valid JSON with ALL of these fields (every field is required):
 - personalInfo: { name, email, phone, location, linkedin, github, portfolio }
 - summary: string (keep at original length, do not shorten)
@@ -137,7 +154,7 @@ ${jobJson}
 GAP ANALYSIS:
 ${gapAnalysis}
 
-Rewrite the resume to be more ATS-friendly while keeping all information truthful. Return ONLY valid JSON.`
+Optimize this resume by integrating missing keywords and improving formatting while preserving all original content. Return ONLY valid JSON.`
 }
 
 export function getCoverLetterPrompt(resumeJson: string, jobJson: string, companyName: string, jobTitle: string): string {
