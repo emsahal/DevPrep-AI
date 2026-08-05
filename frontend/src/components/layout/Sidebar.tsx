@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import { useSidebarStore } from '@/store/sidebarStore'
 
+
 const SECTIONS = [
   {
     label: 'Learn',
@@ -57,7 +58,7 @@ function SectionHeading({ label, collapsed }: { label: string; collapsed: boolea
 export function Sidebar() {
   const location = useLocation()
   const { user, logout } = useAuthStore()
-  const { isOpen } = useSidebarStore()
+  const { isOpen, toggle } = useSidebarStore()
   const isAdmin = user?.email?.toLowerCase() === ADMIN_EMAIL
 
   return (
@@ -69,9 +70,27 @@ export function Sidebar() {
           width: isOpen ? '240px' : '64px',
           background: 'var(--color-surface-container-lowest)',
           borderRight: '1px solid var(--color-border-subtle)',
-          overflow: 'hidden',
+          overflow: 'visible',
         }}
       >
+        {/* Floating toggle button — pinned to right edge at vertical center */}
+        <button
+          onClick={toggle}
+          title={isOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+          className="absolute -right-3 top-1/2 -translate-y-1/2 z-50 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-md"
+          style={{
+            background: 'var(--color-surface-container-highest, #2a2a35)',
+            border: '1px solid var(--color-border-subtle)',
+            color: 'var(--color-outline)',
+          }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: '14px', transition: 'transform 0.3s ease', transform: isOpen ? 'rotate(0deg)' : 'rotate(180deg)' }}>
+            chevron_left
+          </span>
+        </button>
+
+        {/* Inner wrapper clips the nav content */}
+        <div className="flex flex-col flex-1 overflow-hidden">
         <nav className="flex-1 overflow-y-auto no-scrollbar px-2 pt-2 space-y-0.5">
           {SECTIONS.map((section, si) => (
             <div key={si}>
@@ -183,6 +202,7 @@ export function Sidebar() {
             </div>
           )}
         </div>
+        </div>{/* end inner wrapper */}
       </aside>
     </>
   )
