@@ -55,6 +55,20 @@ export interface AdminFormattedInterviewDetail {
   questions: Array<{ number: number; question: string; answer: string }>
 }
 
+export interface AdminRegeneratedTopic {
+  id: string
+  slug: string
+  title: string
+  content: string
+  aiGenerated: boolean
+  aiGeneratedAt: string | null
+}
+
+export interface AdminRegenerateResponse {
+  success: boolean
+  topic: AdminRegeneratedTopic
+}
+
 export const adminService = {
   async getQuizzes(): Promise<AdminQuiz[]> {
     const { data } = await api.get('/admin/quizzes')
@@ -78,6 +92,11 @@ export const adminService = {
 
   async formatInterviewAnswers(slug: string): Promise<AdminFormattedInterviewDetail> {
     const { data } = await api.get(`/admin/interview-prep/${slug}/format`)
+    return data
+  },
+
+  async regenerateTopicContent(slug: string): Promise<AdminRegenerateResponse> {
+    const { data } = await api.post(`/admin/topics/${slug}/regenerate`)
     return data
   },
 }

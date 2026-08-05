@@ -79,6 +79,8 @@ model Topic {
   difficulty   String   @default("beginner")
   order        Int      @default(0)
   isPublished  Boolean  @default(true)
+  aiGenerated  Boolean  @default(false)
+  aiGeneratedAt DateTime?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 

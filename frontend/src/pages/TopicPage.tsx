@@ -1,8 +1,12 @@
 import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { topicService } from '@/services/topicService'
+import { adminService } from '@/services/adminService'
+import { useAuthStore } from '@/store/authStore'
 import { TopicContent } from '@/features/topics/components/TopicContent'
+
+const ADMIN_EMAIL = 'sarcasticsahal@gmail.com'
 
 const LEVEL_COLOR: Record<string, string> = {
   beginner: 'var(--color-success)',
@@ -19,11 +23,21 @@ const LEVEL_LABEL: Record<string, string> = {
 export function TopicPage() {
   const { slug } = useParams<{ slug: string }>()
   const [contentLanguage, setContentLanguage] = useState<'roman' | 'english'>('roman')
+  const user = useAuthStore((s) => s.user)
+  const isAdmin = user?.email?.toLowerCase() === ADMIN_EMAIL
+  const queryClient = useQueryClient()
 
   const { data: topic, isLoading } = useQuery({
     queryKey: ['topic', slug],
     queryFn: () => topicService.getBySlug(slug!),
     enabled: !!slug,
+  })
+
+  const regenerateMutation = useMutation({
+    mutationFn: () => adminService.regenerateTopicContent(slug!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['topic', slug] })
+    },
   })
 
   const siblings = topic?.relatedTopics ?? []
@@ -36,6 +50,13 @@ export function TopicPage() {
     return (
       <div className="px-6 py-20 max-w-3xl mx-auto text-center">
         <span className="material-symbols-outlined text-4xl animate-spin" style={{ color: 'var(--color-primary)' }}>progress_activity</span>
+        <p className="mt-4 text-sm flex items-center justify-center gap-2" style={{ color: 'var(--color-on-surface-variant)' }}>
+          <span className="material-symbols-outlined text-base" style={{ color: 'var(--color-primary)' }}>auto_awesome</span>
+          Generating AI content…
+        </p>
+        <p className="mt-1 text-xs" style={{ color: 'var(--color-outline)' }}>
+          Your first visit creates a tailored explanation + 15 interview questions in Roman Urdu and English. This can take up to a minute.
+        </p>
       </div>
     )
   }
@@ -146,24 +167,42 @@ export function TopicPage() {
                 </div>
               </div>
 
-              <div className="flex rounded-xl p-1" style={{ background: 'var(--color-surface-container)', border: '1px solid var(--color-border-muted)' }}>
-                {[
-                  { value: 'roman', label: 'Roman Urdu' },
-                  { value: 'english', label: 'English' },
-                ].map(option => (
+              <div className="flex flex-wrap items-center gap-2">
+                {isAdmin && (
                   <button
-                    key={option.value}
                     type="button"
-                    onClick={() => setContentLanguage(option.value as 'roman' | 'english')}
-                    className="rounded-lg px-3 py-1.5 text-xs font-bold transition-all"
-                    style={{
-                      background: contentLanguage === option.value ? 'var(--color-primary)' : 'transparent',
-                      color: contentLanguage === option.value ? 'var(--color-on-primary-fixed)' : 'var(--color-on-surface-variant)',
-                    }}
+                    disabled={regenerateMutation.isPending}
+                    onClick={() => regenerateMutation.mutate()}
+                    className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all hover:opacity-90 active:scale-95 disabled:opacity-60"
+                    style={{ background: 'var(--color-surface-container)', border: '1px solid var(--color-border-muted)', color: 'var(--color-tertiary)' }}
                   >
-                    {option.label}
+                    {regenerateMutation.isPending ? (
+                      <span className="material-symbols-outlined text-[15px] animate-spin">progress_activity</span>
+                    ) : (
+                      <span className="material-symbols-outlined text-[15px]">auto_awesome</span>
+                    )}
+                    {regenerateMutation.isPending ? 'Regenerating…' : 'Regenerate with AI'}
                   </button>
-                ))}
+                )}
+                <div className="flex rounded-xl p-1" style={{ background: 'var(--color-surface-container)', border: '1px solid var(--color-border-muted)' }}>
+                  {[
+                    { value: 'roman', label: 'Roman Urdu' },
+                    { value: 'english', label: 'English' },
+                  ].map(option => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => setContentLanguage(option.value as 'roman' | 'english')}
+                      className="rounded-lg px-3 py-1.5 text-xs font-bold transition-all"
+                      style={{
+                        background: contentLanguage === option.value ? 'var(--color-primary)' : 'transparent',
+                        color: contentLanguage === option.value ? 'var(--color-on-primary-fixed)' : 'var(--color-on-surface-variant)',
+                      }}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
             <div className="px-5 py-6">

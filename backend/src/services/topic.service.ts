@@ -1,9 +1,53 @@
 import prisma from '@/utils/prisma'
-import { getCached, setCache } from '@/utils/redis'
-import { slugify } from '@/utils/helpers'
-import { normalizePagination, createPaginatedResult, getSkipTake } from '@/utils/pagination'
+import { getCached, setCache, invalidateCache } from '@/utils/redis'
+import logger from '@/utils/logger'
+import { topicContentAI, type TopicGenerationInput } from './topic-content-ai.service'
+
+type TopicWithRelations = Awaited<ReturnType<typeof prisma.topic.findUnique>>
 
 export class TopicService {
+  private generationPromises = new Map<string, Promise<string>>()
+
+  private async ensureGenerated(topic: NonNullable<TopicWithRelations>): Promise<string> {
+    const inFlight = this.generationPromises.get(topic.id)
+    if (inFlight) return inFlight
+
+    const input: TopicGenerationInput = {
+      id: topic.id,
+      slug: topic.slug,
+      title: topic.title,
+      description: topic.description,
+      difficulty: topic.difficulty,
+      category: topic.category,
+      technologyName: topic.technology?.name,
+    }
+
+    const promise = (async () => {
+      try {
+        const { roman, english, errors } = await topicContentAI.generateAndValidate(input)
+        if (errors.length > 0) {
+          logger.warn(`[TopicAI] invalid AI content for ${topic.slug}: ${errors.join('; ')}`)
+          return topic.content
+        }
+        const content = topicContentAI.buildBilingualContent(input, roman, english)
+        await prisma.topic.update({
+          where: { id: topic.id },
+          data: { content, aiGenerated: true, aiGeneratedAt: new Date() },
+        })
+        await invalidateCache(`topic:${topic.slug}`)
+        logger.info(`[TopicAI] generated & persisted content for "${topic.title}"`)
+        return content
+      } catch (err) {
+        logger.error(`[TopicAI] generation failed for ${topic.slug}: ${err instanceof Error ? err.message : err}`)
+        return topic.content
+      } finally {
+        this.generationPromises.delete(topic.id)
+      }
+    })()
+
+    this.generationPromises.set(topic.id, promise)
+    return promise
+  }
   async getBySlug(slug: string, userId?: string) {
     const cacheKey = `topic:${slug}`
     const cached = await getCached(cacheKey)
@@ -37,6 +81,10 @@ export class TopicService {
     })
 
     if (!topic) return null
+
+    if (!topic.aiGenerated) {
+      topic.content = await this.ensureGenerated(topic)
+    }
 
     const relatedTopics = await prisma.topic.findMany({
       where: {

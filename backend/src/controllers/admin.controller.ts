@@ -2,7 +2,9 @@ import { Request, Response, NextFunction } from 'express'
 import prisma from '@/utils/prisma'
 import { interviewPrepService } from '@/services/interview-prep.service'
 import { nvidiaAI } from '@/ai/nvidia.service'
-import { getCached, setCache } from '@/utils/redis'
+import { getCached, setCache, invalidateCache } from '@/utils/redis'
+import { topicContentAI, type TopicGenerationInput } from '@/services/topic-content-ai.service'
+import logger from '@/utils/logger'
 
 interface FormatQ {
   number: number
@@ -141,6 +143,53 @@ export class AdminController {
       const result = { slug, name: topic.name, questions }
       await setCache(cacheKey, result, 60 * 60 * 24 * 7)
       res.json(result)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async regenerateTopicContent(req: Request, res: Response, next: NextFunction) {
+    try {
+      const topic = await prisma.topic.findUnique({
+        where: { slug: req.params.slug },
+        include: { technology: { select: { id: true, name: true } } },
+      })
+      if (!topic) return res.status(404).json({ message: 'Topic not found' })
+
+      const input: TopicGenerationInput = {
+        id: topic.id,
+        slug: topic.slug,
+        title: topic.title,
+        description: topic.description,
+        difficulty: topic.difficulty,
+        category: topic.category,
+        technologyName: topic.technology?.name,
+      }
+
+      const { roman, english, errors } = await topicContentAI.generateAndValidate(input)
+      if (errors.length > 0) {
+        return res.status(502).json({ message: 'AI generation produced invalid content. Please try again.', errors })
+      }
+
+      const content = topicContentAI.buildBilingualContent(input, roman, english)
+      const updated = await prisma.topic.update({
+        where: { id: topic.id },
+        data: { content, aiGenerated: true, aiGeneratedAt: new Date() },
+      })
+      await invalidateCache(`topic:${topic.slug}`)
+      logger.info(`[Admin] regenerated AI content for "${updated.title}"`)
+
+      res.json({
+        success: true,
+        topic: {
+          id: updated.id,
+          slug: updated.slug,
+          title: updated.title,
+          content: updated.content,
+          aiGenerated: updated.aiGenerated,
+          aiGeneratedAt: updated.aiGeneratedAt,
+        },
+      })
     } catch (error) {
       next(error)
     }
