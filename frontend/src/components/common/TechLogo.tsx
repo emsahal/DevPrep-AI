@@ -67,7 +67,9 @@ export function TechLogo({ slug, icon, size = 26, color }: TechLogoProps) {
   const brand = BRAND_ICONS[slug]
   if (brand) {
     const Icon = brand.Icon
-    return <Icon style={{ color: color || brand.color, fontSize: size }} />
+    const forceWhite = slug === 'nextjs' || slug === 'expressjs'
+    const iconColor = forceWhite ? '#FFFFFF' : color || brand.color
+    return <Icon style={{ color: iconColor, fontSize: size }} />
   }
   return <MaterialIcon name={icon || 'code'} className="text-[26px]" style={{ color, fontSize: size }} />
 }
