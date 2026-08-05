@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { topicService } from '@/services/topicService'
 import { quizService } from '@/services/quizService'
@@ -27,6 +27,7 @@ export function TopicPage() {
   const user = useAuthStore((s) => s.user)
   const isAdmin = user?.email?.toLowerCase() === ADMIN_EMAIL
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   const { data: topic, isLoading } = useQuery({
     queryKey: ['topic', slug],
@@ -42,9 +43,9 @@ export function TopicPage() {
   })
 
   const generateMcqsMutation = useMutation({
-    mutationFn: () => quizService.generateQuizForTopic(slug!),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['topic', slug] })
+    mutationFn: () => quizService.ensureTopicQuiz(slug!),
+    onSuccess: (data) => {
+      navigate(`/quizzes/${data.id}`)
     },
   })
 

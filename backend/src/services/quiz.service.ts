@@ -409,27 +409,17 @@ Format:
     }
   }
 
-  async getOrGenerateQuizForTopic(slug: string, questionCount: number = 15) {
+  async ensureTopicQuiz(slug: string): Promise<{ id: string; title: string; isPlaceholder: boolean }> {
     const topic = await prisma.topic.findUnique({
       where: { slug },
-      select: {
-        id: true,
-        title: true,
-        description: true,
-        content: true,
-        difficulty: true,
-        technology: { select: { name: true } },
-      },
+      select: { id: true, title: true, description: true, technology: { select: { name: true } } },
     })
     if (!topic) throw new AppError(404, 'Topic not found')
 
     const existing = await prisma.quiz.findFirst({
       where: { topicId: topic.id },
       orderBy: { createdAt: 'desc' },
-      include: {
-        topic: { select: { id: true, title: true, slug: true } },
-        questions: { orderBy: { order: 'asc' } },
-      },
+      include: { questions: { orderBy: { order: 'asc' }, take: 1 } },
     })
 
     const isPlaceholder =
@@ -437,28 +427,45 @@ Format:
       existing.questions.length > 0 &&
       (existing.questions[0].text.includes('mainly about?') || existing.questions[0].text.includes('In simple words'))
 
-    if (existing && !isPlaceholder && existing.questions.length > 0) {
+    // If a real quiz already exists, reuse it
+    if (existing && existing.questions.length > 0) {
       return {
         id: existing.id,
         title: existing.title,
-        description: existing.description,
-        difficulty: existing.difficulty,
-        timeLimit: existing.timeLimit,
-        passingScore: existing.passingScore,
-        isDaily: existing.isDaily,
-        topic: existing.topic,
-        questions: existing.questions.map((q) => ({
-          id: q.id,
-          text: q.text,
-          options: q.options,
-          correctAnswer: q.correctAnswer,
-          explanation: q.explanation,
-          order: q.order,
-        })),
+        isPlaceholder: Boolean(isPlaceholder),
       }
     }
 
-    return this.generateAIQuiz(topic.id, questionCount, topic.difficulty)
+    const quiz = await prisma.quiz.create({
+      data: {
+        title: `${topic.title} Quiz`,
+        description: `AI-generated multiple-choice questions on ${topic.title}.`,
+        difficulty: 'mixed',
+        timeLimit: 900,
+        passingScore: 70,
+        isDaily: false,
+        topicId: topic.id,
+        questions: {
+          create: [
+            {
+              text: `In simple words, what is "${topic.title}" mainly about?`,
+              options: [
+                topic.description,
+                `A tool used only to change the visual color of ${topic.technology?.name || 'the'} code`,
+                `A database backup strategy unrelated to ${topic.technology?.name || 'the'} code`,
+                'A shortcut that removes the need to understand fundamentals',
+              ],
+              correctAnswer: 0,
+              explanation: `${topic.title} is best understood through its main purpose: ${topic.description}`,
+              order: 1,
+            },
+          ],
+        },
+      },
+    })
+
+    await invalidateCache('quizzes:all:*')
+    return { id: quiz.id, title: quiz.title, isPlaceholder: true }
   }
 
   async generateAIQuiz(topicId: string, questionCount: number = 15, difficulty: string = 'mixed') {

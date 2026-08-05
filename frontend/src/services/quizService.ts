@@ -182,8 +182,8 @@ export const quizService = {
     return data
   },
 
-  async generateQuizForTopic(slug: string, questionCount = 15): Promise<QuizDetail> {
-    const { data } = await api.post(`/quizzes/topic/${slug}/generate`, null, { params: { questionCount } })
+  async ensureTopicQuiz(slug: string): Promise<{ id: string; title: string; isPlaceholder: boolean }> {
+    const { data } = await api.post(`/quizzes/topic/${slug}/generate`)
     return data
   },
 

@@ -3,6 +3,10 @@ import { getCached, setCache, invalidateCache } from '@/utils/redis'
 import logger from '@/utils/logger'
 import { topicContentAI, type TopicGenerationInput } from './topic-content-ai.service'
 
+function isAIContent(content?: unknown): boolean {
+  return typeof content === 'string' && content.includes('<!--LANG:roman-->') && content.includes('<!--LANG:english-->')
+}
+
 interface TopicSeedInput {
   id: string
   slug: string
@@ -60,7 +64,7 @@ export class TopicService {
   async getBySlug(slug: string, userId?: string) {
     const cacheKey = `topic:${slug}`
     const cached = await getCached(cacheKey)
-    if (cached) return cached
+    if (cached && isAIContent((cached as { content?: unknown }).content)) return cached
 
     const topic = await prisma.topic.findUnique({
       where: { slug },
