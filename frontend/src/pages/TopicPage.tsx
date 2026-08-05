@@ -351,7 +351,7 @@ export function TopicPage() {
               Get a personalized explanation of <strong style={{ color: 'var(--color-on-surface)' }}>{topic.title}</strong> tailored to your skill level — break down tough concepts or interview hints.
             </p>
             <Link
-              to="/ai-tutor"
+              to={`/ai-tutor?topic=${encodeURIComponent(topic.title)}`}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all hover:border-primary/40 hover:text-primary active:scale-95"
               style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--color-on-surface)', border: '1px solid var(--color-border-muted)' }}
             >

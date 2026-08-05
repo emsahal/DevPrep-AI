@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { aiTutorService } from '@/services/aiTutorService'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -53,6 +54,18 @@ export function AITutorPage() {
   const [loadingSessions, setLoadingSessions] = useState(false)
   const [loadingMessages, setLoadingMessages] = useState(false)
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
+
+  const [searchParams] = useSearchParams()
+
+  // Prefill input with a topic-specific template prompt when navigated from a topic page
+  useEffect(() => {
+    const topic = searchParams.get('topic')
+    if (topic) {
+      setInput(`Ask me about "${topic}". Please explain ${topic} in simple, beginner-friendly terms written in Roman Urdu (Urdu in Latin script) with a short English code example, and list 3 common interview questions a recruiter might ask about ${topic}.`)
+    }
+    // run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Load sessions list on mount
   useEffect(() => {
