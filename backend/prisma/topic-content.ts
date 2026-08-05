@@ -30,7 +30,12 @@ function splitSentences(text: string): string[] {
 }
 
 function capitalizeFirst(text: string): string {
-  return text.charAt(0).toUpperCase() + text.slice(1)
+  // Skip leading markdown formatting markers (backticks, asterisks, etc.)
+  // so the first visible letter gets capitalized.
+  const match = text.match(/^[^a-zA-Z]*([a-zA-Z])/)
+  if (!match) return text
+  const prefixLen = match[0].length - 1
+  return text.slice(0, prefixLen) + match[1].toUpperCase() + text.slice(match[0].length)
 }
 
 function formatBulletList(items: string[]): string {

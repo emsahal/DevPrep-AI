@@ -257,6 +257,11 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
+  /* Capitalize the first visible letter of each bullet point */
+  .prose-custom li::first-letter {
+    text-transform: uppercase;
+  }
+
   /* Tag Badge */
   .badge {
     display: inline-flex;

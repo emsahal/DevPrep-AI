@@ -20,7 +20,7 @@ export class TopicService {
           include: {
             questions: {
               orderBy: { order: 'asc' },
-              take: 5,
+              take: 15,
             },
           },
         },
