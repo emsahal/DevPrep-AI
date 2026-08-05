@@ -15,6 +15,7 @@ import {
   type BundledLanguage,
   type CodeFile,
 } from '@/components/kibo-ui/code-block'
+import { InterviewQuestionCards } from './InterviewQuestionCards'
 import { getSectionId } from './TableOfContents'
 
 interface TopicContentProps {
@@ -89,8 +90,55 @@ function filenameForLanguage(language: string): string {
   return FILENAME_BY_LANG[lang] ?? `snippet.${lang || 'txt'}`
 }
 
+function extractInterviewQuestions(content: string): string[] {
+  const questions: string[] = []
+  let inSection = false
+
+  for (const line of content.split('\n')) {
+    const trimmed = line.trim()
+    if (/^#{1,6}\s+interview questions$/i.test(trimmed)) {
+      inSection = true
+      continue
+    }
+    if (inSection && /^#{1,6}\s/.test(trimmed)) {
+      break
+    }
+    if (inSection && /^-\s+/.test(trimmed)) {
+      questions.push(trimmed.replace(/^-\s+/, '').trim())
+    }
+  }
+
+  return questions
+}
+
+function stripInterviewQuestions(content: string): string {
+  const lines = content.split('\n')
+  const out: string[] = []
+  let inSection = false
+
+  for (const line of lines) {
+    const trimmed = line.trim()
+    if (/^#{1,6}\s+interview questions$/i.test(trimmed)) {
+      inSection = true
+      continue
+    }
+    if (inSection) {
+      if (/^#{1,6}\s/.test(trimmed)) {
+        inSection = false
+      } else {
+        continue
+      }
+    }
+    out.push(line)
+  }
+
+  return out.join('\n')
+}
+
 export function TopicContent({ content, language = 'roman' }: TopicContentProps) {
-  const formattedContent = normalizeMarkdown(getLanguageContent(content, language))
+  const fullContent = normalizeMarkdown(getLanguageContent(content, language))
+  const interviewQuestions = extractInterviewQuestions(fullContent)
+  const formattedContent = stripInterviewQuestions(fullContent)
 
   const components = {
     h1: ({ children, ...props }: React.ComponentPropsWithoutRef<'h1'>) => (
@@ -150,9 +198,8 @@ export function TopicContent({ content, language = 'roman' }: TopicContentProps)
       let rawCode = ''
 
       if (React.isValidElement<{ className?: string; children?: React.ReactNode }>(codeChild)) {
-        language = String(codeChild.props.className ?? '')
-          .replace(/^language-/, '')
-          .trim()
+        const match = String(codeChild.props.className ?? '').match(/language-([\w-]+)/)
+        language = match ? match[1] : ''
         rawCode = extractCodeText(codeChild.props.children)
       } else {
         rawCode = extractCodeText(children)
@@ -205,6 +252,7 @@ export function TopicContent({ content, language = 'roman' }: TopicContentProps)
       >
         {formattedContent}
       </Markdown>
+      {interviewQuestions.length > 0 && <InterviewQuestionCards questions={interviewQuestions} />}
     </div>
   )
 }
