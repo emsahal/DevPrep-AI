@@ -38,34 +38,34 @@ import {
 
 const techLogos = [
   // Frontend
-  { node: <SiHtml5 className="text-[#E34F26]" />, title: "HTML", href: "/library?q=HTML" },
-  { node: <SiCss className="text-[#1572B6]" />, title: "CSS", href: "/library?q=CSS" },
-  { node: <SiJavascript className="text-[#F7DF1E]" />, title: "JavaScript", href: "/library?q=JavaScript" },
-  { node: <SiTypescript className="text-[#3178C6]" />, title: "TypeScript", href: "/library?q=TypeScript" },
-  { node: <SiReact className="text-[#61DAFB]" />, title: "React", href: "/library?q=React" },
-  { node: <SiNextdotjs className="text-white" />, title: "Next.js", href: "/library?q=Next.js" },
+  { node: <SiHtml5 className="text-[#E34F26]" />, title: "HTML", href: "/library/html" },
+  { node: <SiCss className="text-[#1572B6]" />, title: "CSS", href: "/library/css" },
+  { node: <SiJavascript className="text-[#F7DF1E]" />, title: "JavaScript", href: "/library/javascript" },
+  { node: <SiTypescript className="text-[#3178C6]" />, title: "TypeScript", href: "/library/typescript" },
+  { node: <SiReact className="text-[#61DAFB]" />, title: "React", href: "/library/react" },
+  { node: <SiNextdotjs className="text-white" />, title: "Next.js", href: "/library/next.js" },
   // Backend
-  { node: <SiNodedotjs className="text-[#5FA04E]" />, title: "Node.js", href: "/library?q=Node.js" },
-  { node: <SiExpress className="text-white" />, title: "Express.js", href: "/library?q=Express" },
-  { node: <TbApi className="text-[#FF6C2C]" />, title: "REST APIs", href: "/library?q=REST" },
-  { node: <SiGraphql className="text-[#E535AB]" />, title: "GraphQL", href: "/library?q=GraphQL" },
-  { node: <TbLockAccess className="text-[#FFB703]" />, title: "Authentication", href: "/library?q=Authentication" },
+  { node: <SiNodedotjs className="text-[#5FA04E]" />, title: "Node.js", href: "/library/node.js" },
+  { node: <SiExpress className="text-white" />, title: "Express.js", href: "/library/express" },
+  { node: <TbApi className="text-[#FF6C2C]" />, title: "REST APIs", href: "/library/rest" },
+  { node: <SiGraphql className="text-[#E535AB]" />, title: "GraphQL", href: "/library/graphql" },
+  { node: <TbLockAccess className="text-[#FFB703]" />, title: "Authentication", href: "/library/authentication" },
   // Database
-  { node: <SiMongodb className="text-[#47A248]" />, title: "MongoDB", href: "/library?q=MongoDB" },
-  { node: <SiPostgresql className="text-[#4169E1]" />, title: "PostgreSQL", href: "/library?q=PostgreSQL" },
-  { node: <SiRedis className="text-[#DC382D]" />, title: "Redis", href: "/library?q=Redis" },
+  { node: <SiMongodb className="text-[#47A248]" />, title: "MongoDB", href: "/library/mongodb" },
+  { node: <SiPostgresql className="text-[#4169E1]" />, title: "PostgreSQL", href: "/library/postgresql" },
+  { node: <SiRedis className="text-[#DC382D]" />, title: "Redis", href: "/library/redis" },
   // DevOps
-  { node: <SiGit className="text-[#F05032]" />, title: "Git", href: "/library?q=Git" },
-  { node: <SiDocker className="text-[#2496ED]" />, title: "Docker", href: "/library?q=Docker" },
-  { node: <TbGitMerge className="text-[#2396ED]" />, title: "CI/CD", href: "/library?q=CICD" },
-  { node: <SiNginx className="text-[#009639]" />, title: "Nginx", href: "/library?q=Nginx" },
-  { node: <SiPm2 className="text-[#A78BFA]" />, title: "PM2", href: "/library?q=PM2" },
+  { node: <SiGit className="text-[#F05032]" />, title: "Git", href: "/library/git" },
+  { node: <SiDocker className="text-[#2496ED]" />, title: "Docker", href: "/library/docker" },
+  { node: <TbGitMerge className="text-[#2396ED]" />, title: "CI/CD", href: "/library/cicd" },
+  { node: <SiNginx className="text-[#009639]" />, title: "Nginx", href: "/library/nginx" },
+  { node: <SiPm2 className="text-[#A78BFA]" />, title: "PM2", href: "/library/pm2" },
   // Software Engineering & CS
-  { node: <TbTestPipe className="text-[#C21325]" />, title: "Testing", href: "/library?q=Testing" },
-  { node: <TbGauge className="text-[#EAB308]" />, title: "Performance", href: "/library?q=Performance" },
-  { node: <TbShieldLock className="text-[#DC2626]" />, title: "Security", href: "/library?q=Security" },
-  { node: <TbTopologyStar3 className="text-[#0891B2]" />, title: "System Design", href: "/library?q=System+Design" },
-  { node: <TbBinaryTree className="text-[#7C3AED]" />, title: "DSA", href: "/library?q=DSA" },
+  { node: <TbTestPipe className="text-[#C21325]" />, title: "Testing", href: "/library/testing" },
+  { node: <TbGauge className="text-[#EAB308]" />, title: "Performance", href: "/library/performance" },
+  { node: <TbShieldLock className="text-[#DC2626]" />, title: "Security", href: "/library/security" },
+  { node: <TbTopologyStar3 className="text-[#0891B2]" />, title: "System Design", href: "/library/system-design" },
+  { node: <TbBinaryTree className="text-[#7C3AED]" />, title: "DSA", href: "/library/dsa" },
 ]
 
 const faqs = [
