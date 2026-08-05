@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Sidebar } from './Sidebar'
 import { TopNavBar } from './TopNavBar'
+import { QuoteBanner } from './QuoteBanner'
 import { Footer } from './Footer'
 import { ReviewModal } from '../common/ReviewModal'
 import { useSidebarStore } from '@/store/sidebarStore'
@@ -19,6 +20,18 @@ export function AppLayout() {
   const { isOpen } = useSidebarStore()
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   const queryClient = useQueryClient()
+
+  const [quoteDismissed, setQuoteDismissed] = useState(false)
+  useEffect(() => {
+    const d = new Date()
+    const todayKey = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
+    if (localStorage.getItem('devprep_quote_dismissed') === todayKey) setQuoteDismissed(true)
+  }, [])
+  const dismissQuote = () => {
+    const d = new Date()
+    setQuoteDismissed(true)
+    localStorage.setItem('devprep_quote_dismissed', `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`)
+  }
 
   const { data: stats } = useQuery({
     queryKey: ['dashboard', 'stats'],
@@ -54,13 +67,22 @@ export function AppLayout() {
   }, [location.pathname, isHome, isAuthenticated, completedTopics])
 
   return (
-    <div style={{ background: 'var(--color-bg-base)', color: 'var(--color-on-surface)', minHeight: '100vh', fontFamily: 'var(--font-sans)' }}>
+    <div
+      style={{
+        background: 'var(--color-bg-base)',
+        color: 'var(--color-on-surface)',
+        minHeight: '100vh',
+        fontFamily: 'var(--font-sans)',
+        ['--quote-banner' as string]: quoteDismissed ? '0px' : '40px',
+      }}
+    >
+      <QuoteBanner visible={!quoteDismissed} onClose={dismissQuote} />
       <TopNavBar />
       {!isHome && <Sidebar />}
       <main
         className="pb-20 lg:pb-0 min-h-screen transition-all duration-300"
         style={{
-          paddingTop: isHome ? 0 : '4rem',
+          paddingTop: isHome ? 0 : 'calc(4rem + var(--quote-banner, 0px))',
           paddingLeft: isHome ? 0 : undefined,
           marginLeft: !isHome ? undefined : 0,
         }}

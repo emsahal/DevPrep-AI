@@ -39,8 +39,9 @@ export function TopNavBar() {
     <>
       {/* Top bar overlay above background */}
       <header
-        className="fixed top-0 left-0 w-full z-50 transition-all duration-300"
+        className="fixed left-0 w-full z-50 transition-all duration-300"
         style={{
+          top: 'var(--quote-banner, 0px)',
           background: isHome ? 'rgba(0, 0, 0, 0.2)' : 'rgba(13, 13, 13, 0.85)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',

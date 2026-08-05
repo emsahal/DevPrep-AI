@@ -65,9 +65,10 @@ export function Sidebar() {
     <>
       {/* Desktop Sidebar */}
       <aside
-        className="fixed left-0 top-0 h-screen flex-col pt-16 pb-4 z-40 hidden lg:flex transition-all duration-300 ease-in-out"
+        className="fixed left-0 top-0 h-screen flex-col pb-4 z-40 hidden lg:flex transition-all duration-300 ease-in-out"
         style={{
           width: isOpen ? '240px' : '64px',
+          paddingTop: 'calc(4rem + var(--quote-banner, 0px))',
           background: 'var(--color-surface-container-lowest)',
           borderRight: '1px solid var(--color-border-subtle)',
           overflow: 'visible',
