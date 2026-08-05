@@ -4,11 +4,13 @@ import { Sidebar } from './Sidebar'
 import { TopNavBar } from './TopNavBar'
 import { Footer } from './Footer'
 import { ReviewModal } from '../common/ReviewModal'
+import { useSidebarStore } from '@/store/sidebarStore'
 
 export function AppLayout() {
   const location = useLocation()
   const isHome = location.pathname === '/'
   const [isReviewOpen, setIsReviewOpen] = useState(false)
+  const { isOpen } = useSidebarStore()
 
   useEffect(() => {
     // Listen for manual triggers from "Write a Review" buttons
@@ -35,8 +37,21 @@ export function AppLayout() {
     <div style={{ background: 'var(--color-bg-base)', color: 'var(--color-on-surface)', minHeight: '100vh', fontFamily: 'var(--font-sans)' }}>
       <TopNavBar />
       {!isHome && <Sidebar />}
-      <main className={`${isHome ? '' : 'lg:ml-60 pt-16'} pb-20 lg:pb-0 min-h-screen`}>
-        <Outlet />
+      <main
+        className="pb-20 lg:pb-0 min-h-screen transition-all duration-300"
+        style={{
+          paddingTop: isHome ? 0 : '4rem',
+          paddingLeft: isHome ? 0 : undefined,
+          marginLeft: !isHome ? undefined : 0,
+        }}
+      >
+        {/* On desktop, shift content by sidebar width */}
+        <div
+          className="transition-all duration-300 h-full"
+          style={{ marginLeft: !isHome ? (isOpen ? '240px' : '64px') : 0 }}
+        >
+          <Outlet />
+        </div>
       </main>
       {isHome && <Footer />}
 

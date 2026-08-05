@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
+import { useSidebarStore } from '@/store/sidebarStore'
 import { useQuery } from '@tanstack/react-query'
 import { gamificationService } from '@/services/gamificationService'
 import { NotificationDropdown } from '@/features/notifications/NotificationDropdown'
@@ -18,6 +19,7 @@ const MOBILE_TABS = [
 export function TopNavBar() {
   const location = useLocation()
   const { isAuthenticated, user } = useAuthStore()
+  const { toggle, isOpen } = useSidebarStore()
   const isHome = location.pathname === '/'
 
   const { data: gamificationStats } = useQuery({
@@ -47,14 +49,27 @@ export function TopNavBar() {
           borderBottom: isHome ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid var(--color-border-subtle)',
         }}
       >
-        <div className="container mx-auto max-w-6xl h-16 px-6 flex items-center justify-between relative">
-          {/* Logo - AI removed, Inter Bold font */}
-          <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-            <img src={logo} alt="DevPrep logo" className="h-8 w-8 object-contain" />
-            <span className="text-lg tracking-tight" style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, color: 'var(--color-on-surface)' }}>
-              DevPrep
-            </span>
-          </Link>
+        <div className="h-16 px-4 flex items-center justify-between relative">
+          {/* Left: Sidebar toggle (non-home) + Logo */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {!isHome && isAuthenticated && (
+              <button
+                onClick={toggle}
+                title={isOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+                className="hidden lg:flex w-8 h-8 items-center justify-center rounded-lg transition-all hover:bg-white/10 text-white/70 hover:text-white"
+              >
+                <span className="material-symbols-outlined text-[20px]">
+                  {isOpen ? 'menu_open' : 'menu'}
+                </span>
+              </button>
+            )}
+            <Link to="/" className="flex items-center gap-2">
+              <img src={logo} alt="DevPrep logo" className="h-8 w-8 object-contain" />
+              <span className="text-lg tracking-tight" style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, color: 'var(--color-on-surface)' }}>
+                DevPrep
+              </span>
+            </Link>
+          </div>
 
           {/* Centered Nav Links */}
           <nav className="hidden md:flex items-center gap-6 absolute left-1/2 -translate-x-1/2">
