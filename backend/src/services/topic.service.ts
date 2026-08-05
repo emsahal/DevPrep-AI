@@ -37,12 +37,11 @@ export class TopicService {
 
     const promise = (async () => {
       try {
-        const { roman, english, errors } = await topicContentAI.generateAndValidate(input)
-        if (errors.length > 0) {
-          logger.warn(`[TopicAI] invalid AI content for ${topic.slug}: ${errors.join('; ')}`)
+        const { content, succeeded } = await this.generateWithRetry(input)
+        if (!succeeded) {
+          logger.warn(`[TopicAI] generation failed for ${topic.slug}, will retry on next open`)
           return topic.content
         }
-        const content = topicContentAI.buildBilingualContent(input, roman, english)
         await prisma.topic.update({
           where: { id: topic.id },
           data: { content, aiGenerated: true, aiGeneratedAt: new Date() },
@@ -60,6 +59,77 @@ export class TopicService {
 
     this.generationPromises.set(topic.id, promise)
     return promise
+  }
+
+  private async generateWithRetry(input: TopicGenerationInput): Promise<{ content: string; succeeded: boolean }> {
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        const { roman, english } = await topicContentAI.generateTopicContent(input)
+        const romanOk = roman.trim().length > 0
+        const englishOk = english.trim().length > 0
+
+        if (romanOk || englishOk) {
+          if (romanOk && englishOk) {
+            return { content: topicContentAI.buildBilingualContent(input, roman, english), succeeded: true }
+          }
+          const language = romanOk ? 'roman' : 'english'
+          const text = romanOk ? roman : english
+          logger.warn(`[TopicAI] ${input.slug}: only ${language} generated (will silently backfill the other later)`)
+          return { content: topicContentAI.buildSingleLanguageContent(input, language, text), succeeded: true }
+        }
+        logger.warn(`[TopicAI] attempt ${attempt} returned empty content for ${input.slug}`)
+      } catch (err) {
+        logger.warn(`[TopicAI] attempt ${attempt} failed for ${input.slug}: ${err instanceof Error ? err.message : err}`)
+      }
+    }
+    return { content: '', succeeded: false }
+  }
+
+  private async ensureMissingLanguage(topic: TopicSeedInput): Promise<void> {
+    const existing = topic.content
+    const romanMarker = '<!--LANG:roman-->'
+    const englishMarker = '<!--LANG:english-->'
+    const hasRoman = existing.includes(romanMarker)
+    const hasEnglish = existing.includes(englishMarker)
+    if (hasRoman && hasEnglish) return
+
+    const input: TopicGenerationInput = {
+      id: topic.id,
+      slug: topic.slug,
+      title: topic.title,
+      description: topic.description,
+      difficulty: topic.difficulty,
+      category: topic.category,
+      technologyName: topic.technology?.name,
+    }
+
+    try {
+      if (!hasEnglish) {
+        const english = (await topicContentAI.generateLanguage(input, 'english')).trim()
+        if (!english) {
+          logger.warn(`[TopicAI] silent backfill english failed for ${topic.slug}`)
+          return
+        }
+        const roman = existing.slice(existing.indexOf(romanMarker) + romanMarker.length).trim()
+        const content = topicContentAI.buildBilingualContent(input, roman, english)
+        await prisma.topic.update({ where: { id: topic.id }, data: { content } })
+        await invalidateCache(`topic:${topic.slug}`)
+        logger.info(`[TopicAI] silently backfilled english for "${topic.title}"`)
+      } else {
+        const english = existing.slice(existing.indexOf(englishMarker) + englishMarker.length).trim()
+        const roman = (await topicContentAI.generateLanguage(input, 'roman')).trim()
+        if (!roman) {
+          logger.warn(`[TopicAI] silent backfill roman failed for ${topic.slug}`)
+          return
+        }
+        const content = topicContentAI.buildBilingualContent(input, roman, english)
+        await prisma.topic.update({ where: { id: topic.id }, data: { content } })
+        await invalidateCache(`topic:${topic.slug}`)
+        logger.info(`[TopicAI] silently backfilled roman for "${topic.title}"`)
+      }
+    } catch (err) {
+      logger.warn(`[TopicAI] silent backfill failed for ${topic.slug}: ${err instanceof Error ? err.message : err}`)
+    }
   }
   async getBySlug(slug: string, userId?: string) {
     const cacheKey = `topic:${slug}`
@@ -98,6 +168,13 @@ export class TopicService {
 
     if (!topic.aiGenerated) {
       topic.content = await this.ensureGenerated(topic)
+    }
+
+    // Silently backfill any missing language on a later visit (non-blocking)
+    if (topic.aiGenerated) {
+      this.ensureMissingLanguage(topic).catch((err) => {
+        logger.warn(`[TopicAI] background backfill error for ${topic.slug}: ${err instanceof Error ? err.message : err}`)
+      })
     }
 
     const relatedTopics = await prisma.topic.findMany({

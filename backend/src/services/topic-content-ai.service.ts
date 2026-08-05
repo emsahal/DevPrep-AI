@@ -115,6 +115,16 @@ ${roman}
 ${english}`
   }
 
+  buildSingleLanguageContent(input: TopicGenerationInput, language: 'roman' | 'english', text: string): string {
+    return `# ${input.title}
+
+<!--LANG:${language}-->
+
+# ${input.title}
+
+${text}`
+  }
+
   validate(roman: string, english: string): string[] {
     const errors: string[] = []
     for (const [lang, content] of [
