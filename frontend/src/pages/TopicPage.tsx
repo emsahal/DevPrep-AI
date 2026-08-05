@@ -139,20 +139,6 @@ export function TopicPage() {
                 {topic.description}
               </p>
             </div>
-
-            {quiz && (
-              <div className="flex items-center gap-4 shrink-0">
-                <div className="flex items-center gap-3 rounded-xl border border-white/10 px-4 py-3" style={{ background: 'rgba(255,255,255,0.03)' }}>
-                  <div className="flex flex-col items-center justify-center h-12 w-12 rounded-xl" style={{ background: 'rgba(208,188,255,0.1)' }}>
-                    <span className="material-symbols-outlined text-xl" style={{ color: 'var(--color-primary)' }}>description</span>
-                  </div>
-                  <div>
-                    <p className="text-lg font-extrabold leading-none" style={{ color: 'var(--color-on-surface)' }}>{quiz.questionCount}</p>
-                    <p className="text-[11px] mt-1" style={{ color: 'var(--color-outline)' }}>Practice questions</p>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </section>
