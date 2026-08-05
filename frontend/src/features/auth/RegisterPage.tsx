@@ -77,7 +77,7 @@ export function RegisterPage() {
         <div className="my-auto max-w-md mx-auto space-y-5 text-left w-full">
           <div>
             <BlurText
-              text="Mastering technical interviews is not just about solving problems, but demonstrating how you reason under pressure."
+              text="Your journey to mastering DSA, system design, and interviews begins with a single problem. Let's get started."
               delay={60}
               animateBy="words"
               direction="top"

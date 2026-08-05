@@ -1,37 +1,57 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Sidebar } from './Sidebar'
 import { TopNavBar } from './TopNavBar'
 import { Footer } from './Footer'
 import { ReviewModal } from '../common/ReviewModal'
 import { useSidebarStore } from '@/store/sidebarStore'
+import { useAuthStore } from '@/store/authStore'
+import { dashboardService } from '@/services/dashboardService'
+
+const REVIEW_TOPIC_THRESHOLD = 10
 
 export function AppLayout() {
   const location = useLocation()
   const isHome = location.pathname === '/'
   const [isReviewOpen, setIsReviewOpen] = useState(false)
+  const hasShownRef = useRef(false)
   const { isOpen } = useSidebarStore()
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const queryClient = useQueryClient()
+
+  const { data: stats } = useQuery({
+    queryKey: ['dashboard', 'stats'],
+    queryFn: () => dashboardService.getStats(),
+    enabled: isAuthenticated,
+    refetchOnWindowFocus: false,
+  })
+
+  const completedTopics = stats?.completedTopics ?? 0
+
+  // Refresh completion count whenever the route changes
+  useEffect(() => {
+    if (isAuthenticated && !isHome) {
+      queryClient.invalidateQueries({ queryKey: ['dashboard', 'stats'] })
+    }
+  }, [location.pathname, isAuthenticated, isHome, queryClient])
 
   useEffect(() => {
     // Listen for manual triggers from "Write a Review" buttons
     const handleOpen = () => setIsReviewOpen(true)
     window.addEventListener('open-review-modal', handleOpen)
 
-    // Trigger feedback popup immediately when user uses the platform (if not already reviewed)
+    // Trigger feedback popup once the user has completed 10 topics (if not already reviewed)
     const reviewed = localStorage.getItem('devprep_reviewed') === 'true'
-    if (!reviewed && !isHome) {
-      const hits = Number(sessionStorage.getItem('devprep_page_hits') || '0') + 1
-      sessionStorage.setItem('devprep_page_hits', hits.toString())
-      
-      if (hits >= 1) {
-        setIsReviewOpen(true)
-      }
+    if (!reviewed && !isHome && isAuthenticated && completedTopics >= REVIEW_TOPIC_THRESHOLD && !hasShownRef.current) {
+      hasShownRef.current = true
+      setIsReviewOpen(true)
     }
 
     return () => {
       window.removeEventListener('open-review-modal', handleOpen)
     }
-  }, [location.pathname, isHome])
+  }, [location.pathname, isHome, isAuthenticated, completedTopics])
 
   return (
     <div style={{ background: 'var(--color-bg-base)', color: 'var(--color-on-surface)', minHeight: '100vh', fontFamily: 'var(--font-sans)' }}>

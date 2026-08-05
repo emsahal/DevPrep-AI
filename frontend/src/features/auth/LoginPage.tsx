@@ -67,7 +67,7 @@ export function LoginPage() {
         <div className="my-auto max-w-md mx-auto space-y-5 text-left w-full">
           <div>
             <BlurText
-              text="Mastering technical interviews is not just about solving problems, but demonstrating how you reason under pressure."
+              text="Consistency beats intensity. Every problem you solve today compounds into the engineer you become tomorrow."
               delay={60}
               animateBy="words"
               direction="top"

@@ -43,11 +43,11 @@ const techLogos = [
   { node: <SiJavascript className="text-[#F7DF1E]" />, title: "JavaScript", href: "/library/javascript" },
   { node: <SiTypescript className="text-[#3178C6]" />, title: "TypeScript", href: "/library/typescript" },
   { node: <SiReact className="text-[#61DAFB]" />, title: "React", href: "/library/react" },
-  { node: <SiNextdotjs className="text-white" />, title: "Next.js", href: "/library/next.js" },
+  { node: <SiNextdotjs className="text-white" />, title: "Next.js", href: "/library/nextjs" },
   // Backend
-  { node: <SiNodedotjs className="text-[#5FA04E]" />, title: "Node.js", href: "/library/node.js" },
-  { node: <SiExpress className="text-white" />, title: "Express.js", href: "/library/express" },
-  { node: <TbApi className="text-[#FF6C2C]" />, title: "REST APIs", href: "/library/rest" },
+  { node: <SiNodedotjs className="text-[#5FA04E]" />, title: "Node.js", href: "/library/nodejs" },
+  { node: <SiExpress className="text-white" />, title: "Express.js", href: "/library/expressjs" },
+  { node: <TbApi className="text-[#FF6C2C]" />, title: "REST APIs", href: "/library/rest-apis" },
   { node: <SiGraphql className="text-[#E535AB]" />, title: "GraphQL", href: "/library/graphql" },
   { node: <TbLockAccess className="text-[#FFB703]" />, title: "Authentication", href: "/library/authentication" },
   // Database
