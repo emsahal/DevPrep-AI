@@ -89,7 +89,7 @@ export function TopicPage() {
   const quiz = topic.quizzes[0]
 
   return (
-    <div className="px-4 sm:px-6 py-6 sm:py-8 max-w-6xl mx-auto">
+    <div className="px-4 sm:px-6 py-6 sm:py-8 max-w-6xl mx-auto" style={{ fontFamily: '"Inter", sans-serif' }}>
       {/* ═══════ Hero ═══════ */}
       <section
         className="relative overflow-hidden rounded-2xl border border-[var(--color-border-muted)] bg-[var(--color-surface-container-lowest)] px-5 py-6 sm:px-8 sm:py-8 animate-fade-up"
@@ -138,8 +138,8 @@ export function TopicPage() {
               </div>
 
               <h1
-                className="text-3xl sm:text-4xl font-extrabold leading-tight mb-3"
-                style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-on-surface)' }}
+                className="text-3xl sm:text-4xl font-semibold leading-tight mb-3 tracking-[-0.03em]"
+                style={{ fontFamily: '"Inter", sans-serif', color: 'var(--color-on-surface)' }}
               >
                 {topic.title}
               </h1>
@@ -187,7 +187,7 @@ export function TopicPage() {
                     {regenerateMutation.isPending ? 'Regenerating…' : 'Regenerate with AI'}
                   </button>
                 )}
-                <div className="flex rounded-xl p-1" style={{ background: 'var(--color-surface-container)', border: '1px solid var(--color-border-muted)' }}>
+                <div className="flex rounded-full p-1" style={{ background: 'var(--color-surface-container)', border: '1px solid var(--color-border-muted)' }}>
                   {[
                     { value: 'roman', label: 'Roman Urdu' },
                     { value: 'english', label: 'English' },
@@ -196,7 +196,7 @@ export function TopicPage() {
                       key={option.value}
                       type="button"
                       onClick={() => setContentLanguage(option.value as 'roman' | 'english')}
-                      className="rounded-lg px-3 py-1.5 text-xs font-bold transition-all"
+                      className="rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all"
                       style={{
                         background: contentLanguage === option.value ? 'var(--color-primary)' : 'transparent',
                         color: contentLanguage === option.value ? 'var(--color-on-primary-fixed)' : 'var(--color-on-surface-variant)',
@@ -216,11 +216,11 @@ export function TopicPage() {
           {/* Practice Quiz */}
           {quiz ? (
             <div className="rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center gap-4" style={{ background: 'rgba(208,188,255,0.05)', border: '1px solid rgba(208,188,255,0.18)' }}>
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl" style={{ background: 'var(--color-primary)' }}>
-                <span className="material-symbols-outlined text-2xl" style={{ color: 'var(--color-on-primary-fixed)' }}>quiz</span>
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl" style={{ background: 'rgba(208,188,255,0.12)' }}>
+                <span className="material-symbols-outlined text-2xl" style={{ color: 'var(--color-primary)' }}>quiz</span>
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-sm mb-1" style={{ color: 'var(--color-on-surface)' }}>Practice Quiz</h3>
+                <h3 className="font-semibold text-sm mb-1 tracking-[-0.01em]" style={{ color: 'var(--color-on-surface)' }}>Practice Quiz</h3>
                 <p className="text-xs flex items-center gap-1.5" style={{ color: 'var(--color-on-surface-variant)' }}>
                   <span className="inline-flex items-center gap-1">
                     <span className="material-symbols-outlined text-[13px]" style={{ color: 'var(--color-primary)' }}>question_mark</span>
@@ -235,10 +235,10 @@ export function TopicPage() {
               </div>
               <Link
                 to={`/quizzes/${quiz.id}`}
-                className="inline-flex items-center gap-2 justify-center px-5 py-2.5 rounded-xl text-sm font-bold transition-all hover:opacity-90 active:scale-95 shadow-[0_0_20px_rgba(139,92,246,0.15)]"
-                style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}
+                className="inline-flex items-center gap-2 justify-center px-5 py-2.5 rounded-full text-sm font-semibold transition-all hover:filter hover:brightness-110 active:scale-95"
+                style={{ background: 'rgba(139,92,246,0.15)', color: 'var(--color-primary)', border: '1px solid rgba(139,92,246,0.3)' }}
               >
-                Start Quiz <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                Continue <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
               </Link>
             </div>
           ) : (
@@ -247,7 +247,7 @@ export function TopicPage() {
                 <span className="material-symbols-outlined text-2xl" style={{ color: 'var(--color-primary)' }}>auto_awesome</span>
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-sm mb-1" style={{ color: 'var(--color-on-surface)' }}>Generate MCQs</h3>
+                <h3 className="font-semibold text-sm mb-1 tracking-[-0.01em]" style={{ color: 'var(--color-on-surface)' }}>Generate MCQs</h3>
                 <p className="text-xs leading-relaxed" style={{ color: 'var(--color-on-surface-variant)' }}>
                   Click to generate 15 multiple-choice questions for <strong style={{ color: 'var(--color-on-surface)' }}>{topic.title}</strong> with AI.
                 </p>
@@ -256,8 +256,8 @@ export function TopicPage() {
                 type="button"
                 disabled={generateMcqsMutation.isPending}
                 onClick={() => generateMcqsMutation.mutate()}
-                className="inline-flex items-center gap-2 justify-center px-5 py-2.5 rounded-xl text-sm font-bold transition-all hover:opacity-90 active:scale-95 shadow-[0_0_20px_rgba(139,92,246,0.15)] disabled:opacity-60"
-                style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}
+                className="inline-flex items-center gap-2 justify-center px-5 py-2.5 rounded-full text-sm font-semibold transition-all hover:filter hover:brightness-110 active:scale-95 disabled:opacity-60"
+                style={{ background: 'rgba(139,92,246,0.15)', color: 'var(--color-primary)', border: '1px solid rgba(139,92,246,0.3)' }}
               >
                 {generateMcqsMutation.isPending ? (
                   <>
@@ -280,7 +280,7 @@ export function TopicPage() {
                 <span className="material-symbols-outlined text-2xl" style={{ color: 'var(--color-success)' }}>style</span>
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-sm mb-1" style={{ color: 'var(--color-on-surface)' }}>Flashcards</h3>
+                <h3 className="font-semibold text-sm mb-1 tracking-[-0.01em]" style={{ color: 'var(--color-on-surface)' }}>Flashcards</h3>
                 <p className="text-xs flex items-center gap-1.5" style={{ color: 'var(--color-on-surface-variant)' }}>
                   <span className="inline-flex items-center gap-1">
                     <span className="material-symbols-outlined text-[13px]" style={{ color: 'var(--color-success)' }}>style</span>
@@ -290,8 +290,8 @@ export function TopicPage() {
               </div>
               <Link
                 to="/flashcards"
-                className="inline-flex items-center gap-2 justify-center px-5 py-2.5 rounded-xl text-sm font-bold transition-all hover:opacity-90 active:scale-95"
-                style={{ background: 'var(--color-success)', color: '#04150d' }}
+                className="inline-flex items-center gap-2 justify-center px-5 py-2.5 rounded-full text-sm font-semibold transition-all hover:filter hover:brightness-110 active:scale-95"
+                style={{ background: 'rgba(16,185,129,0.12)', color: 'var(--color-success)', border: '1px solid rgba(16,185,129,0.28)' }}
               >
                 Review Flashcards <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
               </Link>
@@ -302,7 +302,7 @@ export function TopicPage() {
                 <span className="material-symbols-outlined text-2xl" style={{ color: 'var(--color-success)' }}>style</span>
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-sm mb-1" style={{ color: 'var(--color-on-surface)' }}>Generate Flashcards</h3>
+                <h3 className="font-semibold text-sm mb-1 tracking-[-0.01em]" style={{ color: 'var(--color-on-surface)' }}>Generate Flashcards</h3>
                 <p className="text-xs leading-relaxed" style={{ color: 'var(--color-on-surface-variant)' }}>
                   Click to generate 10 AI flashcards for <strong style={{ color: 'var(--color-on-surface)' }}>{topic.title}</strong>. They&apos;ll be saved to the Flashcards page.
                 </p>
@@ -311,8 +311,8 @@ export function TopicPage() {
                 type="button"
                 disabled={generateFlashcardsMutation.isPending}
                 onClick={() => generateFlashcardsMutation.mutate()}
-                className="inline-flex items-center gap-2 justify-center px-5 py-2.5 rounded-xl text-sm font-bold transition-all hover:opacity-90 active:scale-95 disabled:opacity-60"
-                style={{ background: 'var(--color-success)', color: '#04150d' }}
+                className="inline-flex items-center gap-2 justify-center px-5 py-2.5 rounded-full text-sm font-semibold transition-all hover:filter hover:brightness-110 active:scale-95 disabled:opacity-60"
+                style={{ background: 'rgba(16,185,129,0.12)', color: 'var(--color-success)', border: '1px solid rgba(16,185,129,0.28)' }}
               >
                 {generateFlashcardsMutation.isPending ? (
                   <>
@@ -334,17 +334,17 @@ export function TopicPage() {
               <span className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: 'rgba(139,92,246,0.15)' }}>
                 <span className="material-symbols-outlined text-lg" style={{ color: 'var(--color-primary)', fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
               </span>
-              <span className="font-semibold text-sm" style={{ color: 'var(--color-primary)' }}>AI Deep Dive</span>
+              <span className="font-semibold text-sm tracking-[-0.01em]" style={{ color: 'var(--color-primary)' }}>AI Deep Dive</span>
             </div>
             <p className="text-sm mb-4 leading-relaxed" style={{ color: 'var(--color-on-surface-variant)' }}>
               Get a personalized explanation of <strong style={{ color: 'var(--color-on-surface)' }}>{topic.title}</strong> tailored to your skill level — break down tough concepts or interview hints.
             </p>
             <Link
               to="/ai-tutor"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all hover:opacity-90 active:scale-95"
-              style={{ background: 'var(--color-tertiary)', color: '#2c1700' }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all hover:border-primary/40 hover:text-primary active:scale-95"
+              style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--color-on-surface)', border: '1px solid var(--color-border-muted)' }}
             >
-              Open AI Tutor <span className="material-symbols-outlined text-[16px]">smart_toy</span>
+              Open AI Tutor <span className="material-symbols-outlined text-[16px]" style={{ color: 'var(--color-primary)' }}>smart_toy</span>
             </Link>
           </div>
         </div>
@@ -396,16 +396,16 @@ export function TopicPage() {
             <div className="flex items-start gap-4">
               <span className="material-symbols-outlined text-3xl flex-shrink-0" style={{ color: 'var(--color-tertiary)' }}>data_object</span>
               <div className="flex-1">
-                <p className="font-semibold text-sm mb-1" style={{ color: 'var(--color-on-surface)' }}>Try in Code Lab</p>
+                <p className="font-semibold text-sm mb-1 tracking-[-0.01em]" style={{ color: 'var(--color-on-surface)' }}>Try in Code Lab</p>
                 <p className="text-xs leading-relaxed" style={{ color: 'var(--color-on-surface-variant)' }}>Paste an example, run it, and get instant AI-powered analysis.</p>
               </div>
             </div>
             <Link
               to="/code-analyzer"
-              className="mt-4 inline-flex items-center gap-2 w-full justify-center px-3 py-2 rounded-xl text-xs font-bold transition-all hover:opacity-90 active:scale-[0.98]"
-              style={{ background: 'var(--color-tertiary)', color: '#2c1700' }}
+              className="mt-4 inline-flex items-center gap-2 w-full justify-center px-3 py-2 rounded-full text-xs font-semibold transition-all hover:border-primary/40 hover:text-primary active:scale-[0.98]"
+              style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--color-on-surface)', border: '1px solid var(--color-border-muted)' }}
             >
-              Open Code Lab <span className="material-symbols-outlined text-[14px]">terminal</span>
+              Open Code Lab <span className="material-symbols-outlined text-[14px]" style={{ color: 'var(--color-primary)' }}>terminal</span>
             </Link>
           </div>
 
