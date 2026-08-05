@@ -3,12 +3,21 @@ import { getCached, setCache, invalidateCache } from '@/utils/redis'
 import logger from '@/utils/logger'
 import { topicContentAI, type TopicGenerationInput } from './topic-content-ai.service'
 
-type TopicWithRelations = Awaited<ReturnType<typeof prisma.topic.findUnique>>
+interface TopicSeedInput {
+  id: string
+  slug: string
+  title: string
+  description: string
+  difficulty: string
+  category: string
+  content: string
+  technology?: { name?: string } | null
+}
 
 export class TopicService {
   private generationPromises = new Map<string, Promise<string>>()
 
-  private async ensureGenerated(topic: NonNullable<TopicWithRelations>): Promise<string> {
+  private async ensureGenerated(topic: TopicSeedInput): Promise<string> {
     const inFlight = this.generationPromises.get(topic.id)
     if (inFlight) return inFlight
 
