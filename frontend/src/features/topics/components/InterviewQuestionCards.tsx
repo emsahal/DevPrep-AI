@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface InterviewQuestionCardsProps {
   questions: string[]
@@ -17,7 +17,9 @@ export function InterviewQuestionCards({ questions }: InterviewQuestionCardsProp
       <Card className="w-full border-[var(--color-border-muted)] bg-[var(--color-surface-container-lowest)] text-[var(--color-on-surface)]">
         <CardHeader>
           <CardTitle className="text-base">Commonly asked in real-world technical interviews.</CardTitle>
-
+          <CardDescription className="text-sm text-[var(--color-on-surface-variant)]">
+            These questions are designed to assess your problem-solving skills, coding proficiency, and understanding of data structures and algorithms.
+          </CardDescription>
         </CardHeader>
 
         <CardContent>
