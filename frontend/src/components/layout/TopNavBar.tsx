@@ -80,14 +80,6 @@ export function TopNavBar() {
           <div className="flex items-center gap-2 flex-shrink-0">
             {isAuthenticated ? (
               <>
-                {/* Dashboard */}
-                <Link to="/dashboard"
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all hover:opacity-90 active:scale-95 mr-1.5"
-                      style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
-                  <span className="material-symbols-outlined text-[16px]">dashboard</span>
-                  <span className="hidden sm:inline">Dashboard</span>
-                </Link>
-
                 {/* Streak */}
                 <Link to="/leaderboard" className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold transition-colors hover:opacity-80"
                      style={{ background: 'var(--color-tertiary-container)/20', color: 'var(--color-tertiary)' }}>
