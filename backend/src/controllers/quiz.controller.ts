@@ -121,25 +121,42 @@ export class QuizController {
         return
       }
 
+let scopeContent = ''
+      if (quiz.topicId) {
+        const topicMeta = await prisma.topic.findUnique({
+          where: { id: quiz.topicId },
+          select: { title: true, content: true, description: true },
+        })
+        scopeContent = (topicMeta?.content || topicMeta?.description || '').trim().slice(0, 4500)
+      }
+
       const difficultyInstruction =
         quiz.difficulty === 'mixed'
           ? 'Mix easy, intermediate, and hard questions.'
           : `All questions should be ${quiz.difficulty} level.`
 
       const prompt = `You are an expert technical interviewer and software staff engineer.
-Generate exactly 15 high-quality multiple-choice questions (MCQs) for the topic "${quiz.topic?.title || 'this topic'}".
+Generate exactly 15 high-quality multiple-choice questions (MCQs) for the SPECIFIC topic "${quiz.topic?.title || 'this topic'}".
 These questions must be realistic, challenging, and suitable for technical interview preparation at top tech companies.
 
+CRITICAL SCOPE RULE:
+- Generate questions ONLY about THIS specific topic "${quiz.topic?.title || 'this topic'}" and the covered content below.
+- Do NOT ask about broader or other sub-topics of the same technology that are NOT part of this lesson (for example, if the topic is "Introduction to HTML", ask only about tags, elements, attributes, and document structure — NOT forms, media, APIs, or advanced HTML features).
+- Every question must be answerable from the covered content given below.
+${scopeContent ? `\nCOVERED CONTENT FOR THIS TOPIC (use this as the source of scope):\n${scopeContent}` : ''}
+
 CRITICAL INSTRUCTIONS:
-1. NO PLACEHOLDERS: Do not use template questions. Every question must be distinct and explore specific technical mechanics.
+1. NO PLACEHOLDERS: Do not use template questions. Every question must be distinct and explore the specifics of "${quiz.topic?.title || 'this topic'}".
 2. REAL-WORLD CODE: Include code snippets or mock output scenarios in at least 5 questions.
 3. MULTI-LINE CODE BLOCKS: Any code snippet, code block, or execution code must be enclosed in standard triple-backtick markdown blocks with the correct language identifier (e.g. \`\`\`javascript or \`\`\`python).
 4. CODE INDENTATION: Code within blocks must use proper indentation (4 spaces per block level) and be formatted across multiple lines for readability. Do NOT write code in a single line.
-5. TOPIC DEPTH: Cover deep, practical concepts (syntax, execution steps, performance characteristics, memory, common edge cases, errors).
+5. TOPIC DEPTH: Cover deep, practical concepts specific to the lesson (syntax, structure, execution steps, performance characteristics, common edge cases, errors).
 6. QUALITY OPTIONS: Ensure options are realistic distractors.
 7. EXPLANATIONS: Provide clear, technical, step-by-step explanations of why the correct option is right.
 
 ${difficultyInstruction}
+
+${scopeContent ? `Topic content to scope questions:\n${scopeContent}` : ''}
 
 IMPORTANT: Return ONLY a valid JSON array. Do not wrap it in markdown code blocks. No text before or after the JSON.
 Format:
