@@ -89,7 +89,7 @@ export function TopicPage() {
   const quiz = topic.quizzes[0]
 
   return (
-    <div className="px-4 sm:px-6 py-6 sm:py-8 max-w-6xl mx-auto" style={{ fontFamily: '"Inter", sans-serif' }}>
+    <div className="px-4 sm:px-6 py-6 sm:py-8 max-w-6xl mx-auto">
       {/* ═══════ Hero ═══════ */}
       <section
         className="relative overflow-hidden rounded-2xl border border-[var(--color-border-muted)] bg-[var(--color-surface-container-lowest)] px-5 py-6 sm:px-8 sm:py-8 animate-fade-up"
@@ -138,8 +138,8 @@ export function TopicPage() {
               </div>
 
               <h1
-                className="text-3xl sm:text-4xl font-semibold leading-tight mb-3 tracking-[-0.03em]"
-                style={{ fontFamily: '"Inter", sans-serif', color: 'var(--color-on-surface)' }}
+                className="text-3xl sm:text-4xl font-extrabold leading-tight mb-3"
+                style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-on-surface)' }}
               >
                 {topic.title}
               </h1>
@@ -220,7 +220,7 @@ export function TopicPage() {
                 <span className="material-symbols-outlined text-2xl" style={{ color: 'var(--color-primary)' }}>quiz</span>
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-sm mb-1 tracking-[-0.01em]" style={{ color: 'var(--color-on-surface)' }}>Practice Quiz</h3>
+                <h3 className="font-bold text-sm mb-1" style={{ color: 'var(--color-on-surface)' }}>Practice Quiz</h3>
                 <p className="text-xs flex items-center gap-1.5" style={{ color: 'var(--color-on-surface-variant)' }}>
                   <span className="inline-flex items-center gap-1">
                     <span className="material-symbols-outlined text-[13px]" style={{ color: 'var(--color-primary)' }}>question_mark</span>
@@ -247,7 +247,7 @@ export function TopicPage() {
                 <span className="material-symbols-outlined text-2xl" style={{ color: 'var(--color-primary)' }}>auto_awesome</span>
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-sm mb-1 tracking-[-0.01em]" style={{ color: 'var(--color-on-surface)' }}>Generate MCQs</h3>
+                <h3 className="font-bold text-sm mb-1" style={{ color: 'var(--color-on-surface)' }}>Generate MCQs</h3>
                 <p className="text-xs leading-relaxed" style={{ color: 'var(--color-on-surface-variant)' }}>
                   Click to generate 15 multiple-choice questions for <strong style={{ color: 'var(--color-on-surface)' }}>{topic.title}</strong> with AI.
                 </p>
@@ -280,7 +280,7 @@ export function TopicPage() {
                 <span className="material-symbols-outlined text-2xl" style={{ color: 'var(--color-success)' }}>style</span>
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-sm mb-1 tracking-[-0.01em]" style={{ color: 'var(--color-on-surface)' }}>Flashcards</h3>
+                <h3 className="font-bold text-sm mb-1" style={{ color: 'var(--color-on-surface)' }}>Flashcards</h3>
                 <p className="text-xs flex items-center gap-1.5" style={{ color: 'var(--color-on-surface-variant)' }}>
                   <span className="inline-flex items-center gap-1">
                     <span className="material-symbols-outlined text-[13px]" style={{ color: 'var(--color-success)' }}>style</span>
@@ -302,7 +302,7 @@ export function TopicPage() {
                 <span className="material-symbols-outlined text-2xl" style={{ color: 'var(--color-success)' }}>style</span>
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-sm mb-1 tracking-[-0.01em]" style={{ color: 'var(--color-on-surface)' }}>Generate Flashcards</h3>
+                <h3 className="font-bold text-sm mb-1" style={{ color: 'var(--color-on-surface)' }}>Generate Flashcards</h3>
                 <p className="text-xs leading-relaxed" style={{ color: 'var(--color-on-surface-variant)' }}>
                   Click to generate 10 AI flashcards for <strong style={{ color: 'var(--color-on-surface)' }}>{topic.title}</strong>. They&apos;ll be saved to the Flashcards page.
                 </p>
@@ -334,7 +334,7 @@ export function TopicPage() {
               <span className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: 'rgba(139,92,246,0.15)' }}>
                 <span className="material-symbols-outlined text-lg" style={{ color: 'var(--color-primary)', fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
               </span>
-              <span className="font-semibold text-sm tracking-[-0.01em]" style={{ color: 'var(--color-primary)' }}>AI Deep Dive</span>
+              <span className="font-semibold text-sm" style={{ color: 'var(--color-primary)' }}>AI Deep Dive</span>
             </div>
             <p className="text-sm mb-4 leading-relaxed" style={{ color: 'var(--color-on-surface-variant)' }}>
               Get a personalized explanation of <strong style={{ color: 'var(--color-on-surface)' }}>{topic.title}</strong> tailored to your skill level — break down tough concepts or interview hints.
@@ -396,7 +396,7 @@ export function TopicPage() {
             <div className="flex items-start gap-4">
               <span className="material-symbols-outlined text-3xl flex-shrink-0" style={{ color: 'var(--color-tertiary)' }}>data_object</span>
               <div className="flex-1">
-                <p className="font-semibold text-sm mb-1 tracking-[-0.01em]" style={{ color: 'var(--color-on-surface)' }}>Try in Code Lab</p>
+                <p className="font-bold text-sm mb-1" style={{ color: 'var(--color-on-surface)' }}>Try in Code Lab</p>
                 <p className="text-xs leading-relaxed" style={{ color: 'var(--color-on-surface-variant)' }}>Paste an example, run it, and get instant AI-powered analysis.</p>
               </div>
             </div>
