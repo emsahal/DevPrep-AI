@@ -83,6 +83,7 @@ export function FlashcardsPage() {
         >
           <div className="absolute inset-0 rounded-2xl flex flex-col items-center justify-center p-8 text-center"
                style={{ backfaceVisibility: 'hidden', border: '1px solid var(--color-border-subtle)', background: 'var(--color-surface-container-lowest)' }}>
+            <span className="pill mb-2" style={{ background: 'var(--color-surface-container-high)', color: 'var(--color-primary)' }}>{card.topic?.title || 'General'}</span>
             <span className="pill mb-4" style={{ background: 'var(--color-surface-container-high)', color: 'var(--color-outline)' }}>{card.difficulty}</span>
             <p className="text-xl font-bold leading-snug" style={{ color: 'var(--color-on-surface)', fontFamily: 'var(--font-sans)' }}>{card.front}</p>
             <p className="text-xs mt-5" style={{ color: 'var(--color-outline)' }}>Tap to reveal answer</p>

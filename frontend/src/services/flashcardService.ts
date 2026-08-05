@@ -39,6 +39,11 @@ export const flashcardService = {
     return data
   },
 
+  async generateForTopic(slug: string): Promise<{ topicId: string; count: number; alreadyExists: boolean; cards: FlashCard[] }> {
+    const { data } = await api.post(`/flashcards/topic/${slug}/generate`)
+    return data
+  },
+
   async getDueCards(): Promise<FlashCard[]> {
     const { data } = await api.get('/flashcards/due')
     return data

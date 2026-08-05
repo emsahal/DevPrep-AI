@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { topicService } from '@/services/topicService'
 import { quizService } from '@/services/quizService'
+import { flashcardService } from '@/services/flashcardService'
 import { adminService } from '@/services/adminService'
 import { useAuthStore } from '@/store/authStore'
 import { TopicContent } from '@/features/topics/components/TopicContent'
@@ -46,6 +47,13 @@ export function TopicPage() {
     mutationFn: () => quizService.ensureTopicQuiz(slug!),
     onSuccess: (data) => {
       navigate(`/quizzes/${data.id}`)
+    },
+  })
+
+  const generateFlashcardsMutation = useMutation({
+    mutationFn: () => flashcardService.generateForTopic(slug!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['topic', slug] })
     },
   })
 
@@ -259,6 +267,61 @@ export function TopicPage() {
                 ) : (
                   <>
                     Generate MCQs <span className="material-symbols-outlined text-[16px]">quiz</span>
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+
+          {/* Flashcards */}
+          {topic.flashCards.length > 0 ? (
+            <div className="rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center gap-4" style={{ background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.2)' }}>
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl" style={{ background: 'rgba(16,185,129,0.15)' }}>
+                <span className="material-symbols-outlined text-2xl" style={{ color: 'var(--color-success)' }}>style</span>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-sm mb-1" style={{ color: 'var(--color-on-surface)' }}>Flashcards</h3>
+                <p className="text-xs flex items-center gap-1.5" style={{ color: 'var(--color-on-surface-variant)' }}>
+                  <span className="inline-flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[13px]" style={{ color: 'var(--color-success)' }}>style</span>
+                    {topic.flashCards.length} flashcards for {topic.title}
+                  </span>
+                </p>
+              </div>
+              <Link
+                to="/flashcards"
+                className="inline-flex items-center gap-2 justify-center px-5 py-2.5 rounded-xl text-sm font-bold transition-all hover:opacity-90 active:scale-95"
+                style={{ background: 'var(--color-success)', color: '#04150d' }}
+              >
+                Review Flashcards <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+              </Link>
+            </div>
+          ) : (
+            <div className="rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center gap-4" style={{ background: 'rgba(16,185,129,0.06)', border: '1px dashed rgba(16,185,129,0.35)' }}>
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl" style={{ background: 'rgba(16,185,129,0.15)' }}>
+                <span className="material-symbols-outlined text-2xl" style={{ color: 'var(--color-success)' }}>style</span>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-sm mb-1" style={{ color: 'var(--color-on-surface)' }}>Generate Flashcards</h3>
+                <p className="text-xs leading-relaxed" style={{ color: 'var(--color-on-surface-variant)' }}>
+                  Click to generate 10 AI flashcards for <strong style={{ color: 'var(--color-on-surface)' }}>{topic.title}</strong>. They&apos;ll be saved to the Flashcards page.
+                </p>
+              </div>
+              <button
+                type="button"
+                disabled={generateFlashcardsMutation.isPending}
+                onClick={() => generateFlashcardsMutation.mutate()}
+                className="inline-flex items-center gap-2 justify-center px-5 py-2.5 rounded-xl text-sm font-bold transition-all hover:opacity-90 active:scale-95 disabled:opacity-60"
+                style={{ background: 'var(--color-success)', color: '#04150d' }}
+              >
+                {generateFlashcardsMutation.isPending ? (
+                  <>
+                    <span className="material-symbols-outlined text-[16px] animate-spin">progress_activity</span>
+                    Generating…
+                  </>
+                ) : (
+                  <>
+                    Generate Flashcards <span className="material-symbols-outlined text-[16px]">style</span>
                   </>
                 )}
               </button>

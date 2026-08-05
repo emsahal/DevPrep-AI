@@ -55,6 +55,16 @@ export class FlashcardController {
       next(error)
     }
   }
+
+  async generateForTopic(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const { slug } = req.params
+      const result = await flashcardService.generateForTopic(slug)
+      res.json(result)
+    } catch (error) {
+      next(error)
+    }
+  }
 }
 
 export const flashcardController = new FlashcardController()
