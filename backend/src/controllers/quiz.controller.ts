@@ -355,6 +355,17 @@ FORMATTING RULES (strictly follow):
     }
   }
 
+  async generateForTopic(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const { slug } = req.params
+      const count = Math.min(Math.max(parseInt(req.query.questionCount as string, 10) || 15, 15), 40)
+      const quiz = await quizService.getOrGenerateQuizForTopic(slug, count)
+      res.json(quiz)
+    } catch (error) {
+      next(error)
+    }
+  }
+
   async addCustomQuestion(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { id } = req.params

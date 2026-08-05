@@ -38,16 +38,17 @@ function buildSystemPrompt(input: TopicGenerationInput, language: 'roman' | 'eng
 GUIDELINES:
 - Difficulty level: ${difficultyGuide}
 - Write ONLY in ${LANGUAGE_HEADING[language]}. ${LANGUAGE_LABEL[language]}
-- Use short bullet points ("- ") for all explanations. Never use numbered lists.
-- Use **bold** for key terms on first mention. Never use *** or tables.
+- **Easy Explanation**: write at least 2–3 short, readable paragraphs that introduce the concept with a real-world analogy. After the paragraphs, add a numbered list ("1. ", "2. ", "3. ") of 3–5 key points.
+- **Code Explanation**: walk through the code using a numbered list ("1. ", "2. ", "3. ").
+- Use **bold** for key terms on first mention. Never use tables or "***".
 - Structure the output EXACTLY with these sections, using these exact headings:
   ## Easy Explanation
   ## Code Example
   ## Code Explanation
   ## Interview Questions
 - The Code Example must be a single fenced code block with a language tag (e.g. \`\`\`javascript), containing a short self-contained example related to the topic.
-- The Interview Questions section must list EXACTLY 15 interview questions, each on its own line starting with "- ". Questions must be relevant to the topic and to the learner's difficulty level.
-- Keep every bullet concise (max ~25 words). Avoid filler.
+- The Interview Questions section must list EXACTLY 5 interview questions, each on its own line starting with "- ". Questions must be relevant to the topic and to the learner's difficulty level.
+- Keep every point concise (max ~25 words). Avoid filler.
 - Output ONLY the sections above. No preamble, no title heading, no footer.`
 }
 
@@ -58,7 +59,7 @@ TECHNOLOGY: ${input.technologyName || ''}
 DIFFICULTY: ${input.difficulty}
 DESCRIPTION: ${input.description}
 
-Write the full study content in ${LANGUAGE_HEADING[language]} following the exact structure from the system prompt, with exactly 15 interview questions.`
+Write the full study content in ${LANGUAGE_HEADING[language]} following the exact structure from the system prompt, with exactly 5 interview questions.`
 }
 
 function countInterviewQuestions(content: string): number {

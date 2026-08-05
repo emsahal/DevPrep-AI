@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { topicService } from '@/services/topicService'
+import { quizService } from '@/services/quizService'
 import { adminService } from '@/services/adminService'
 import { useAuthStore } from '@/store/authStore'
 import { TopicContent } from '@/features/topics/components/TopicContent'
@@ -35,6 +36,13 @@ export function TopicPage() {
 
   const regenerateMutation = useMutation({
     mutationFn: () => adminService.regenerateTopicContent(slug!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['topic', slug] })
+    },
+  })
+
+  const generateMcqsMutation = useMutation({
+    mutationFn: () => quizService.generateQuizForTopic(slug!),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['topic', slug] })
     },
@@ -211,7 +219,7 @@ export function TopicPage() {
           </div>
 
           {/* Practice Quiz */}
-          {quiz && (
+          {quiz ? (
             <div className="rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center gap-4" style={{ background: 'rgba(208,188,255,0.05)', border: '1px solid rgba(208,188,255,0.18)' }}>
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl" style={{ background: 'var(--color-primary)' }}>
                 <span className="material-symbols-outlined text-2xl" style={{ color: 'var(--color-on-primary-fixed)' }}>quiz</span>
@@ -237,6 +245,36 @@ export function TopicPage() {
               >
                 Start Quiz <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
               </Link>
+            </div>
+          ) : (
+            <div className="rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center gap-4" style={{ background: 'rgba(139,92,246,0.06)', border: '1px dashed rgba(139,92,246,0.35)' }}>
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl" style={{ background: 'rgba(139,92,246,0.15)' }}>
+                <span className="material-symbols-outlined text-2xl" style={{ color: 'var(--color-primary)' }}>auto_awesome</span>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-sm mb-1" style={{ color: 'var(--color-on-surface)' }}>Generate MCQs</h3>
+                <p className="text-xs leading-relaxed" style={{ color: 'var(--color-on-surface-variant)' }}>
+                  Click to generate 15 multiple-choice questions for <strong style={{ color: 'var(--color-on-surface)' }}>{topic.title}</strong> with AI.
+                </p>
+              </div>
+              <button
+                type="button"
+                disabled={generateMcqsMutation.isPending}
+                onClick={() => generateMcqsMutation.mutate()}
+                className="inline-flex items-center gap-2 justify-center px-5 py-2.5 rounded-xl text-sm font-bold transition-all hover:opacity-90 active:scale-95 shadow-[0_0_20px_rgba(139,92,246,0.15)] disabled:opacity-60"
+                style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}
+              >
+                {generateMcqsMutation.isPending ? (
+                  <>
+                    <span className="material-symbols-outlined text-[16px] animate-spin">progress_activity</span>
+                    Generating…
+                  </>
+                ) : (
+                  <>
+                    Generate MCQs <span className="material-symbols-outlined text-[16px]">quiz</span>
+                  </>
+                )}
+              </button>
             </div>
           )}
 

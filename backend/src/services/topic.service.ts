@@ -69,6 +69,7 @@ export class TopicService {
           select: { id: true, name: true, slug: true, category: true },
         },
         quizzes: {
+          orderBy: { createdAt: 'desc' },
           take: 1,
           include: {
             questions: {

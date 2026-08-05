@@ -182,6 +182,11 @@ export const quizService = {
     return data
   },
 
+  async generateQuizForTopic(slug: string, questionCount = 15): Promise<QuizDetail> {
+    const { data } = await api.post(`/quizzes/topic/${slug}/generate`, null, { params: { questionCount } })
+    return data
+  },
+
   async aiExplain(
     quizId: string,
     payload: { questionText: string; options: string[]; correctAnswer: number; selectedAnswer: number; userQuery?: string },

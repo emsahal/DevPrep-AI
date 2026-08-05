@@ -6,6 +6,7 @@ const router = Router()
 
 router.get('/', optionalAuth, quizController.getAll.bind(quizController))
 router.post('/ai-generate', authenticate, quizController.generateAIQuiz.bind(quizController))
+router.post('/topic/:slug/generate', authenticate, quizController.generateForTopic.bind(quizController))
 router.get('/daily', authenticate, quizController.getDaily.bind(quizController))
 router.get('/attempts', authenticate, quizController.getAttempts.bind(quizController))
 router.get('/test-nvidia', quizController.testNvidia.bind(quizController))

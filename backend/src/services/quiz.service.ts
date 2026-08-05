@@ -409,6 +409,58 @@ Format:
     }
   }
 
+  async getOrGenerateQuizForTopic(slug: string, questionCount: number = 15) {
+    const topic = await prisma.topic.findUnique({
+      where: { slug },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        content: true,
+        difficulty: true,
+        technology: { select: { name: true } },
+      },
+    })
+    if (!topic) throw new AppError(404, 'Topic not found')
+
+    const existing = await prisma.quiz.findFirst({
+      where: { topicId: topic.id },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        topic: { select: { id: true, title: true, slug: true } },
+        questions: { orderBy: { order: 'asc' } },
+      },
+    })
+
+    const isPlaceholder =
+      existing &&
+      existing.questions.length > 0 &&
+      (existing.questions[0].text.includes('mainly about?') || existing.questions[0].text.includes('In simple words'))
+
+    if (existing && !isPlaceholder && existing.questions.length > 0) {
+      return {
+        id: existing.id,
+        title: existing.title,
+        description: existing.description,
+        difficulty: existing.difficulty,
+        timeLimit: existing.timeLimit,
+        passingScore: existing.passingScore,
+        isDaily: existing.isDaily,
+        topic: existing.topic,
+        questions: existing.questions.map((q) => ({
+          id: q.id,
+          text: q.text,
+          options: q.options,
+          correctAnswer: q.correctAnswer,
+          explanation: q.explanation,
+          order: q.order,
+        })),
+      }
+    }
+
+    return this.generateAIQuiz(topic.id, questionCount, topic.difficulty)
+  }
+
   async generateAIQuiz(topicId: string, questionCount: number = 15, difficulty: string = 'mixed') {
     const topic = await prisma.topic.findUnique({
       where: { id: topicId },
