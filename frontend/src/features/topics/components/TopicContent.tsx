@@ -1,7 +1,20 @@
+import * as React from 'react'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 import rehypeRaw from 'rehype-raw'
+import {
+  CodeBlock,
+  CodeBlockBody,
+  CodeBlockContent,
+  CodeBlockCopyButton,
+  CodeBlockFilename,
+  CodeBlockFiles,
+  CodeBlockHeader,
+  CodeBlockItem,
+  type BundledLanguage,
+  type CodeFile,
+} from '@/components/kibo-ui/code-block'
 import { getSectionId } from './TableOfContents'
 
 interface TopicContentProps {
@@ -33,6 +46,47 @@ function normalizeMarkdown(content: string) {
     .replace(/```(\w+)\s+/g, '```$1\n')
     .replace(/\s+```/g, '\n```')
     .trim()
+}
+
+function extractCodeText(node: React.ReactNode): string {
+  if (node == null) return ''
+  if (typeof node === 'string' || typeof node === 'number') return String(node)
+  if (Array.isArray(node)) return node.map(extractCodeText).join('')
+  if (React.isValidElement(node)) {
+    const props = node.props as { children?: React.ReactNode }
+    return extractCodeText(props.children)
+  }
+  return ''
+}
+
+const FILENAME_BY_LANG: Record<string, string> = {
+  html: 'index.html',
+  xml: 'index.html',
+  css: 'styles.css',
+  javascript: 'script.js',
+  js: 'script.js',
+  jsx: 'App.jsx',
+  typescript: 'main.ts',
+  ts: 'main.ts',
+  tsx: 'App.tsx',
+  python: 'main.py',
+  py: 'main.py',
+  bash: 'script.sh',
+  sh: 'script.sh',
+  shell: 'script.sh',
+  json: 'data.json',
+  c: 'main.c',
+  cpp: 'main.cpp',
+  java: 'Main.java',
+  sql: 'query.sql',
+  markdown: 'README.md',
+  md: 'README.md',
+  plaintext: 'code.txt',
+}
+
+function filenameForLanguage(language: string): string {
+  const lang = language.toLowerCase()
+  return FILENAME_BY_LANG[lang] ?? `snippet.${lang || 'txt'}`
 }
 
 export function TopicContent({ content, language = 'roman' }: TopicContentProps) {
@@ -90,9 +144,47 @@ export function TopicContent({ content, language = 'roman' }: TopicContentProps)
         </code>
       )
     },
-    pre: (props: React.ComponentPropsWithoutRef<'pre'>) => (
-      <pre className="mb-6 overflow-x-auto rounded-lg border bg-muted/50 p-4 text-sm" {...props} />
-    ),
+    pre: ({ children }: React.ComponentPropsWithoutRef<'pre'>) => {
+      const codeChild = React.Children.toArray(children)[0]
+      let language = ''
+      let rawCode = ''
+
+      if (React.isValidElement<{ className?: string; children?: React.ReactNode }>(codeChild)) {
+        language = String(codeChild.props.className ?? '')
+          .replace(/^language-/, '')
+          .trim()
+        rawCode = extractCodeText(codeChild.props.children)
+      } else {
+        rawCode = extractCodeText(children)
+      }
+
+      const lang = language || 'plaintext'
+      const data: CodeFile[] = [{ language: lang, filename: filenameForLanguage(lang), code: rawCode }]
+
+      return (
+        <CodeBlock data={data} defaultValue={lang}>
+          <CodeBlockHeader className="justify-between">
+            <CodeBlockFiles>
+              {(item) => (
+                <CodeBlockFilename key={item.language} value={item.language}>
+                  {item.filename}
+                </CodeBlockFilename>
+              )}
+            </CodeBlockFiles>
+            <CodeBlockCopyButton />
+          </CodeBlockHeader>
+          <CodeBlockBody>
+            {(item) => (
+              <CodeBlockItem key={item.language} value={item.language}>
+                <CodeBlockContent language={item.language as BundledLanguage}>
+                  {item.code}
+                </CodeBlockContent>
+              </CodeBlockItem>
+            )}
+          </CodeBlockBody>
+        </CodeBlock>
+      )
+    },
     blockquote: (props: React.ComponentPropsWithoutRef<'blockquote'>) => (
       <blockquote className="mb-4 border-l-4 border-primary pl-4 italic text-muted-foreground" {...props} />
     ),

@@ -245,6 +245,18 @@
   /* Code font */
   .font-code { font-family: var(--font-mono); }
 
+  /* Code block typewriter reveal */
+  @keyframes code-type {
+    from { clip-path: inset(0 100% 0 0); }
+    to   { clip-path: inset(0 0 0 0); }
+  }
+
+  /* Status card pop-in */
+  @keyframes card-pop {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
   /* Tag Badge */
   .badge {
     display: inline-flex;

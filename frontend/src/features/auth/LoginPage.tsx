@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import type { CSSProperties } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -12,6 +13,19 @@ import { SocialAuthButton } from './SocialAuthButton'
 import { Loader2 } from 'lucide-react'
 import BlurText from '@/components/ui/BlurText'
 import logo from '@/assets/logo.png'
+
+const codeLineStyle = (index: number, text: string, baseDelayMs = 0): CSSProperties => {
+  const chars = Math.max(text.length, 2)
+  return {
+    clipPath: 'inset(0 100% 0 0)',
+    animation: `code-type ${Math.max(250, chars * 45)}ms steps(${chars}, end) ${baseDelayMs + index * 500}ms both`,
+  }
+}
+
+const cardFadeStyle: CSSProperties = {
+  opacity: 0,
+  animation: 'card-pop 500ms ease 3400ms both',
+}
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -87,42 +101,62 @@ export function LoginPage() {
               <rect x="250" y="13" width="75" height="16" rx="4" fill="#3f3f46" />
               <text x="260" y="25" fill="#34d399" fontSize="8.5" fontWeight="bold" fontFamily="monospace">Python 3.11</text>
 
-              <text x="18" y="52" fill="#52525b" fontSize="9" fontFamily="monospace">1</text>
-              <text x="35" y="52" fill="#c084fc" fontSize="9.5" fontWeight="bold" fontFamily="monospace">def</text>
-              <text x="60" y="52" fill="#60a5fa" fontSize="9.5" fontWeight="bold" fontFamily="monospace">two_sum</text>
-              <text x="105" y="52" fill="#e4e4e7" fontSize="9.5" fontFamily="monospace">(nums, target):</text>
+              <g style={codeLineStyle(0, 'def two_sum(nums, target):')}>
+                <text x="18" y="52" fill="#52525b" fontSize="9" fontFamily="monospace">1</text>
+                <text x="35" y="52" fill="#c084fc" fontSize="9.5" fontWeight="bold" fontFamily="monospace">def</text>
+                <text x="60" y="52" fill="#60a5fa" fontSize="9.5" fontWeight="bold" fontFamily="monospace">two_sum</text>
+                <text x="105" y="52" fill="#e4e4e7" fontSize="9.5" fontFamily="monospace">(nums, target):</text>
+              </g>
 
-              <text x="18" y="68" fill="#52525b" fontSize="9" fontFamily="monospace">2</text>
-              <text x="50" y="68" fill="#e4e4e7" fontSize="9.5" fontFamily="monospace">seen = {}</text>
+              <g style={codeLineStyle(1, 'seen = {}')}>
+                <text x="18" y="68" fill="#52525b" fontSize="9" fontFamily="monospace">2</text>
+                <text x="50" y="68" fill="#e4e4e7" fontSize="9.5" fontFamily="monospace">seen = {}</text>
+              </g>
 
-              <text x="18" y="84" fill="#52525b" fontSize="9" fontFamily="monospace">3</text>
-              <text x="50" y="84" fill="#c084fc" fontSize="9.5" fontWeight="bold" fontFamily="monospace">for</text>
-              <text x="72" y="84" fill="#e4e4e7" fontSize="9.5" fontFamily="monospace">i, num </text>
-              <text x="112" y="84" fill="#c084fc" fontSize="9.5" fontWeight="bold" fontFamily="monospace">in</text>
-              <text x="126" y="84" fill="#38bdf8" fontSize="9.5" fontFamily="monospace">enumerate</text>
-              <text x="185" y="84" fill="#e4e4e7" fontSize="9.5" fontFamily="monospace">(nums):</text>
+              <g style={codeLineStyle(2, 'for i, num in enumerate(nums):')}>
+                <text x="18" y="84" fill="#52525b" fontSize="9" fontFamily="monospace">3</text>
+                <text x="50" y="84" fill="#c084fc" fontSize="9.5" fontWeight="bold" fontFamily="monospace">for</text>
+                <text x="72" y="84" fill="#e4e4e7" fontSize="9.5" fontFamily="monospace">i, num </text>
+                <text x="112" y="84" fill="#c084fc" fontSize="9.5" fontWeight="bold" fontFamily="monospace">in</text>
+                <text x="126" y="84" fill="#38bdf8" fontSize="9.5" fontFamily="monospace">enumerate</text>
+                <text x="185" y="84" fill="#e4e4e7" fontSize="9.5" fontFamily="monospace">(nums):</text>
+              </g>
 
-              <text x="18" y="100" fill="#52525b" fontSize="9" fontFamily="monospace">4</text>
-              <text x="65" y="100" fill="#e4e4e7" fontSize="9.5" fontFamily="monospace">diff = target - num</text>
+              <g style={codeLineStyle(3, 'diff = target - num')}>
+                <text x="18" y="100" fill="#52525b" fontSize="9" fontFamily="monospace">4</text>
+                <text x="65" y="100" fill="#e4e4e7" fontSize="9.5" fontFamily="monospace">diff = target - num</text>
+              </g>
 
-              <text x="18" y="116" fill="#52525b" fontSize="9" fontFamily="monospace">5</text>
-              <text x="65" y="116" fill="#c084fc" fontSize="9.5" fontWeight="bold" fontFamily="monospace">if</text>
-              <text x="80" y="116" fill="#e4e4e7" fontSize="9.5" fontFamily="monospace">diff </text>
-              <text x="105" y="116" fill="#c084fc" fontSize="9.5" fontWeight="bold" fontFamily="monospace">in</text>
-              <text x="120" y="116" fill="#e4e4e7" fontSize="9.5" fontFamily="monospace">seen:</text>
+              <g style={codeLineStyle(4, 'if diff in seen:')}>
+                <text x="18" y="116" fill="#52525b" fontSize="9" fontFamily="monospace">5</text>
+                <text x="65" y="116" fill="#c084fc" fontSize="9.5" fontWeight="bold" fontFamily="monospace">if</text>
+                <text x="80" y="116" fill="#e4e4e7" fontSize="9.5" fontFamily="monospace">diff </text>
+                <text x="105" y="116" fill="#c084fc" fontSize="9.5" fontWeight="bold" fontFamily="monospace">in</text>
+                <text x="120" y="116" fill="#e4e4e7" fontSize="9.5" fontFamily="monospace">seen:</text>
+              </g>
 
-              <text x="18" y="132" fill="#52525b" fontSize="9" fontFamily="monospace">6</text>
-              <text x="80" y="132" fill="#c084fc" fontSize="9.5" fontWeight="bold" fontFamily="monospace">return</text>
-              <text x="120" y="132" fill="#e4e4e7" fontSize="9.5" fontFamily="monospace">[seen[diff], i]</text>
+              <g style={codeLineStyle(5, 'return [seen[diff], i]')}>
+                <text x="18" y="132" fill="#52525b" fontSize="9" fontFamily="monospace">6</text>
+                <text x="80" y="132" fill="#c084fc" fontSize="9.5" fontWeight="bold" fontFamily="monospace">return</text>
+                <text x="120" y="132" fill="#e4e4e7" fontSize="9.5" fontFamily="monospace">[seen[diff], i]</text>
+              </g>
 
-              <text x="18" y="148" fill="#52525b" fontSize="9" fontFamily="monospace">7</text>
-              <text x="65" y="148" fill="#e4e4e7" fontSize="9.5" fontFamily="monospace">seen[num] = i</text>
+              <g style={codeLineStyle(6, 'seen[num] = i')}>
+                <text x="18" y="148" fill="#52525b" fontSize="9" fontFamily="monospace">7</text>
+                <text x="65" y="148" fill="#e4e4e7" fontSize="9.5" fontFamily="monospace">seen[num] = i</text>
+              </g>
 
-              <rect x="160" y="150" width="165" height="52" rx="8" fill="#27272a" stroke="#34d399" strokeWidth="1.5" />
-              <circle cx="178" cy="176" r="9" fill="#34d399" fillOpacity="0.2" />
-              <path d="M178 171L179.5 174.5L183 176L179.5 177.5L178 181L176.5 177.5L173 176L176.5 174.5Z" fill="#34d399" />
-              <text x="194" y="172" fill="#ffffff" fontSize="9.5" fontWeight="bold" fontFamily="sans-serif">AI Optimization Check</text>
-              <text x="194" y="185" fill="#34d399" fontSize="8.5" fontFamily="sans-serif">Time O(N) • Space O(N) Optimal</text>
+              <g style={cardFadeStyle}>
+                <rect x="160" y="150" width="165" height="52" rx="8" fill="#27272a" stroke="#34d399" strokeWidth="1.5" />
+                <circle cx="178" cy="176" r="9" fill="#34d399" fillOpacity="0.2" />
+                <path d="M178 171L179.5 174.5L183 176L179.5 177.5L178 181L176.5 177.5L173 176L176.5 174.5Z" fill="#34d399" />
+              </g>
+              <g style={codeLineStyle(0, 'AI Optimization Check', 3400)}>
+                <text x="194" y="172" fill="#ffffff" fontSize="9.5" fontWeight="bold" fontFamily="sans-serif">AI Optimization Check</text>
+              </g>
+              <g style={codeLineStyle(1, 'Time O(N) • Space O(N) Optimal', 3400)}>
+                <text x="194" y="185" fill="#34d399" fontSize="8.5" fontFamily="sans-serif">Time O(N) • Space O(N) Optimal</text>
+              </g>
             </svg>
           </div>
         </div>
