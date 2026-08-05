@@ -162,15 +162,15 @@ export function HomePage() {
               <span className="font-semibold text-sm px-1">Get Started</span>
             </StarBorder>
 
-            {/* Secondary Cyan Button */}
+            {/* Secondary Purple Button */}
             <StarBorder
               as={Link}
               to="/learning-paths"
-              color="#38bdf8"
+              color="#a78bfa"
               speed="5s"
               thickness={2}
               className="w-full sm:w-auto"
-              innerClassName="inner-content-cyan"
+              innerClassName="inner-content-purple"
               style={{ borderRadius: '9999px' }}
             >
               <span className="font-semibold text-sm px-1">Browse Learning Paths</span>

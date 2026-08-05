@@ -84,6 +84,21 @@
   color: #7dd3fc !important;
 }
 
+/* Purple/Secondary button variant */
+.inner-content-purple {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(167, 139, 250, 0.2) 100%) !important;
+  border: 1px solid rgba(167, 139, 250, 0.4) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(167, 139, 250, 0.2) !important;
+}
+
+.inner-content-purple:hover {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(126, 34, 206, 0.85) 100%) !important;
+  border-color: rgba(167, 139, 250, 0.7) !important;
+  box-shadow: 0 0 30px rgba(167, 139, 250, 0.35) !important;
+  color: #ffffff !important;
+}
+
 @keyframes star-movement-bottom {
   0% {
     transform: translate(0%, 0%);
