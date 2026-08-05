@@ -11,7 +11,7 @@ export function AppLayout() {
     <div style={{ background: 'var(--color-bg-base)', color: 'var(--color-on-surface)', minHeight: '100vh', fontFamily: 'var(--font-sans)' }}>
       <TopNavBar />
       {!isHome && <Sidebar />}
-      <main className={`${isHome ? '' : 'lg:ml-60'} pt-16 pb-20 lg:pb-0 min-h-screen`}>
+      <main className={`${isHome ? '' : 'lg:ml-60 pt-16'} pb-20 lg:pb-0 min-h-screen`}>
         <Outlet />
       </main>
       {isHome && <Footer />}

@@ -1,0 +1,119 @@
+/* ThemeSeparator.css – Modern Futuristic Animated Separator */
+
+.theme-separator-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 0;
+  box-sizing: border-box;
+}
+
+.theme-separator-track {
+  position: relative;
+  width: 100%;
+  height: 2px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-border-muted, rgba(255, 255, 255, 0.08)) 12%,
+    rgba(208, 188, 255, 0.15) 50%,
+    var(--color-border-muted, rgba(255, 255, 255, 0.08)) 88%,
+    transparent 100%
+  );
+  box-shadow: 0 0 12px var(--color-ai-glow, rgba(139, 92, 246, 0.15));
+}
+
+.theme-separator-light-sweep {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -25%;
+  width: 25%;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-primary, #d0bcff) 40%,
+    var(--color-secondary, #4cd7f6) 70%,
+    transparent 100%
+  );
+  opacity: 0.85;
+  filter: blur(0.8px);
+  will-change: transform;
+  animation: theme-separator-sweep 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Secondary variant highlight */
+.theme-separator-track.variant-secondary .theme-separator-light-sweep {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-secondary, #4cd7f6) 40%,
+    var(--color-primary, #d0bcff) 70%,
+    transparent 100%
+  );
+}
+
+/* Ambient variant highlight */
+.theme-separator-track.variant-ambient .theme-separator-light-sweep {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(208, 188, 255, 0.7) 30%,
+    rgba(255, 184, 105, 0.7) 65%,
+    transparent 100%
+  );
+}
+
+/* Outer subtle glow line */
+.theme-separator-glow {
+  position: absolute;
+  top: 50%;
+  left: 15%;
+  right: 15%;
+  height: 1px;
+  transform: translateY(-50%);
+  background: radial-gradient(
+    ellipse at center,
+    var(--color-primary, #d0bcff) 0%,
+    transparent 70%
+  );
+  opacity: 0.15;
+  filter: blur(4px);
+  pointer-events: none;
+}
+
+/* Center accent dot node */
+.theme-separator-node {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-primary, #d0bcff);
+  box-shadow: 0 0 10px var(--color-primary, #d0bcff), 0 0 20px var(--color-secondary, #4cd7f6);
+  z-index: 2;
+}
+
+@keyframes theme-separator-sweep {
+  0% {
+    transform: translateX(0%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.85;
+  }
+  90% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateX(500%);
+    opacity: 0;
+  }
+}

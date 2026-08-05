@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700;800;900&family=Geist:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:wght@400;500;700;800&family=Geist:wght@400;600;700;800&display=swap');
 @import "tailwindcss";
 @import "highlight.js/styles/github-dark.css";
 
@@ -87,7 +87,7 @@
   --spacing-unit-12:                  3rem;
 
   /* ─── Typography ──────────────────────────────── */
-  --font-sans:                        "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-sans:                        "Inter", "Geist", ui-sans-serif, system-ui, sans-serif;
   --font-mono:                        "JetBrains Mono", ui-monospace, monospace;
 
   --text-display-lg:                  42px;
@@ -131,15 +131,16 @@
 @layer base {
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; font-family: "Inter", "Geist", ui-sans-serif, system-ui, sans-serif; }
 
   body {
     background-color: var(--color-bg-base);
     color: var(--color-on-surface);
-    font-family: var(--font-sans);
+    font-family: "Inter", "Geist", ui-sans-serif, system-ui, sans-serif;
     font-size: var(--text-body-md);
     line-height: var(--text-body-md--line-height);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
     cursor: default;
   }
@@ -243,4 +244,26 @@
 
   /* Code font */
   .font-code { font-family: var(--font-mono); }
+
+  /* Tag Badge */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px 16px;
+    width: fit-content;
+    height: fit-content;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+    color: #cfeaff;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 38px;
+    overflow: hidden;
+    opacity: 1;
+    box-sizing: border-box;
+  }
 }

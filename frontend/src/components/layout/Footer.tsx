@@ -11,8 +11,8 @@ export function Footer() {
                    style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
                 D
               </div>
-              <span className="font-bold text-base" style={{ color: 'var(--color-on-surface)' }}>
-                DevPrep<span style={{ color: 'var(--color-primary)' }}>AI</span>
+              <span className="text-base tracking-tight" style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, color: 'var(--color-on-surface)' }}>
+                DevPrep
               </span>
             </div>
             <p className="text-sm leading-relaxed" style={{ color: 'var(--color-on-surface-variant)' }}>
@@ -55,7 +55,7 @@ export function Footer() {
         </div>
         <div className="mt-10 pt-6 text-center text-xs"
              style={{ borderTop: '1px solid var(--color-border-subtle)', color: 'var(--color-outline)' }}>
-          &copy; {new Date().getFullYear()} DevPrep AI. All rights reserved.
+          &copy; {new Date().getFullYear()} DevPrep. All rights reserved.
         </div>
       </div>
     </footer>

@@ -1,0 +1,103 @@
+/* LogoLoop.css - React Bits infinite ticker loop */
+.logoloop {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  user-select: none;
+  display: flex;
+  align-items: center;
+}
+
+.logoloop--horizontal {
+  flex-direction: row;
+}
+
+.logoloop--vertical {
+  flex-direction: column;
+}
+
+.logoloop__track {
+  display: flex;
+  flex-direction: row;
+  width: max-content;
+  will-change: transform;
+}
+
+.logoloop--vertical .logoloop__track {
+  flex-direction: column;
+  height: max-content;
+}
+
+.logoloop__list {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--logoloop-gap, 40px);
+  padding: 0 var(--logoloop-gap, 40px) 0 0;
+  margin: 0;
+  list-style: none;
+  flex-shrink: 0;
+}
+
+.logoloop--vertical .logoloop__list {
+  flex-direction: column;
+  padding: 0 0 var(--logoloop-gap, 40px) 0;
+}
+
+.logoloop__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+.logoloop--scale-hover .logoloop__item:hover {
+  transform: scale(1.12);
+}
+
+.logoloop__node {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--logoloop-logoHeight, 32px);
+  color: var(--color-on-surface, #ffffff);
+  font-size: var(--logoloop-logoHeight, 32px);
+}
+
+.logoloop__item img {
+  height: var(--logoloop-logoHeight, 32px);
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.logoloop__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Optional fade-out edges overlay */
+.logoloop--fade::before,
+.logoloop--fade::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.logoloop--horizontal.logoloop--fade::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--logoloop-fadeColor, #0e0e0e) 0%, transparent 100%);
+}
+
+.logoloop--horizontal.logoloop--fade::after {
+  right: 0;
+  background: linear-gradient(90deg, transparent 0%, var(--logoloop-fadeColor, #0e0e0e) 100%);
+}

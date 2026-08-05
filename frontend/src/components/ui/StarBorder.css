@@ -1,0 +1,107 @@
+/* StarBorder component styles */
+.star-border-container {
+  display: inline-block !important;
+  position: relative !important;
+  border-radius: 9999px !important;
+  overflow: hidden !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+.star-border-container:hover {
+  transform: translateY(-2px) !important;
+}
+
+.border-gradient-bottom {
+  position: absolute !important;
+  width: 300% !important;
+  height: 65% !important;
+  opacity: 0.9 !important;
+  bottom: -10px !important;
+  right: -250% !important;
+  border-radius: 50% !important;
+  animation: star-movement-bottom linear infinite alternate !important;
+  z-index: 0 !important;
+}
+
+.border-gradient-top {
+  position: absolute !important;
+  opacity: 0.9 !important;
+  width: 300% !important;
+  height: 65% !important;
+  top: -10px !important;
+  left: -250% !important;
+  border-radius: 50% !important;
+  animation: star-movement-top linear infinite alternate !important;
+  z-index: 0 !important;
+}
+
+.inner-content {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  font-family: "Inter", sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+  padding: 10px 24px !important;
+  border-radius: 9999px !important;
+  z-index: 1 !important;
+  transition: all 0.25s ease !important;
+  box-sizing: border-box !important;
+}
+
+/* White button variant */
+.inner-content-white {
+  background: #ffffff !important;
+  color: #09090b !important;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.25), 0 0 35px rgba(167, 139, 250, 0.25) !important;
+}
+
+.inner-content-white:hover {
+  background: #f4f4f5 !important;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.35), 0 0 45px rgba(167, 139, 250, 0.35) !important;
+}
+
+/* Cyan/Secondary button variant */
+.inner-content-cyan {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(8, 47, 73, 0.85) 100%) !important;
+  border: 1px solid rgba(56, 189, 248, 0.4) !important;
+  color: #38bdf8 !important;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.2) !important;
+}
+
+.inner-content-cyan:hover {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(14, 116, 144, 0.85) 100%) !important;
+  border-color: rgba(56, 189, 248, 0.7) !important;
+  box-shadow: 0 0 30px rgba(56, 189, 248, 0.35) !important;
+  color: #7dd3fc !important;
+}
+
+@keyframes star-movement-bottom {
+  0% {
+    transform: translate(0%, 0%);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-100%, 0%);
+    opacity: 0.3;
+  }
+}
+
+@keyframes star-movement-top {
+  0% {
+    transform: translate(0%, 0%);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(100%, 0%);
+    opacity: 0.3;
+  }
+}
