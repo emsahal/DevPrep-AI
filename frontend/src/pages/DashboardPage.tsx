@@ -4,10 +4,10 @@ import { dashboardService } from '@/services/dashboardService'
 import { useAuthStore } from '@/store/authStore'
 
 function getGreeting(hour: number) {
-  if (hour >= 5 && hour < 12) return { greeting: 'Good morning', note: 'Rise and shine — let\u2019s get some learning in!' }
-  if (hour >= 12 && hour < 17) return { greeting: 'Good afternoon', note: 'Halfway there — keep up the momentum!' }
-  if (hour >= 17 && hour < 21) return { greeting: 'Good evening', note: 'Perfect time for a quick review session.' }
-  return { greeting: 'Good night', note: 'Night owl detected \uD83E\uDD83 — brilliant focus hours ahead!' }
+  if (hour >= 5 && hour < 12) return { greeting: 'Good Morning', note: 'Rise and shine — let\u2019s get some learning in!' }
+  if (hour >= 12 && hour < 17) return { greeting: 'Good Afternoon', note: 'Halfway there — keep up the momentum!' }
+  if (hour >= 17 && hour < 21) return { greeting: 'Good Evening', note: 'Perfect time for a quick review session.' }
+  return { greeting: 'Good Night', note: 'Night owl detected \uD83E\uDD83 — brilliant focus hours ahead!' }
 }
 
 export function DashboardPage() {
