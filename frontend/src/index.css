@@ -242,6 +242,18 @@
     box-shadow: 0 0 8px rgba(208, 188, 255, 0.5);
   }
 
+  /* Gentle idle float/bob for icons */
+  @keyframes float-y {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+  }
+  .animate-float {
+    animation: float-y 3s ease-in-out infinite;
+  }
+  .animate-float-slow {
+    animation: float-y 4.5s ease-in-out infinite;
+  }
+
   /* Code font */
   .font-code { font-family: var(--font-mono); }
 

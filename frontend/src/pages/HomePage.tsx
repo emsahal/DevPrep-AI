@@ -252,7 +252,7 @@ export function HomePage() {
                 { icon: 'style', title: 'Spaced Flashcards', desc: 'Master key CS formulas, algorithms, and concepts with SM-2 retention.', link: '/flashcards' },
                 { icon: 'swords', title: '1v1 Coding Duels', desc: 'Challenge peers in real-time competitive DSA battles & climb the leaderboard.', link: '/duels' },
                 { icon: 'description', title: 'Resume Optimizer', desc: 'AI keyword extraction and ATS scoring tailored for software roles.', link: '/resume-optimizer' },
-              ].map((item) => (
+              ].map((item, i) => (
                 <Link
                   key={item.title}
                   to={item.link}
@@ -272,7 +272,7 @@ export function HomePage() {
                     <div>
                       {/* Icon Container */}
                       <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/25 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-300">
-                        <span className="material-symbols-outlined text-primary text-xl group-hover:rotate-[3deg] transition-transform duration-300">{item.icon}</span>
+                        <span className="material-symbols-outlined text-primary text-xl animate-float" style={{ animationDelay: `${i * 0.35}s` }}>{item.icon}</span>
                       </div>
 
                       {/* Title */}
