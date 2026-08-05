@@ -25,6 +25,7 @@ const LEVEL_LABEL: Record<string, string> = {
 export function TopicPage() {
   const { slug } = useParams<{ slug: string }>()
   const [contentLanguage, setContentLanguage] = useState<'roman' | 'english'>('roman')
+  const [showRelated, setShowRelated] = useState(true)
   const user = useAuthStore((s) => s.user)
   const isAdmin = user?.email?.toLowerCase() === ADMIN_EMAIL
   const queryClient = useQueryClient()
@@ -153,7 +154,7 @@ export function TopicPage() {
 
       {/* ═══════ Main grid ═══════ */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6 animate-fade-up animation-delay-100">
-        <div className="lg:col-span-7 space-y-5">
+        <div className={showRelated ? 'lg:col-span-7 space-y-5' : 'lg:col-span-12 space-y-5'}>
           {/* Content */}
           <div className="bento-card overflow-hidden">
             <div
@@ -171,6 +172,16 @@ export function TopicPage() {
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowRelated(s => !s)}
+                  title={showRelated ? 'Hide Related Topics' : 'Show Related Topics'}
+                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all hover:opacity-90 active:scale-95"
+                  style={{ background: 'var(--color-surface-container)', border: '1px solid var(--color-border-muted)', color: 'var(--color-on-surface-variant)' }}
+                >
+                  <span className="material-symbols-outlined text-[15px]">{showRelated ? 'right_panel_close' : 'right_panel_open'}</span>
+                  <span className="hidden sm:inline">{showRelated ? 'Hide sidebar' : 'Show sidebar'}</span>
+                </button>
                 {isAdmin && (
                   <button
                     type="button"
@@ -350,6 +361,7 @@ export function TopicPage() {
         </div>
 
         {/* ═══════ Sidebar ═══════ */}
+        {showRelated && (
         <div className="lg:col-span-5 flex flex-col gap-5">
           {/* Related Topics */}
           <div className="bento-card overflow-hidden">
@@ -433,6 +445,7 @@ export function TopicPage() {
             ) : <div className="flex-1" />}
           </div>
         </div>
+        )}
       </div>
     </div>
   )
