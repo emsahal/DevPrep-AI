@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'motion/react'
 import { AnimateOnScroll } from '@/components/common/AnimateOnScroll'
 import BlurText from '@/components/ui/BlurText'
@@ -77,6 +77,19 @@ const faqs = [
 
 export function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
+  const [reviews, setReviews] = useState<any[]>(() => {
+    const stored = localStorage.getItem('devprep_user_reviews')
+    return stored ? JSON.parse(stored) : []
+  })
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      const stored = localStorage.getItem('devprep_user_reviews')
+      setReviews(stored ? JSON.parse(stored) : [])
+    }
+    window.addEventListener('devprep-reviews-updated', handleUpdate)
+    return () => window.removeEventListener('devprep-reviews-updated', handleUpdate)
+  }, [])
 
   // Standard Framer/SaaS section heading style
   const sectionHeadingStyle = {
@@ -1009,71 +1022,111 @@ export function HomePage() {
       <section className="py-24 border-b border-white/10" style={{ background: 'var(--color-surface-container-low)' }}>
         <div className="container mx-auto px-6 max-w-6xl">
           <AnimateOnScroll direction="up">
-            <div className="text-center max-w-3xl mx-auto mb-14">
+            <div className="text-center max-w-3xl mx-auto mb-14 flex flex-col items-center">
               <span className="badge mb-3">Social Proof</span>
               <h2 className="text-3xl sm:text-[40px] mb-4" style={sectionHeadingStyle}>Verified Tech Placements</h2>
               <p className="text-white text-sm sm:text-base opacity-90 font-normal">
                 Hear from engineers who leveraged DevPrep AI to land roles at top tech companies.
               </p>
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent('open-review-modal'))}
+                className="mt-5 px-5 py-2.5 rounded-full font-semibold text-xs text-white border border-white/15 bg-white/5 hover:bg-white/10 hover:border-white/25 hover:shadow-[0_0_15px_rgba(255,255,255,0.05)] transition-all active:scale-95 duration-150"
+              >
+                Write a Review
+              </button>
             </div>
           </AnimateOnScroll>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <AnimateOnScroll direction="left" delay={0}>
-              <div className="p-6 rounded-2xl border h-full transition-all duration-300 hover:-translate-y-1"
-                   style={{
-                     background: 'linear-gradient(145deg, rgba(28,27,35,0.7) 0%, rgba(18,18,22,0.9) 100%)',
-                     borderColor: 'rgba(255,255,255,0.08)',
-                   }}>
-                <p className="text-white text-xs sm:text-sm leading-relaxed mb-6 opacity-90 italic">
-                  "The system design feedback was incredibly detailed. It pointed out flaws in my database sharding logic that I never would have noticed myself."
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary">AR</div>
-                  <div>
-                    <div className="text-sm font-semibold text-white">Alex Rivera</div>
-                    <div className="text-[10px] font-mono text-primary uppercase">SDE II @ Stripe</div>
+            {reviews.length > 0 ? (
+              reviews.map((rev: any, index: number) => (
+                <AnimateOnScroll key={rev.id || index} direction="up" delay={index * 100}>
+                  <div className="p-6 rounded-2xl border h-full transition-all duration-300 hover:-translate-y-1"
+                       style={{
+                         background: 'linear-gradient(145deg, rgba(28,27,35,0.7) 0%, rgba(18,18,22,0.9) 100%)',
+                         borderColor: 'rgba(255,255,255,0.08)',
+                       }}>
+                    <div className="flex items-center gap-1 text-yellow-400 mb-3">
+                      {Array.from({ length: rev.rating || 5 }).map((_, i) => (
+                        <svg key={i} className="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      ))}
+                    </div>
+                    <p className="text-white text-xs sm:text-sm leading-relaxed mb-6 opacity-90 italic">
+                      "{rev.text}"
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary text-sm">
+                        {rev.initials}
+                      </div>
+                      <div>
+                        <div className="text-sm font-semibold text-white">{rev.name}</div>
+                        <div className="text-[10px] font-mono text-primary uppercase">{rev.role}</div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </AnimateOnScroll>
+                </AnimateOnScroll>
+              ))
+            ) : (
+              <>
+                <AnimateOnScroll direction="left" delay={0}>
+                  <div className="p-6 rounded-2xl border h-full transition-all duration-300 hover:-translate-y-1"
+                       style={{
+                         background: 'linear-gradient(145deg, rgba(28,27,35,0.7) 0%, rgba(18,18,22,0.9) 100%)',
+                         borderColor: 'rgba(255,255,255,0.08)',
+                       }}>
+                    <p className="text-white text-xs sm:text-sm leading-relaxed mb-6 opacity-90 italic">
+                      "The system design feedback was incredibly detailed. It pointed out flaws in my database sharding logic that I never would have noticed myself."
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary">AR</div>
+                      <div>
+                        <div className="text-sm font-semibold text-white">Alex Rivera</div>
+                        <div className="text-[10px] font-mono text-primary uppercase">SDE II @ Stripe</div>
+                      </div>
+                    </div>
+                  </div>
+                </AnimateOnScroll>
 
-            <AnimateOnScroll direction="up" delay={100}>
-              <div className="p-6 rounded-2xl border h-full transition-all duration-300 hover:-translate-y-1 shadow-[0_0_25px_rgba(139,92,246,0.1)]"
-                   style={{
-                     background: 'linear-gradient(145deg, rgba(139,92,246,0.12) 0%, rgba(20,20,25,0.9) 100%)',
-                     borderColor: 'rgba(139,92,246,0.3)',
-                   }}>
-                <p className="text-white text-xs sm:text-sm leading-relaxed mb-6 italic">
-                  "DevPrep AI helped me transition smoothly to a top software role in just 3 months. The roadmap kept me focused on what actually matters in interviews."
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/30 flex items-center justify-center font-bold text-primary">SC</div>
-                  <div>
-                    <div className="text-sm font-semibold text-white">Sarah Chen</div>
-                    <div className="text-[10px] font-mono text-primary uppercase">Software Engineer</div>
+                <AnimateOnScroll direction="up" delay={100}>
+                  <div className="p-6 rounded-2xl border h-full transition-all duration-300 hover:-translate-y-1 shadow-[0_0_25px_rgba(139,92,246,0.1)]"
+                       style={{
+                         background: 'linear-gradient(145deg, rgba(139,92,246,0.12) 0%, rgba(20,20,25,0.9) 100%)',
+                         borderColor: 'rgba(139,92,246,0.3)',
+                       }}>
+                    <p className="text-white text-xs sm:text-sm leading-relaxed mb-6 italic">
+                      "DevPrep AI helped me transition smoothly to a top software role in just 3 months. The roadmap kept me focused on what actually matters in interviews."
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/30 flex items-center justify-center font-bold text-primary">SC</div>
+                      <div>
+                        <div className="text-sm font-semibold text-white">Sarah Chen</div>
+                        <div className="text-[10px] font-mono text-primary uppercase">Software Engineer</div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </AnimateOnScroll>
+                </AnimateOnScroll>
 
-            <AnimateOnScroll direction="right" delay={200}>
-              <div className="p-6 rounded-2xl border h-full transition-all duration-300 hover:-translate-y-1"
-                   style={{
-                     background: 'linear-gradient(145deg, rgba(28,27,35,0.7) 0%, rgba(18,18,22,0.9) 100%)',
-                     borderColor: 'rgba(255,255,255,0.08)',
-                   }}>
-                <p className="text-white text-xs sm:text-sm leading-relaxed mb-6 opacity-90 italic">
-                  "The AI tutor doesn't just give the answer; it guides you to find it. Essential for mastering senior-level technical communication."
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary">MT</div>
-                  <div>
-                    <div className="text-sm font-semibold text-white">Marcus Thorne</div>
-                    <div className="text-[10px] font-mono text-primary uppercase">Lead Architect @ Vercel</div>
+                <AnimateOnScroll direction="right" delay={200}>
+                  <div className="p-6 rounded-2xl border h-full transition-all duration-300 hover:-translate-y-1"
+                       style={{
+                         background: 'linear-gradient(145deg, rgba(28,27,35,0.7) 0%, rgba(18,18,22,0.9) 100%)',
+                         borderColor: 'rgba(255,255,255,0.08)',
+                       }}>
+                    <p className="text-white text-xs sm:text-sm leading-relaxed mb-6 opacity-90 italic">
+                      "The AI tutor doesn't just give the answer; it guides you to find it. Essential for mastering senior-level technical communication."
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary">MT</div>
+                      <div>
+                        <div className="text-sm font-semibold text-white">Marcus Thorne</div>
+                        <div className="text-[10px] font-mono text-primary uppercase">Lead Architect @ Vercel</div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </AnimateOnScroll>
+                </AnimateOnScroll>
+              </>
+            )}
           </div>
         </div>
       </section>
