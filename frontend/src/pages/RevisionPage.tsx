@@ -75,7 +75,7 @@ export function RevisionPage() {
             <p className="text-sm mb-4" style={{ color: 'var(--color-on-surface-variant)' }}>
               Revise <strong style={{ color: 'var(--color-on-surface)' }}>JavaScript Closures</strong> today — 15 mins of revision can lock it in for 3+ weeks.
             </p>
-            <Link to="/topics/js-closures"
+            <Link to="/topics/functions-scope"
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all hover:opacity-90"
                   style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
               Revise Now <span className="material-symbols-outlined text-[16px]">arrow_forward</span>

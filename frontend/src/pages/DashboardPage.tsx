@@ -1,6 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { dashboardService } from '@/services/dashboardService'
+import { useAuthStore } from '@/store/authStore'
+
+function getGreeting(hour: number) {
+  if (hour >= 5 && hour < 12) return { greeting: 'Good morning', note: 'Rise and shine — let\u2019s get some learning in!' }
+  if (hour >= 12 && hour < 17) return { greeting: 'Good afternoon', note: 'Halfway there — keep up the momentum!' }
+  if (hour >= 17 && hour < 21) return { greeting: 'Good evening', note: 'Perfect time for a quick review session.' }
+  return { greeting: 'Good night', note: 'Night owl detected \uD83E\uDD83 — brilliant focus hours ahead!' }
+}
 
 export function DashboardPage() {
   const { data: stats, isLoading: statsLoading } = useQuery({
@@ -35,15 +43,19 @@ export function DashboardPage() {
   const pct = stats?.completionRate ?? 0
   const streakDays = stats?.streakDays ?? 0
 
+  const user = useAuthStore((s) => s.user)
+  const firstName = user?.name?.split(' ')[0] || 'there'
+  const { greeting, note } = getGreeting(new Date().getHours())
+
   return (
     <div className="px-6 py-8 max-w-7xl mx-auto space-y-6">
 
       <div className="animate-fade-up">
         <h1 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-on-surface)' }}>
-          Good morning 👋
+          {greeting}, {firstName} 👋
         </h1>
         <p className="text-sm mt-1" style={{ color: 'var(--color-on-surface-variant)' }}>
-          You're on a <span style={{ color: 'var(--color-tertiary)', fontWeight: 600 }}>{streakDays}-day streak</span>. Keep it up!
+          {note}
         </p>
       </div>
 
@@ -106,7 +118,7 @@ export function DashboardPage() {
               Deep dive into lexical scoping, closures, and the JavaScript runtime model.
             </p>
             <div className="flex items-center gap-4">
-              <Link to="/topics/js-closures"
+              <Link to="/topics/functions-scope"
                     className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all hover:opacity-90 active:scale-95"
                     style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
                 Continue
