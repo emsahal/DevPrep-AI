@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { technologyService } from '@/services/technologyService'
-import { MaterialIcon } from '@/components/common/MaterialIcon'
+import { TechLogo } from '@/components/common/TechLogo'
 
 const CATEGORIES = ['All', 'Frontend', 'Backend', 'Database', 'Security', 'DevOps', 'System Design', 'DSA', 'Projects']
 
@@ -75,7 +75,7 @@ export function TechnologyLibraryPage() {
                     className="group bento-card tech-card-hover p-5 flex flex-col gap-4 no-underline">
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110"
                      style={{ background: `${tech.color}18` }}>
-                  <MaterialIcon name={tech.icon} className="text-[26px]" style={{ color: tech.color, fontVariationSettings: "'FILL' 0" }} />
+                  <TechLogo slug={tech.slug} icon={tech.icon} color={tech.color} size={26} />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-base mb-1" style={{ color: 'var(--color-on-surface)' }}>{tech.name}</h3>

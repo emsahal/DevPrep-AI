@@ -1,7 +1,7 @@
 import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { learningPathService } from '@/services/learningPathService'
-import { MaterialIcon } from '@/components/common/MaterialIcon'
+import { TechLogo } from '@/components/common/TechLogo'
 
 export function LearningPathDetailPage() {
   const { path: slug } = useParams<{ path: string }>()
@@ -76,7 +76,7 @@ export function LearningPathDetailPage() {
       {path.technologies.map(tech => (
         <div key={tech.id} className="mb-8 animate-fade-up animation-delay-200">
           <div className="flex items-center gap-2 mb-4">
-            <MaterialIcon name={tech.icon} className="text-xl" style={{ color: tech.color }} />
+            <TechLogo slug={tech.slug} icon={tech.icon} color={tech.color} size={20} />
             <h2 className="font-bold text-sm uppercase tracking-widest" style={{ color: 'var(--color-outline)' }}>{tech.name}</h2>
           </div>
           <div className="space-y-3">

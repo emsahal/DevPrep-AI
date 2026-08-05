@@ -64,7 +64,7 @@ export function TopicPage() {
           Generating AI content…
         </p>
         <p className="mt-1 text-xs" style={{ color: 'var(--color-outline)' }}>
-          Your first visit creates a tailored explanation + 15 interview questions in Roman Urdu and English. This can take up to a minute.
+          Your first visit creates a tailored explanation...
         </p>
       </div>
     )

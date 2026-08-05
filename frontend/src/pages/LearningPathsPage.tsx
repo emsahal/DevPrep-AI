@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { learningPathService } from '@/services/learningPathService'
 import { MaterialIcon } from '@/components/common/MaterialIcon'
+import { TechLogo } from '@/components/common/TechLogo'
 
 const COLORS = [
   'var(--color-primary)', 'var(--color-secondary)', 'var(--color-tertiary)',
@@ -71,7 +72,7 @@ export function LearningPathsPage() {
                     <Link key={tech.id} to={`/library/${tech.slug}`}
                           className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all hover:opacity-80"
                           style={{ background: `${tech.color}15`, color: tech.color, border: `1px solid ${tech.color}25` }}>
-                      <MaterialIcon name={tech.icon} className="text-[13px]" style={{ fontVariationSettings: "'FILL' 0" }} />
+                      <TechLogo slug={tech.slug} icon={tech.icon} color={tech.color} size={14} />
                       {tech.name}
                       <span className="ml-1 opacity-60">{tech.topicCount}</span>
                     </Link>

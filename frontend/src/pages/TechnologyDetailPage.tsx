@@ -1,7 +1,7 @@
 import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { technologyService } from '@/services/technologyService'
-import { MaterialIcon } from '@/components/common/MaterialIcon'
+import { TechLogo } from '@/components/common/TechLogo'
 
 const LEVEL_COLOR: Record<string, string> = {
   beginner: 'var(--color-success)',
@@ -46,7 +46,7 @@ export function TechnologyDetailPage() {
              style={{ background: tech.color }} />
         <div className="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0"
              style={{ background: `${tech.color}18` }}>
-          <MaterialIcon name={tech.icon} className="text-4xl" style={{ color: tech.color }} />
+          <TechLogo slug={tech.slug} icon={tech.icon} color={tech.color} size={40} />
         </div>
         <div className="flex-1 relative z-10">
           <div className="flex items-center gap-2 mb-2">
