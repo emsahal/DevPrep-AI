@@ -87,7 +87,7 @@
   --spacing-unit-12:                  3rem;
 
   /* ─── Typography ──────────────────────────────── */
-  --font-sans:                        "Inter", "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-sans:                        "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono:                        "JetBrains Mono", ui-monospace, monospace;
 
   --text-display-lg:                  42px;
@@ -131,12 +131,12 @@
 @layer base {
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html { scroll-behavior: smooth; font-family: "Inter", "Geist", ui-sans-serif, system-ui, sans-serif; }
+  html { scroll-behavior: smooth; font-family: "Inter", ui-sans-serif, system-ui, sans-serif; }
 
   body {
     background-color: var(--color-bg-base);
     color: var(--color-on-surface);
-    font-family: "Inter", "Geist", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
     font-size: var(--text-body-md);
     line-height: var(--text-body-md--line-height);
     -webkit-font-smoothing: antialiased;

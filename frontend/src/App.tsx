@@ -74,20 +74,20 @@ export default function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
 
-              <Route path="/learning-paths" element={<LearningPathsPage />} />
-              <Route path="/learning-paths/:path" element={<LearningPathDetailPage />} />
-              <Route path="/library" element={<TechnologyLibraryPage />} />
-              <Route path="/library/:technology" element={<TechnologyDetailPage />} />
-              <Route path="/topics/:slug" element={<TopicPage />} />
+              <Route path="/learning-paths" element={<ProtectedRoute><LearningPathsPage /></ProtectedRoute>} />
+              <Route path="/learning-paths/:path" element={<ProtectedRoute><LearningPathDetailPage /></ProtectedRoute>} />
+              <Route path="/library" element={<ProtectedRoute><TechnologyLibraryPage /></ProtectedRoute>} />
+              <Route path="/library/:technology" element={<ProtectedRoute><TechnologyDetailPage /></ProtectedRoute>} />
+              <Route path="/topics/:slug" element={<ProtectedRoute><TopicPage /></ProtectedRoute>} />
               <Route path="/ai-tutor" element={<ProtectedRoute><AITutorPage /></ProtectedRoute>} />
               <Route path="/code-analyzer" element={<ProtectedRoute><CodeAnalyzerPage /></ProtectedRoute>} />
               <Route path="/quizzes" element={<ProtectedRoute><QuizzesPage /></ProtectedRoute>} />
               <Route path="/quizzes/:id" element={<ProtectedRoute><QuizDetailPage /></ProtectedRoute>} />
               <Route path="/flashcards" element={<ProtectedRoute><FlashcardsPage /></ProtectedRoute>} />
               <Route path="/revision" element={<ProtectedRoute><RevisionPage /></ProtectedRoute>} />
-              <Route path="/search" element={<SearchPage />} />
-              <Route path="/interview-prep" element={<InterviewPrepPage />} />
-              <Route path="/interview-prep/:slug" element={<InterviewPrepTopicPage />} />
+              <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
+              <Route path="/interview-prep" element={<ProtectedRoute><InterviewPrepPage /></ProtectedRoute>} />
+              <Route path="/interview-prep/:slug" element={<ProtectedRoute><InterviewPrepTopicPage /></ProtectedRoute>} />
               <Route path="/bookmarks" element={<ProtectedRoute><BookmarksPage /></ProtectedRoute>} />
               <Route path="/leaderboard" element={<LeaderboardPage />} />
               <Route path="/duel" element={<ProtectedRoute><DuelPage /></ProtectedRoute>} />

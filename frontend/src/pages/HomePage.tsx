@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import { motion } from 'motion/react'
 import { AnimateOnScroll } from '@/components/common/AnimateOnScroll'
 import BlurText from '@/components/ui/BlurText'
 import GradientWaves from '@/components/ui/GradientWaves'
@@ -91,7 +92,7 @@ export function HomePage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-64px)] flex flex-col font-sans selection:bg-primary/30 selection:text-white" style={{ background: 'var(--color-surface-container-lowest)', color: '#ffffff' }}>
+    <div className="min-h-[calc(100vh-64px)] flex flex-col font-sans selection:bg-primary/30 selection:text-white" style={{ background: 'var(--color-surface-container-lowest)', color: '#ffffff', fontFamily: '"Inter", sans-serif' }}>
 
       {/* ═══════ 1. Hero Section (No bottom border, opacity 0.50) ═══════ */}
       <section className="relative h-screen min-h-[580px] pt-16 flex flex-col items-center justify-center overflow-hidden"
@@ -140,8 +141,13 @@ export function HomePage() {
             className="text-base sm:text-lg text-white max-w-2xl mx-auto mb-10 opacity-90 leading-relaxed justify-center"
           />
 
-          {/* CTA Buttons - White Button 1 & Cyan Button 2 with continuous StarBorder glow */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          {/* CTA Buttons - Staggered animation to reveal smoothly after headline and paragraph text */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.5, duration: 0.6, ease: [0.25, 0.4, 0.25, 1.0] }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          >
             {/* Primary White Button */}
             <StarBorder
               as={Link}
@@ -169,7 +175,7 @@ export function HomePage() {
             >
               <span className="font-semibold text-sm px-1">Browse Learning Paths</span>
             </StarBorder>
-          </div>
+          </motion.div>
         </div>
       </section>
 

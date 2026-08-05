@@ -59,11 +59,12 @@ export function TopNavBar() {
           {/* Centered Nav Links */}
           <nav className="hidden md:flex items-center gap-6 absolute left-1/2 -translate-x-1/2">
             {navLinks.map(({ to, label }) => {
+              const target = isAuthenticated ? to : '/login'
               const active = location.pathname === to
               return (
                 <Link
                   key={to}
-                  to={to}
+                  to={target}
                   className="text-sm font-medium transition-colors hover:text-primary"
                   style={{
                     color: active ? 'var(--color-primary)' : 'rgba(255, 255, 255, 0.85)',
@@ -126,9 +127,10 @@ export function TopNavBar() {
       <nav className="fixed bottom-0 left-0 w-full z-50 flex lg:hidden"
            style={{ background: 'rgba(13,13,13,0.95)', backdropFilter: 'blur(16px)', borderTop: '1px solid var(--color-border-subtle)' }}>
         {MOBILE_TABS.map(({ to, icon, label }) => {
+          const target = isAuthenticated || to === '/' ? to : '/login'
           const active = location.pathname === to || (to !== '/' && location.pathname.startsWith(to))
           return (
-            <Link key={to} to={to} className="flex-1 flex flex-col items-center gap-0.5 py-3 transition-colors"
+            <Link key={to} to={target} className="flex-1 flex flex-col items-center gap-0.5 py-3 transition-colors"
                   style={{ color: active ? 'var(--color-primary)' : 'var(--color-outline)' }}>
               <span className="material-symbols-outlined text-[22px] leading-none"
                     style={{ fontVariationSettings: active ? "'FILL' 1" : "'FILL' 0" }}>
