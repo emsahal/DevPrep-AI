@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { reviewService } from '@/services/reviewService'
 
 interface ReviewModalProps {
   isOpen: boolean
@@ -12,6 +13,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess }: ReviewModalProps) {
   const [rating, setRating] = useState(5)
   const [reviewText, setReviewText] = useState('')
   const [hoveredRating, setHoveredRating] = useState<number | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     if (isOpen) {
@@ -27,47 +29,37 @@ export function ReviewModal({ isOpen, onClose, onSuccess }: ReviewModalProps) {
 
   if (!isOpen) return null
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.trim() || !reviewText.trim()) return
 
-    // Get existing reviews
-    const existing = localStorage.getItem('devprep_user_reviews')
-    const reviews = existing ? JSON.parse(existing) : []
+    setIsLoading(true)
+    try {
+      await reviewService.createReview({
+        name: name.trim(),
+        role: role.trim() || undefined,
+        rating,
+        text: reviewText.trim(),
+      })
 
-    // Add new review
-    const initials = name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .slice(0, 2)
-      .toUpperCase()
+      localStorage.setItem('devprep_reviewed', 'true')
 
-    const newReview = {
-      id: Date.now().toString(),
-      name: name.trim(),
-      role: role.trim() || 'Software Engineer',
-      rating,
-      text: reviewText.trim(),
-      initials: initials || 'US',
-      date: new Date().toLocaleDateString(),
+      // Reset fields
+      setName('')
+      setRole('')
+      setRating(5)
+      setReviewText('')
+
+      onSuccess?.()
+      onClose()
+      
+      // Dispatch custom event to notify components that reviews have updated
+      window.dispatchEvent(new CustomEvent('devprep-reviews-updated'))
+    } catch (err) {
+      console.error('Error submitting review:', err)
+    } finally {
+      setIsLoading(false)
     }
-
-    reviews.unshift(newReview)
-    localStorage.setItem('devprep_user_reviews', JSON.stringify(reviews))
-    localStorage.setItem('devprep_reviewed', 'true')
-
-    // Reset fields
-    setName('')
-    setRole('')
-    setRating(5)
-    setReviewText('')
-
-    onSuccess?.()
-    onClose()
-    
-    // Dispatch custom event to notify components that reviews have updated
-    window.dispatchEvent(new CustomEvent('devprep-reviews-updated'))
   }
 
   return (
@@ -184,18 +176,20 @@ export function ReviewModal({ isOpen, onClose, onSuccess }: ReviewModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-2.5 rounded-xl border border-white/10 text-white/80 hover:text-white hover:bg-white/5 font-semibold text-sm transition-all"
+              disabled={isLoading}
+              className="flex-1 py-2.5 rounded-xl border border-white/10 text-white/80 hover:text-white hover:bg-white/5 font-semibold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Maybe Later
             </button>
             <button
               type="submit"
-              className="flex-1 py-2.5 rounded-xl text-white font-semibold text-sm transition-all hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] active:scale-98 duration-100"
+              disabled={isLoading}
+              className="flex-1 py-2.5 rounded-xl text-white font-semibold text-sm transition-all hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] active:scale-98 duration-100 disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
                 background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
               }}
             >
-              Submit Review
+              {isLoading ? 'Submitting...' : 'Submit Review'}
             </button>
           </div>
         </form>

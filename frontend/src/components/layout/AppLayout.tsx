@@ -15,13 +15,13 @@ export function AppLayout() {
     const handleOpen = () => setIsReviewOpen(true)
     window.addEventListener('open-review-modal', handleOpen)
 
-    // Trigger feedback popup after navigating 3 pages on the platform (if not already reviewed)
+    // Trigger feedback popup immediately when user uses the platform (if not already reviewed)
     const reviewed = localStorage.getItem('devprep_reviewed') === 'true'
     if (!reviewed && !isHome) {
       const hits = Number(sessionStorage.getItem('devprep_page_hits') || '0') + 1
       sessionStorage.setItem('devprep_page_hits', hits.toString())
       
-      if (hits === 3) {
+      if (hits >= 1) {
         setIsReviewOpen(true)
       }
     }

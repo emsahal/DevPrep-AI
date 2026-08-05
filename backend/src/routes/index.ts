@@ -17,6 +17,7 @@ import notificationRoutes from './notification.routes'
 import dsaCheckRoutes from './dsa-check.routes'
 import resumeOptimizerRoutes from './resume-optimizer.routes'
 import adminRoutes from './admin.routes'
+import reviewRoutes from './review.routes'
 
 const router = Router()
 
@@ -38,5 +39,7 @@ router.use('/notifications', notificationRoutes)
 router.use('/dsa-check', dsaCheckRoutes)
 router.use('/resume-optimizer', resumeOptimizerRoutes)
 router.use('/admin', adminRoutes)
+router.use('/reviews', reviewRoutes)
 
 export default router
+

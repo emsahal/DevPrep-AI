@@ -6,6 +6,7 @@ import BlurText from '@/components/ui/BlurText'
 import GradientWaves from '@/components/ui/GradientWaves'
 import StarBorder from '@/components/ui/StarBorder'
 import LogoLoop from '@/components/ui/LogoLoop'
+import { reviewService } from '@/services/reviewService'
 import {
   SiHtml5,
   SiCss,
@@ -77,18 +78,22 @@ const faqs = [
 
 export function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
-  const [reviews, setReviews] = useState<any[]>(() => {
-    const stored = localStorage.getItem('devprep_user_reviews')
-    return stored ? JSON.parse(stored) : []
-  })
+  const [reviews, setReviews] = useState<any[]>([])
 
   useEffect(() => {
-    const handleUpdate = () => {
-      const stored = localStorage.getItem('devprep_user_reviews')
-      setReviews(stored ? JSON.parse(stored) : [])
+    const fetchReviews = async () => {
+      try {
+        const data = await reviewService.getReviews()
+        setReviews(data)
+      } catch (err) {
+        console.error('Failed to fetch reviews:', err)
+      }
     }
-    window.addEventListener('devprep-reviews-updated', handleUpdate)
-    return () => window.removeEventListener('devprep-reviews-updated', handleUpdate)
+
+    fetchReviews()
+
+    window.addEventListener('devprep-reviews-updated', fetchReviews)
+    return () => window.removeEventListener('devprep-reviews-updated', fetchReviews)
   }, [])
 
   // Standard Framer/SaaS section heading style
