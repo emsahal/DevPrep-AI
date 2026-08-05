@@ -280,7 +280,7 @@ export function AITutorPage() {
               <h2 className="font-semibold text-sm" style={{ color: 'var(--color-on-surface)' }}>DevPrep AI Tutor</h2>
               <div className="flex items-center gap-1.5">
                 <div className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--color-success)' }} />
-                <span className="text-[10px] font-bold tracking-widest uppercase" style={{ color: 'var(--color-success)' }}>Online · GPT-4o</span>
+                <span className="text-[10px] font-bold tracking-widest uppercase" style={{ color: 'var(--color-success)' }}>Online</span>
               </div>
             </div>
           </div>
