@@ -107,18 +107,11 @@ export function TopNavBar() {
                 </Link>
               </>
             ) : (
-              <div className="flex items-center gap-2">
-                <Link to="/login"
-                      className="px-4 py-1.5 rounded-xl text-sm font-medium transition-colors hover:bg-surface-container-low"
-                      style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
-                  Log in
-                </Link>
-                <Link to="/register"
-                      className="px-4 py-1.5 rounded-xl text-sm font-bold transition-opacity hover:opacity-90"
-                      style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
-                  Sign up
-                </Link>
-              </div>
+              <Link to="/register"
+                    className="px-4 py-1.5 rounded-xl text-sm font-bold transition-opacity hover:opacity-90"
+                    style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
+                Join
+              </Link>
             )}
           </div>
         </div>
