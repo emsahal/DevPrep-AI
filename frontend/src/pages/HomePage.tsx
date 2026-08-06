@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react'
 import { motion } from 'motion/react'
 import { AnimateOnScroll } from '@/components/common/AnimateOnScroll'
 import BlurText from '@/components/ui/BlurText'
+import TypingCode from '@/components/ui/TypingCode'
+import { secondLargestQuestions, twoSumQuestions } from '@/data/homeCodeSamples'
 import GradientWaves from '@/components/ui/GradientWaves'
 import StarBorder from '@/components/ui/StarBorder'
 import LogoLoop from '@/components/ui/LogoLoop'
@@ -79,6 +81,12 @@ const faqs = [
 export function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [reviews, setReviews] = useState<any[]>([])
+  const [secondLargestQ] = useState(
+    () => secondLargestQuestions[Math.floor(Math.random() * secondLargestQuestions.length)]
+  )
+  const [twoSumQ] = useState(
+    () => twoSumQuestions[Math.floor(Math.random() * twoSumQuestions.length)]
+  )
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -491,20 +499,14 @@ export function HomePage() {
                     <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/70"></div>
                     <div className="w-2.5 h-2.5 rounded-full bg-green-500/70"></div>
                   </div>
-                  <span className="font-mono text-[11px] text-white/60 font-medium">second_largest.py</span>
-                  <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Python 3.11</span>
+                  <span className="font-mono text-[11px] text-white/60 font-medium">second_largest.js</span>
+                  <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">JavaScript</span>
                 </div>
 
                 {/* Code Body */}
                 <div className="p-5 font-mono text-xs leading-relaxed">
-                  <div className="text-white/40 mb-2 text-[11px]">// 2nd Largest Element in Array</div>
-                  <div className="text-white/90 space-y-1 text-[12px]">
-                    <div><span className="text-purple-400">def</span> <span className="text-cyan-300 font-semibold">second_largest</span>(nums):</div>
-                    <div className="pl-4 text-white/70">first = second = float(<span className="text-emerald-300">'-inf'</span>)</div>
-                    <div className="pl-4 text-white/70"><span className="text-purple-400">for</span> num <span className="text-purple-400">in</span> nums:</div>
-                    <div className="pl-8 text-white/70"><span className="text-purple-400">if</span> num &gt; first: second, first = first, num</div>
-                    <div className="pl-8 text-white/70"><span className="text-purple-400">elif</span> num &gt; second <span className="text-purple-400">and</span> num != first: second = num</div>
-                    <div className="pl-4 text-white/70"><span className="text-purple-400">return</span> second</div>
+                  <div className="text-white/90 text-[12px]">
+                    <TypingCode lines={secondLargestQ.lines} funcColor="text-cyan-300 font-semibold" loop />
                   </div>
 
                   {/* AI Suggestion Box */}
@@ -513,7 +515,7 @@ export function HomePage() {
                       <span className="material-symbols-outlined text-sm text-primary">auto_awesome</span> AI Suggestion:
                     </div>
                     <p className="text-white/90 text-xs leading-relaxed font-sans font-normal">
-                      Single-pass O(N) time &amp; O(1) space complexity algorithm. Correctly handles duplicate array values.
+                      {secondLargestQ.suggestion ?? 'Analyzing algorithmic efficiency, space complexity, and edge-case handling as you type.'}
                     </p>
                   </div>
                 </div>
@@ -625,13 +627,7 @@ export function HomePage() {
                     <div className="h-2 w-2/3 bg-white/10 rounded"></div>
                   </div>
                   <div className="flex-1 font-mono text-xs text-white/90 space-y-1">
-                    <div><span className="text-purple-400">def</span> <span className="text-yellow-400 font-semibold">two_sum</span>(nums, target):</div>
-                    <div className="pl-4 text-white/70">seen = &#123;&#125;</div>
-                    <div className="pl-4 text-white/70"><span className="text-purple-400">for</span> i, num <span className="text-purple-400">in</span> enumerate(nums):</div>
-                    <div className="pl-8 text-white/70">diff = target - num</div>
-                    <div className="pl-8 text-white/70"><span className="text-purple-400">if</span> diff <span className="text-purple-400">in</span> seen: <span className="text-purple-400">return</span> [seen[diff], i]</div>
-                    <div className="pl-8 text-white/70">seen[num] = i</div>
-                    <div className="pl-8 text-cyan-400 animate-pulse font-bold">|</div>
+                    <TypingCode lines={twoSumQ.lines} funcColor="text-yellow-400 font-semibold" loop />
                   </div>
                 </div>
               </div>

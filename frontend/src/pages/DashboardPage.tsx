@@ -11,6 +11,8 @@ function getGreeting(hour: number) {
 }
 
 export function DashboardPage() {
+  const user = useAuthStore((s) => s.user)
+
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['dashboard', 'stats'],
     queryFn: () => dashboardService.getStats(),
@@ -43,7 +45,6 @@ export function DashboardPage() {
   const pct = stats?.completionRate ?? 0
   const streakDays = stats?.streakDays ?? 0
 
-  const user = useAuthStore((s) => s.user)
   const firstName = user?.name?.split(' ')[0] || 'there'
   const { greeting, note } = getGreeting(new Date().getHours())
 
