@@ -1,96 +1,70 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { resumeOptimizerService } from '@/services/resumeOptimizerService'
-import {
-  ANALYSIS_STEPS,
-  useResumeOptimizerStore,
-  type AnalysisStepStatus,
-} from '@/store/resumeOptimizerStore'
-
-const PHASE_KEYS: Record<string, string> = {
-  analyze: 'analyze',
-  optimize: 'optimize',
-  'cover-letter': 'cover-letter',
-}
+import { useResumeOptimizerStore } from '@/store/resumeOptimizerStore'
 
 export function JobDescriptionInput() {
   const [text, setText] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
-  const lastPhaseRef = useRef<string>('')
   const resumeId = useResumeOptimizerStore(s => s.resumeId)
+  const uploadResult = useResumeOptimizerStore(s => s.uploadResult)
   const setStep = useResumeOptimizerStore(s => s.setStep)
   const setError = useResumeOptimizerStore(s => s.setError)
-  const setProgressSteps = useResumeOptimizerStore(s => s.setProgressSteps)
+  const setLoading = useResumeOptimizerStore(s => s.setLoading)
+  const setJobAnalysis = useResumeOptimizerStore(s => s.setJobAnalysis)
+  const setGapAnalysis = useResumeOptimizerStore(s => s.setGapAnalysis)
+  const setJobDescription = useResumeOptimizerStore(s => s.setJobDescription)
+  const setOptimizedResume = useResumeOptimizerStore(s => s.setOptimizedResume)
+  const setCoverLetter = useResumeOptimizerStore(s => s.setCoverLetter)
   const setProgressStatus = useResumeOptimizerStore(s => s.setProgressStatus)
-  const setLiveText = useResumeOptimizerStore(s => s.setLiveText)
-  const uploadResult = useResumeOptimizerStore(s => s.uploadResult)
-
-  const resetProgress = () => setProgressSteps(ANALYSIS_STEPS.map((s) => ({ ...s, status: 'pending' })))
-
-  const markPhase = (phase: string, status: AnalysisStepStatus) => {
-    const key = PHASE_KEYS[phase]
-    if (key) setProgressStatus(key, status)
-  }
 
   const handleGenerate = async () => {
     if (!resumeId || !text.trim() || isGenerating) return
 
     setIsGenerating(true)
     setError(null)
-    lastPhaseRef.current = ''
-    resetProgress()
-    setLiveText(() => '')
+    setLoading(true)
     setStep('analyzing')
+    setProgressStatus('analyze', 'active')
 
     try {
-      await resumeOptimizerService.streamGenerate(resumeId, text, {
-        onToken: (phase, liveContent) => {
-          if (lastPhaseRef.current !== phase) {
-            if (lastPhaseRef.current) markPhase(lastPhaseRef.current, 'done')
-            markPhase(phase, 'active')
-            lastPhaseRef.current = phase
-          }
-          setLiveText((prev) => {
-            const next = prev + liveContent
-            return next.length > 1400 ? next.slice(-1400) : next
-          })
-        },
-        onComplete: (result) => {
-          const store = useResumeOptimizerStore.getState()
-          const originalParsed = store.uploadResult?.parsedData as Record<string, unknown> | undefined
-          store.setJobAnalysis(result.analysis.jobAnalysis)
-          store.setGapAnalysis(result.analysis.gapAnalysis)
-          store.setJobDescription(text)
-          store.setOptimizedResume({
-            ...originalParsed,
-            ...result.optimize.optimizedData,
-            personalInfo: (originalParsed?.personalInfo as Record<string, string> | undefined) || {},
-          })
-          store.setCoverLetter(result.coverLetter)
-          store.setCredits(result.credits)
-          setProgressStatus('cover-letter', 'done')
-          setProgressStatus('finalize', 'active')
-          setLiveText(() => '')
-          setTimeout(() => {
-            setProgressStatus('finalize', 'done')
-            setStep('results')
-          }, 600)
-        },
-        onError: (message) => {
-          const store = useResumeOptimizerStore.getState()
-          const current = store.progressSteps.find((st) => st.status === 'active')
-          if (current) store.setProgressStatus(current.key, 'error')
-          setLiveText(() => '')
-          setError(message)
-        },
+      const analysis = await resumeOptimizerService.analyzeJob(resumeId, text)
+      setJobAnalysis(analysis.jobAnalysis)
+      setGapAnalysis(analysis.gapAnalysis)
+      setJobDescription(text)
+      setProgressStatus('analyze', 'done')
+
+      setProgressStatus('optimize', 'active')
+      const optimize = await resumeOptimizerService.optimizeResume(resumeId)
+      const originalParsed = uploadResult?.parsedData as Record<string, unknown> | undefined
+      setOptimizedResume({
+        ...originalParsed,
+        ...optimize.optimizedData,
+        personalInfo: (originalParsed?.personalInfo as Record<string, string> | undefined) || {},
       })
-    } catch {
-      const store = useResumeOptimizerStore.getState()
-      const current = store.progressSteps.find((st) => st.status === 'active')
-      if (current) store.setProgressStatus(current.key, 'error')
-      setLiveText(() => '')
-      setError('Could not connect to the resume generator. Please try again.')
+      setProgressStatus('optimize', 'done')
+
+      setProgressStatus('cover-letter', 'active')
+      const coverLetter = await resumeOptimizerService.generateCoverLetter(
+        resumeId,
+        analysis.jobAnalysis?.companyName,
+        analysis.jobAnalysis?.jobTitle
+      )
+      setCoverLetter(coverLetter)
+      setProgressStatus('cover-letter', 'done')
+
+      setProgressStatus('finalize', 'active')
+      setTimeout(() => {
+        setProgressStatus('finalize', 'done')
+        setStep('results')
+      }, 600)
+    } catch (error: any) {
+      const current = useResumeOptimizerStore.getState().progressSteps.find((st) => st.status === 'active')
+      const failedKey = current?.key
+      if (failedKey) setProgressStatus(failedKey, 'error')
+      setError(error?.message || 'Resume optimization failed. Please try again.')
     } finally {
       setIsGenerating(false)
+      setLoading(false)
     }
   }
 

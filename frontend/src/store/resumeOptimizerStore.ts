@@ -32,7 +32,6 @@ interface ResumeOptimizerState {
   isLoading: boolean
   error: string | null
   progressSteps: AnalysisStep[]
-  liveText: string
 
   setStep: (step: Step) => void
   setResumeId: (id: string) => void
@@ -49,7 +48,6 @@ interface ResumeOptimizerState {
   setError: (error: string | null) => void
   setProgressSteps: (steps: AnalysisStep[]) => void
   setProgressStatus: (key: string, status: AnalysisStepStatus) => void
-  setLiveText: (updater: (prev: string) => string) => void
   reset: () => void
 }
 
@@ -68,7 +66,6 @@ const initialState = {
   isLoading: false,
   error: null as string | null,
   progressSteps: ANALYSIS_STEPS.map((s) => ({ ...s })),
-  liveText: '',
 }
 
 export const useResumeOptimizerStore = create<ResumeOptimizerState>((set) => ({
@@ -91,6 +88,5 @@ export const useResumeOptimizerStore = create<ResumeOptimizerState>((set) => ({
   setProgressStatus: (key, status) => set((s) => ({
     progressSteps: s.progressSteps.map((st) => (st.key === key ? { ...st, status } : st)),
   })),
-  setLiveText: ((updater: (prev: string) => string) => set((s) => ({ liveText: updater(s.liveText) }))),
   reset: () => set({ ...initialState, credits: null }),
 }))

@@ -21,7 +21,6 @@ const STEP_LABELS: Record<string, string> = {
 
 export function AnalysisStepper() {
   const progressSteps = useResumeOptimizerStore(s => s.progressSteps)
-  const liveText = useResumeOptimizerStore(s => s.liveText)
 
   const statusMap = new Map<string, AnalysisStepStatus>()
   progressSteps.forEach((st) => statusMap.set(st.key, st.status))
@@ -78,32 +77,6 @@ export function AnalysisStepper() {
           <span style={{ fontSize: 13, fontWeight: 600, color: '#e5e2e1' }}>
             {STEP_LABELS[progressSteps[activeIndex]?.key ?? 'optimize']}…
           </span>
-        </Box>
-      )}
-
-      {/* Realtime stream preview */}
-      {liveText && (
-        <Box
-          sx={{
-            mx: 'auto',
-            mt: 3,
-            maxWidth: 720,
-            maxHeight: 160,
-            overflow: 'auto',
-            p: 2,
-            borderRadius: 2,
-            border: '1px solid rgba(208,188,255,0.15)',
-            background: 'rgba(0,0,0,0.35)',
-            fontSize: 12,
-            lineHeight: 1.6,
-            color: '#cbc3d7',
-            fontFamily: '"JetBrains Mono", monospace',
-            whiteSpace: 'pre-wrap',
-            wordBreak: 'break-word',
-          }}
-        >
-          {liveText}
-          <span style={{ display: 'inline-block', width: 7, height: 14, verticalAlign: 'text-bottom', marginLeft: 2, background: '#d0bcff', animation: 'blink 1s step-start infinite' as any }} />
         </Box>
       )}
     </Box>

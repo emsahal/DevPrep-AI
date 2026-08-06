@@ -1,16 +1,5 @@
-import api, { apiBaseUrl } from '@/lib/axios'
+import api from '@/lib/axios'
 import type { ResumeUploadResult, CreditInfo, PricingPlan, CoverLetterData } from '@/types'
-
-export interface GenerateStreamHandlers {
-  onToken: (phase: 'analyze' | 'optimize' | 'cover-letter', text: string) => void
-  onComplete: (result: {
-    analysis: any
-    optimize: { optimizedData: any; optimizedContent: string }
-    coverLetter: CoverLetterData
-    credits: CreditInfo
-  }) => void
-  onError: (message: string) => void
-}
 
 export const resumeOptimizerService = {
   async getCredits(): Promise<CreditInfo> {
@@ -34,64 +23,6 @@ export const resumeOptimizerService = {
   async analyzeJob(resumeId: string, jobDescription: string): Promise<{ jobAnalysis: any; gapAnalysis: any }> {
     const { data } = await api.post('/resume-optimizer/analyze-job', { resumeId, jobDescription })
     return data
-  },
-
-  async streamGenerate(
-    resumeId: string,
-    jobDescription: string,
-    handlers: GenerateStreamHandlers
-  ): Promise<void> {
-    const token = localStorage.getItem('accessToken')
-    const res = await fetch(`${apiBaseUrl}/resume-optimizer/generate/stream`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': token ? `Bearer ${token}` : '',
-      },
-      body: JSON.stringify({ resumeId, jobDescription }),
-    })
-
-    if (!res.ok || !res.body) {
-      throw new Error('Failed to start resume generation')
-    }
-
-    const reader = res.body.getReader()
-    const decoder = new TextDecoder()
-    let buffer = ''
-
-    while (true) {
-      const { done, value } = await reader.read()
-      if (done) break
-      buffer += decoder.decode(value, { stream: true })
-      const blocks = buffer.split('\n\n')
-      buffer = blocks.pop() || ''
-
-      for (const block of blocks) {
-        for (const line of block.split('\n')) {
-          const clean = line.trim()
-          if (!clean.startsWith('data: ')) continue
-          const raw = clean.slice(6).trim()
-          if (!raw) continue
-          try {
-            const payload = JSON.parse(raw)
-            if (payload.type === 'token') {
-              handlers.onToken(payload.phase, payload.text)
-            } else if (payload.type === 'done') {
-              handlers.onComplete({
-                analysis: payload.analysis,
-                optimize: payload.optimize,
-                coverLetter: payload.coverLetter,
-                credits: payload.credits,
-              })
-              return
-            } else if (payload.type === 'error') {
-              handlers.onError(payload.message || 'Generation failed')
-              return
-            }
-          } catch { /* ignore malformed line */ }
-        }
-      }
-    }
   },
 
   async optimizeResume(resumeId: string): Promise<{ optimizedData: any; optimizedContent: string }> {
