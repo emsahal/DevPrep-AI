@@ -136,6 +136,7 @@
     font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
     overscroll-behavior: none;
     overflow-x: clip;
+    overflow-y: auto;
   }
 
   body {
