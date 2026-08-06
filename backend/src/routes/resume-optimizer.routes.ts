@@ -35,6 +35,7 @@ router.get('/credits', authenticate, resumeOptimizerController.getCredits.bind(r
 router.post('/credits/purchase', authenticate, resumeOptimizerController.purchaseCredits.bind(resumeOptimizerController))
 router.post('/upload', authenticate, upload.single('resume'), resumeOptimizerController.uploadResume.bind(resumeOptimizerController))
 router.post('/analyze-job', authenticate, resumeOptimizerController.analyzeJob.bind(resumeOptimizerController))
+router.post('/generate/stream', authenticate, resumeOptimizerController.generateStream.bind(resumeOptimizerController))
 router.post('/optimize', authenticate, resumeOptimizerController.optimizeResume.bind(resumeOptimizerController))
 router.post('/cover-letter', authenticate, resumeOptimizerController.generateCoverLetter.bind(resumeOptimizerController))
 router.get('/resumes', authenticate, resumeOptimizerController.getUserResumes.bind(resumeOptimizerController))

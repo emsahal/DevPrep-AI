@@ -1,66 +1,96 @@
-import { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { useState, useRef } from 'react'
 import { resumeOptimizerService } from '@/services/resumeOptimizerService'
-import { useResumeOptimizerStore } from '@/store/resumeOptimizerStore'
+import {
+  ANALYSIS_STEPS,
+  useResumeOptimizerStore,
+  type AnalysisStepStatus,
+} from '@/store/resumeOptimizerStore'
+
+const PHASE_KEYS: Record<string, string> = {
+  analyze: 'analyze',
+  optimize: 'optimize',
+  'cover-letter': 'cover-letter',
+}
 
 export function JobDescriptionInput() {
   const [text, setText] = useState('')
+  const [isGenerating, setIsGenerating] = useState(false)
+  const lastPhaseRef = useRef<string>('')
   const resumeId = useResumeOptimizerStore(s => s.resumeId)
-  const setJobAnalysis = useResumeOptimizerStore(s => s.setJobAnalysis)
-  const setGapAnalysis = useResumeOptimizerStore(s => s.setGapAnalysis)
-  const setJobDescription = useResumeOptimizerStore(s => s.setJobDescription)
   const setStep = useResumeOptimizerStore(s => s.setStep)
   const setError = useResumeOptimizerStore(s => s.setError)
+  const setProgressSteps = useResumeOptimizerStore(s => s.setProgressSteps)
+  const setProgressStatus = useResumeOptimizerStore(s => s.setProgressStatus)
+  const setLiveText = useResumeOptimizerStore(s => s.setLiveText)
   const uploadResult = useResumeOptimizerStore(s => s.uploadResult)
 
-  const analyzeMutation = useMutation({
-    mutationFn: () => resumeOptimizerService.analyzeJob(resumeId!, text),
-    onSuccess: (data) => {
-      setJobAnalysis(data.jobAnalysis)
-      setGapAnalysis(data.gapAnalysis)
-      setJobDescription(text)
-      setStep('analyzing')
-      runOptimization(resumeId!)
-    },
-    onError: (err: any) => {
-      setError(err?.response?.data?.message || 'Failed to analyze job description')
-    },
-  })
+  const resetProgress = () => setProgressSteps(ANALYSIS_STEPS.map((s) => ({ ...s, status: 'pending' })))
 
-  const optimizeMutation = useMutation({
-    mutationFn: (id: string) => resumeOptimizerService.optimizeResume(id),
-  })
+  const markPhase = (phase: string, status: AnalysisStepStatus) => {
+    const key = PHASE_KEYS[phase]
+    if (key) setProgressStatus(key, status)
+  }
 
-  const coverLetterMutation = useMutation({
-    mutationFn: (params: { id: string; company?: string; title?: string }) =>
-      resumeOptimizerService.generateCoverLetter(params.id, params.company, params.title),
-  })
+  const handleGenerate = async () => {
+    if (!resumeId || !text.trim() || isGenerating) return
 
-  const runOptimization = async (id: string) => {
+    setIsGenerating(true)
+    setError(null)
+    lastPhaseRef.current = ''
+    resetProgress()
+    setLiveText(() => '')
+    setStep('analyzing')
+
     try {
-      const optResult = await optimizeMutation.mutateAsync(id)
-      const store = useResumeOptimizerStore.getState()
-      const originalParsed = store.uploadResult?.parsedData as Record<string, unknown> | undefined
-      const merged = {
-        ...originalParsed,
-        ...optResult.optimizedData,
-        personalInfo: (originalParsed?.personalInfo as Record<string, string> | undefined) || {},
-      }
-      store.setOptimizedResume(merged)
-
-      const jobAnalysis = useResumeOptimizerStore.getState().jobAnalysis
-      const clResult = await coverLetterMutation.mutateAsync({
-        id,
-        company: jobAnalysis?.companyName,
-        title: jobAnalysis?.jobTitle,
+      await resumeOptimizerService.streamGenerate(resumeId, text, {
+        onToken: (phase, liveContent) => {
+          if (lastPhaseRef.current !== phase) {
+            if (lastPhaseRef.current) markPhase(lastPhaseRef.current, 'done')
+            markPhase(phase, 'active')
+            lastPhaseRef.current = phase
+          }
+          setLiveText((prev) => {
+            const next = prev + liveContent
+            return next.length > 1400 ? next.slice(-1400) : next
+          })
+        },
+        onComplete: (result) => {
+          const store = useResumeOptimizerStore.getState()
+          const originalParsed = store.uploadResult?.parsedData as Record<string, unknown> | undefined
+          store.setJobAnalysis(result.analysis.jobAnalysis)
+          store.setGapAnalysis(result.analysis.gapAnalysis)
+          store.setJobDescription(text)
+          store.setOptimizedResume({
+            ...originalParsed,
+            ...result.optimize.optimizedData,
+            personalInfo: (originalParsed?.personalInfo as Record<string, string> | undefined) || {},
+          })
+          store.setCoverLetter(result.coverLetter)
+          store.setCredits(result.credits)
+          setProgressStatus('cover-letter', 'done')
+          setProgressStatus('finalize', 'active')
+          setLiveText(() => '')
+          setTimeout(() => {
+            setProgressStatus('finalize', 'done')
+            setStep('results')
+          }, 600)
+        },
+        onError: (message) => {
+          const store = useResumeOptimizerStore.getState()
+          const current = store.progressSteps.find((st) => st.status === 'active')
+          if (current) store.setProgressStatus(current.key, 'error')
+          setLiveText(() => '')
+          setError(message)
+        },
       })
-      useResumeOptimizerStore.getState().setCoverLetter(clResult)
-      useResumeOptimizerStore.getState().setCredits(
-        await resumeOptimizerService.getCredits()
-      )
-      setStep('results')
-    } catch (err: any) {
-      setError(err?.response?.data?.message || 'Optimization failed')
+    } catch {
+      const store = useResumeOptimizerStore.getState()
+      const current = store.progressSteps.find((st) => st.status === 'active')
+      if (current) store.setProgressStatus(current.key, 'error')
+      setLiveText(() => '')
+      setError('Could not connect to the resume generator. Please try again.')
+    } finally {
+      setIsGenerating(false)
     }
   }
 
@@ -114,19 +144,19 @@ export function JobDescriptionInput() {
             {text.length} characters
           </span>
           <button
-            onClick={() => analyzeMutation.mutate()}
-            disabled={!text.trim() || analyzeMutation.isPending}
+            onClick={handleGenerate}
+            disabled={!text.trim() || isGenerating}
             className="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-all border-none cursor-pointer"
             style={{
               background: !text.trim() ? 'var(--color-surface-container-high)' : 'var(--color-primary)',
               color: !text.trim() ? 'var(--color-outline)' : 'var(--color-on-primary-fixed)',
-              opacity: analyzeMutation.isPending ? 0.7 : 1,
+              opacity: isGenerating ? 0.7 : 1,
             }}
           >
-            {analyzeMutation.isPending ? (
+            {isGenerating ? (
               <>
                 <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
-                Analyzing...
+                Starting...
               </>
             ) : (
               <>

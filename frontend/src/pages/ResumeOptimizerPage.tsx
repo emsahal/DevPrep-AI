@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { ResumeUpload } from '@/features/resume-optimizer/components/ResumeUpload'
 import { JobDescriptionInput } from '@/features/resume-optimizer/components/JobDescriptionInput'
 import { AnalysisDashboard } from '@/features/resume-optimizer/components/AnalysisDashboard'
+import { AnalysisStepper } from '@/features/resume-optimizer/components/AnalysisStepper'
 import { ResumePreview } from '@/features/resume-optimizer/components/ResumePreview'
 import { CoverLetterPreview } from '@/features/resume-optimizer/components/CoverLetterPreview'
 import { PricingModal } from '@/features/resume-optimizer/components/PricingModal'
@@ -154,11 +155,10 @@ export function ResumeOptimizerPage() {
           {step === 'upload' && <ResumeUpload />}
           {step === 'job-description' && <JobDescriptionInput />}
           {step === 'analyzing' && (
-            <div className="flex flex-col items-center justify-center py-16 gap-4">
-              <span className="material-symbols-outlined animate-spin text-[40px]" style={{ color: 'var(--color-primary)' }}>progress_activity</span>
-              <p className="text-sm font-medium" style={{ color: 'var(--color-on-surface-variant)' }}>Optimizing your resume and generating cover letter...</p>
-              <div className="w-64 h-1 rounded-full overflow-hidden" style={{ background: 'var(--color-surface-container-high)' }}>
-                <div className="h-full rounded-full animate-pulse" style={{ background: 'linear-gradient(90deg, var(--color-primary), var(--color-secondary))', width: '60%' }} />
+            <div className="flex flex-col items-center justify-center py-16 gap-2">
+              <p className="text-sm font-bold mb-2" style={{ color: 'var(--color-on-surface)' }}>Optimizing your resume & generating cover letter</p>
+              <div className="w-full max-w-xl">
+                <AnalysisStepper />
               </div>
             </div>
           )}

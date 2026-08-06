@@ -43,6 +43,65 @@ export class ResumeOptimizerController {
     } catch (error) { next(error) }
   }
 
+  /**
+   * Runs the full pipeline (job analysis → gap analysis → optimize → cover letter)
+   * and streams per-token progress back over SSE.
+   */
+  async generateStream(req: AuthRequest, res: Response, next: NextFunction) {
+    const { resumeId, jobDescription } = req.body
+    if (!resumeId || !jobDescription) {
+      return res.status(400).json({ message: 'resumeId and jobDescription are required' })
+    }
+
+    res.setHeader('Content-Type', 'text/event-stream')
+    res.setHeader('Cache-Control', 'no-cache')
+    res.setHeader('Connection', 'keep-alive')
+    res.flushHeaders()
+
+    let closed = false
+    req.on('close', () => { closed = true })
+
+    const send = (payload: unknown) => {
+      if (closed) return
+      try {
+        res.write(`data: ${JSON.stringify(payload)}\n\n`)
+      } catch { /* client gone */ }
+    }
+
+    const finish = (payload: unknown) => {
+      if (closed) return
+      try {
+        res.write(`data: ${JSON.stringify(payload)}\n\n`)
+      } catch { /* ignore */ }
+      res.end()
+    }
+
+    try {
+      const analysis = await resumeOptimizerService.analyzeJobDescriptionStreamed(
+        resumeId,
+        jobDescription,
+        (content) => send({ type: 'token', phase: 'analyze', text: content })
+      )
+
+      const optimize = await resumeOptimizerService.optimizeResumeStreamed(
+        resumeId,
+        (content) => send({ type: 'token', phase: 'optimize', text: content })
+      )
+
+      const coverLetter = await resumeOptimizerService.generateCoverLetterStreamed(
+        resumeId,
+        (content) => send({ type: 'token', phase: 'cover-letter', text: content }),
+        analysis.companyName ?? null,
+        analysis.jobAnalysis?.jobTitle ?? null
+      )
+
+      const credits = await resumeOptimizerService.getCredits(req.userId!)
+      finish({ type: 'done', analysis, optimize, coverLetter, credits })
+    } catch (error: any) {
+      finish({ type: 'error', message: error?.message || 'Generation failed' })
+    }
+  }
+
   async optimizeResume(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { resumeId } = req.body

@@ -3,6 +3,20 @@ import type { ResumeUploadResult, GapAnalysis, JobAnalysis, OptimizedResume, Cov
 
 type Step = 'upload' | 'job-description' | 'analyzing' | 'results'
 
+export type AnalysisStepStatus = 'pending' | 'active' | 'done' | 'error'
+export interface AnalysisStep {
+  key: string
+  label: string
+  status: AnalysisStepStatus
+}
+
+export const ANALYSIS_STEPS: AnalysisStep[] = [
+  { key: 'analyze', label: 'Analyzing job description', status: 'pending' },
+  { key: 'optimize', label: 'Optimizing resume', status: 'pending' },
+  { key: 'cover-letter', label: 'Generating cover letter', status: 'pending' },
+  { key: 'finalize', label: 'Finalizing results', status: 'pending' },
+]
+
 interface ResumeOptimizerState {
   step: Step
   resumeId: string | null
@@ -17,6 +31,8 @@ interface ResumeOptimizerState {
   credits: CreditInfo | null
   isLoading: boolean
   error: string | null
+  progressSteps: AnalysisStep[]
+  liveText: string
 
   setStep: (step: Step) => void
   setResumeId: (id: string) => void
@@ -31,6 +47,9 @@ interface ResumeOptimizerState {
   setCredits: (credits: CreditInfo) => void
   setLoading: (loading: boolean) => void
   setError: (error: string | null) => void
+  setProgressSteps: (steps: AnalysisStep[]) => void
+  setProgressStatus: (key: string, status: AnalysisStepStatus) => void
+  setLiveText: (updater: (prev: string) => string) => void
   reset: () => void
 }
 
@@ -48,6 +67,8 @@ const initialState = {
   credits: null as CreditInfo | null,
   isLoading: false,
   error: null as string | null,
+  progressSteps: ANALYSIS_STEPS.map((s) => ({ ...s })),
+  liveText: '',
 }
 
 export const useResumeOptimizerStore = create<ResumeOptimizerState>((set) => ({
@@ -66,5 +87,10 @@ export const useResumeOptimizerStore = create<ResumeOptimizerState>((set) => ({
   setCredits: (credits) => set({ credits }),
   setLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
+  setProgressSteps: (progressSteps) => set({ progressSteps }),
+  setProgressStatus: (key, status) => set((s) => ({
+    progressSteps: s.progressSteps.map((st) => (st.key === key ? { ...st, status } : st)),
+  })),
+  setLiveText: ((updater: (prev: string) => string) => set((s) => ({ liveText: updater(s.liveText) }))),
   reset: () => set({ ...initialState, credits: null }),
 }))
