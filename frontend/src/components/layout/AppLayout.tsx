@@ -10,6 +10,7 @@ import { ReviewModal } from '../common/ReviewModal'
 import { useSidebarStore } from '@/store/sidebarStore'
 import { useMobileNavStore } from '@/store/mobileNavStore'
 import { useAuthStore } from '@/store/authStore'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { dashboardService } from '@/services/dashboardService'
 
 const REVIEW_TOPIC_THRESHOLD = 10
@@ -23,6 +24,7 @@ export function AppLayout() {
   const { close: closeMobileNav } = useMobileNavStore()
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   const queryClient = useQueryClient()
+  const isDesktop = useMediaQuery('(min-width: 1024px)')
 
   const [quoteDismissed, setQuoteDismissed] = useState(false)
   useEffect(() => {
@@ -95,7 +97,7 @@ export function AppLayout() {
         {/* On desktop, shift content by sidebar width */}
         <div
           className="transition-all duration-300 h-full"
-          style={{ marginLeft: !isHome ? (isOpen ? '240px' : '64px') : 0 }}
+          style={{ marginLeft: !isHome && isDesktop ? (isOpen ? '240px' : '64px') : 0 }}
         >
           <Outlet />
         </div>
