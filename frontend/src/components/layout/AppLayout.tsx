@@ -3,10 +3,12 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Sidebar } from './Sidebar'
 import { TopNavBar } from './TopNavBar'
+import { MobileNav } from './MobileNav'
 import { QuoteBanner } from './QuoteBanner'
 import { Footer } from './Footer'
 import { ReviewModal } from '../common/ReviewModal'
 import { useSidebarStore } from '@/store/sidebarStore'
+import { useMobileNavStore } from '@/store/mobileNavStore'
 import { useAuthStore } from '@/store/authStore'
 import { dashboardService } from '@/services/dashboardService'
 
@@ -18,6 +20,7 @@ export function AppLayout() {
   const [isReviewOpen, setIsReviewOpen] = useState(false)
   const hasShownRef = useRef(false)
   const { isOpen } = useSidebarStore()
+  const { close: closeMobileNav } = useMobileNavStore()
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   const queryClient = useQueryClient()
 
@@ -44,10 +47,11 @@ export function AppLayout() {
 
   // Refresh completion count whenever the route changes
   useEffect(() => {
+    closeMobileNav()
     if (isAuthenticated && !isHome) {
       queryClient.invalidateQueries({ queryKey: ['dashboard', 'stats'] })
     }
-  }, [location.pathname, isAuthenticated, isHome, queryClient])
+  }, [location.pathname, isAuthenticated, isHome, queryClient, closeMobileNav])
 
   useEffect(() => {
     // Listen for manual triggers from "Write a Review" buttons
@@ -78,9 +82,10 @@ export function AppLayout() {
     >
       <QuoteBanner visible={!quoteDismissed} onClose={dismissQuote} />
       <TopNavBar />
+      <MobileNav />
       {!isHome && <Sidebar />}
       <main
-        className="pb-20 lg:pb-0 min-h-screen transition-all duration-300"
+        className="min-h-screen transition-all duration-300"
         style={{
           paddingTop: isHome ? 0 : 'calc(4rem + var(--quote-banner, 0px))',
           paddingLeft: isHome ? 0 : undefined,

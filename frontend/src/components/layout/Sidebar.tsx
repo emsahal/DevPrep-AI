@@ -39,9 +39,12 @@ const SECTIONS = [
   {
     items: [
       { to: '/bookmarks',      icon: 'bookmark',         label: 'Bookmarks'  },
+      { to: '/profile',        icon: 'person',           label: 'Profile'    },
     ],
   },
 ]
+
+export { SECTIONS }
 
 const ADMIN_EMAIL = 'sarcasticsahal@gmail.com'
 

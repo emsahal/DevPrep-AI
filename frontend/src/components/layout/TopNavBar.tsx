@@ -4,21 +4,14 @@ import { useQuery } from '@tanstack/react-query'
 import { gamificationService } from '@/services/gamificationService'
 import { NotificationDropdown } from '@/features/notifications/NotificationDropdown'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { useMobileNavStore } from '@/store/mobileNavStore'
 import logo from '@/assets/logo.png'
-
-const MOBILE_TABS = [
-  { to: '/dashboard',      icon: 'dashboard',   label: 'Home'      },
-  { to: '/learning-paths', icon: 'map',         label: 'Roadmaps'  },
-  { to: '/library',        icon: 'menu_book',   label: 'Library'   },
-  { to: '/interview-prep', icon: 'quiz',        label: 'Prep'      },
-  { to: '/ai-tutor',       icon: 'smart_toy',   label: 'AI Tutor'  },
-  { to: '/profile',        icon: 'person',      label: 'Profile'   },
-]
 
 export function TopNavBar() {
   const location = useLocation()
   const { isAuthenticated, user } = useAuthStore()
   const isHome = location.pathname === '/'
+  const { toggle: toggleMobileNav } = useMobileNavStore()
 
   const { data: gamificationStats } = useQuery({
     queryKey: ['gamification', 'stats'],
@@ -48,7 +41,15 @@ export function TopNavBar() {
           borderBottom: isHome ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid var(--color-border-subtle)',
         }}
       >
-        <div className="h-16 px-6 flex items-center justify-between relative">
+        <div className="h-16 px-3 sm:px-5 md:px-10 flex items-center justify-between relative">
+          {/* Hamburger (mobile) */}
+          <button
+            onClick={toggleMobileNav}
+            aria-label="Open menu"
+            className="lg:hidden mr-1 flex-shrink-0 p-2 -ml-1 rounded-lg transition-colors hover:bg-white/5"
+          >
+            <span className="material-symbols-outlined text-[24px]" style={{ color: 'var(--color-on-surface)' }}>menu</span>
+          </button>
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 flex-shrink-0">
             <img src={logo} alt="DevPrep logo" className="h-8 w-8 object-contain" />
@@ -58,7 +59,7 @@ export function TopNavBar() {
           </Link>
 
           {/* Centered Nav Links */}
-          <nav className="hidden md:flex items-center gap-6 absolute left-1/2 -translate-x-1/2">
+          <nav className="hidden lg:flex items-center gap-6 absolute left-1/2 -translate-x-1/2">
             {navLinks.map(({ to, label }) => {
               const target = isAuthenticated ? to : '/login'
               const active = location.pathname === to
@@ -116,25 +117,6 @@ export function TopNavBar() {
           </div>
         </div>
       </header>
-
-      {/* Mobile bottom nav */}
-      <nav className="fixed bottom-0 left-0 w-full z-50 flex lg:hidden"
-           style={{ background: 'rgba(13,13,13,0.95)', backdropFilter: 'blur(16px)', borderTop: '1px solid var(--color-border-subtle)' }}>
-        {MOBILE_TABS.map(({ to, icon, label }) => {
-          const target = isAuthenticated || to === '/' ? to : '/login'
-          const active = location.pathname === to || (to !== '/' && location.pathname.startsWith(to))
-          return (
-            <Link key={to} to={target} className="flex-1 flex flex-col items-center gap-0.5 py-3 transition-colors"
-                  style={{ color: active ? 'var(--color-primary)' : 'var(--color-outline)' }}>
-              <span className="material-symbols-outlined text-[22px] leading-none"
-                    style={{ fontVariationSettings: active ? "'FILL' 1" : "'FILL' 0" }}>
-                {icon}
-              </span>
-              <span className="text-[10px] font-medium" style={{ fontFamily: 'var(--font-sans)' }}>{label}</span>
-            </Link>
-          )
-        })}
-      </nav>
     </>
   )
 }
