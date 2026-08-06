@@ -90,7 +90,7 @@ export function QuizzesPage() {
             </p>
           )}
         </div>
-        <div className="grid grid-cols-3 lg:grid-cols-[120px_120px_120px] gap-2 items-end">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 items-end">
           <label className="text-xs" style={{ color: 'var(--color-outline)' }}>
             Type
             <select value={quizType} onChange={event => setQuizType(event.target.value)}
@@ -130,10 +130,10 @@ export function QuizzesPage() {
         </div>
       </form>
 
-      <div className="flex items-center gap-2 mb-6 animate-fade-up animation-delay-200">
+      <div className="flex items-center gap-2 mb-6 animate-fade-up animation-delay-200 overflow-x-auto no-scrollbar">
         {tags.slice(0, 6).map(f => (
           <button key={f} onClick={() => setFilter(f)}
-                  className="px-3 py-1.5 rounded-full text-xs font-bold transition-all"
+                  className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold transition-all"
                   style={{
                     background: filter === f ? 'var(--color-primary)' : 'var(--color-surface-container-high)',
                     color: filter === f ? 'var(--color-on-primary-fixed)' : 'var(--color-on-surface-variant)',

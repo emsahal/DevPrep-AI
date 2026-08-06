@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { aiTutorService } from '@/services/aiTutorService'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
@@ -53,6 +54,7 @@ export function AITutorPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [loadingSessions, setLoadingSessions] = useState(false)
   const [loadingMessages, setLoadingMessages] = useState(false)
+  const isMobile = useMediaQuery('(max-width: 1023px)')
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
 
   const [searchParams] = useSearchParams()
@@ -189,8 +191,20 @@ export function AITutorPage() {
         className="flex flex-col rounded-2xl transition-all duration-300 overflow-hidden flex-shrink-0"
         style={{
           width: sidebarOpen ? 280 : 48,
+          minWidth: sidebarOpen ? 280 : 48,
           border: '1px solid var(--color-border-subtle)',
           background: 'var(--color-surface-container-lowest)',
+          ...(isMobile && sidebarOpen
+            ? {
+                position: 'fixed' as const,
+                left: 0,
+                top: 'calc(4rem + var(--quote-banner, 0px))',
+                bottom: 0,
+                zIndex: 40,
+                borderRadius: 0,
+                boxShadow: '8px 0 32px rgba(0,0,0,0.5)',
+              }
+            : { position: 'relative' as const }),
         }}
       >
         {/* Sidebar Header */}

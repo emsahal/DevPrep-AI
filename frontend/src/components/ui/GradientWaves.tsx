@@ -240,9 +240,14 @@ const GradientWaves = ({
 
     const setSize = () => {
       const rect = container.getBoundingClientRect();
-      const w = Math.max(1, Math.floor(rect.width));
-      const h = Math.max(1, Math.floor(rect.height));
+      const w = Math.max(1, Math.ceil(rect.width));
+      const h = Math.max(1, Math.ceil(rect.height));
       renderer.setSize(w, h);
+      // Ensure the canvas always fills the container (Renderer.setSize
+      // overrides the CSS size to exact pixels, which can leave a 1px gap
+      // on the right when the container width is fractional).
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
       const res = program.uniforms.iResolution.value as Float32Array;
       res[0] = gl.drawingBufferWidth;
       res[1] = gl.drawingBufferHeight;

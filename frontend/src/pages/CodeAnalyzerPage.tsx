@@ -305,7 +305,7 @@ export function CodeAnalyzerPage() {
               <button onClick={handleBackToQuestions} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12.5, color: 'var(--color-primary)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginBottom: 16 }}>
                 ← Back to Questions
               </button>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
                 <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--color-on-surface)', margin: 0 }}>{question.title}</h2>
                 {(() => { const dc = difficultyColors[question.difficulty]; return (
                   <span style={{ fontSize: 11, fontWeight: 600, color: dc.text, background: dc.bg, padding: '2px 10px', borderRadius: 10 }}>{question.difficulty}</span>
@@ -414,7 +414,7 @@ export function CodeAnalyzerPage() {
               {/* Code Editor */}
               {showEditor && (
                 <div style={{ border: '1px solid var(--color-border-subtle)', borderRadius: 10, overflow: 'hidden', marginBottom: 16 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 14px', borderBottom: '1px solid var(--color-border-subtle)', background: 'var(--color-surface-container-low)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap', padding: '8px 14px', borderBottom: '1px solid var(--color-border-subtle)', background: 'var(--color-surface-container-low)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                       <span className="material-symbols-outlined text-[16px]" style={{ color: 'var(--color-primary)', fontVariationSettings: "'FILL' 0" }}>code</span>
                       <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-on-surface)' }}>Your Solution</span>

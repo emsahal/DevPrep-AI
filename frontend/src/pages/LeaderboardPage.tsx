@@ -90,13 +90,13 @@ export function LeaderboardPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 p-1 rounded-xl animate-fade-up animation-delay-100"
+      <div className="flex gap-1 mb-6 p-1 rounded-xl animate-fade-up animation-delay-100 overflow-x-auto no-scrollbar"
            style={{ background: 'var(--color-surface-container-low)' }}>
         {TABS.map(tab => (
           <button
             key={tab.key}
             onClick={() => { setActiveTab(tab.key); setPage(1) }}
-            className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition-all ${
+            className={`flex-shrink-0 lg:flex-1 py-2 px-4 rounded-lg text-sm font-semibold whitespace-nowrap transition-all ${
               activeTab === tab.key ? 'shadow-sm' : 'opacity-60 hover:opacity-100'
             }`}
             style={{
