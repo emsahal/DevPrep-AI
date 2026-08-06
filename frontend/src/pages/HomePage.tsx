@@ -122,7 +122,7 @@ export function HomePage() {
 
       {/* ═══════ 1. Hero Section (No bottom border, opacity 0.50) ═══════ */}
       <section className="relative h-screen min-h-[580px] pt-16 flex flex-col items-center justify-center overflow-hidden"
-               style={{ background: 'var(--color-surface-container-lowest)' }}>
+               style={{ background: 'linear-gradient(180deg, #10061f 0%, #150a2e 45%, #2e1065 100%)' }}>
         {/* GradientWaves Background - rich vibrant purple/violet gradient */}
         <div className="absolute inset-0 z-0 pointer-events-none">
           <GradientWaves
