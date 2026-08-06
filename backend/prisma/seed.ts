@@ -9,7 +9,7 @@ const technologies = [
   { name: 'JavaScript', slug: 'javascript', description: 'High-level, interpreted programming language that conforms to the ECMAScript specification.', category: 'frontend', icon: 'file-type-js', color: '#f7df1e', order: 3 },
   { name: 'TypeScript', slug: 'typescript', description: 'Typed superset of JavaScript that compiles to plain JavaScript with static type checking.', category: 'frontend', icon: 'file-type-ts', color: '#3178c6', order: 4 },
   { name: 'React', slug: 'react', description: 'JavaScript library for building user interfaces with reusable, declarative components.', category: 'frontend', icon: 'react', color: '#61dafb', order: 5 },
-  { name: 'Next.js', slug: 'nextjs', description: 'React framework for production-grade applications with SSR, SSG, and API routes.', category: 'frontend', icon: 'nextjs', color: '#000000', order: 6 },
+  { name: 'Next.js', slug: 'nextjs', description: 'React framework for production-grade applications with SSR, SSG, and API routes.', category: 'frontend', icon: 'nextjs', color: '#ffffff', order: 6 },
   { name: 'Node.js', slug: 'nodejs', description: 'JavaScript runtime built on Chrome V8 engine for building scalable server-side applications.', category: 'backend', icon: 'nodejs', color: '#339933', order: 7 },
   { name: 'Express.js', slug: 'expressjs', description: 'Fast, unopinionated, minimalist web framework for Node.js with robust routing and middleware.', category: 'backend', icon: 'express', color: '#000000', order: 8 },
   { name: 'REST APIs', slug: 'rest-apis', description: 'Architectural style for designing networked applications with stateless HTTP operations.', category: 'backend', icon: 'api', color: '#ff6c2c', order: 9 },

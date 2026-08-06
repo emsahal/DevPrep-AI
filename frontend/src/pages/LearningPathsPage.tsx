@@ -71,8 +71,8 @@ export function LearningPathsPage() {
                   {path.technologies.map(tech => (
                     <Link key={tech.id} to={`/library/${tech.slug}`}
                           className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all hover:opacity-80"
-                          style={{ background: `${tech.color}15`, color: tech.color, border: `1px solid ${tech.color}25` }}>
-                      <TechLogo slug={tech.slug} icon={tech.icon} color={tech.color} size={14} />
+                          style={{ background: `${tech.color}15`, color: tech.slug === 'nextjs' ? '#ffffff' : tech.color, border: `1px solid ${tech.color}25` }}>
+                      <TechLogo slug={tech.slug} icon={tech.icon} color={tech.slug === 'nextjs' ? '#ffffff' : tech.color} size={14} />
                       {tech.name}
                       <span className="ml-1 opacity-60">{tech.topicCount}</span>
                     </Link>
