@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import { aiTutorService } from '@/services/aiTutorService'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
+import { useAuthStore } from '@/store/authStore'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
@@ -134,8 +135,17 @@ export function AITutorPage() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, streamingContent])
 
+  const isAuthenticated = useAuthStore(s => s.isAuthenticated)
+  const navigate = useNavigate()
+
   const send = useCallback((text: string) => {
     if (!text.trim() || isStreaming) return
+
+    // Limit unauthenticated guests to 5 messages max
+    if (!isAuthenticated && messages.length >= 5) {
+      navigate('/login')
+      return
+    }
     setMessages(prev => [...prev, { role: 'user', text }])
     setInput('')
     setIsStreaming(true)

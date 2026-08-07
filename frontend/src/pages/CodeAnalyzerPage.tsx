@@ -264,13 +264,22 @@ export function CodeAnalyzerPage() {
                     <div key={topic.name} style={{ marginBottom: 20 }}>
                       <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-on-surface)', margin: '0 0 8px' }}>{topic.name}</h3>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                        {topicQs.map(q => {
+                        {topicQs.map((q, qIdx) => {
                           if (!q) return null
                           const dc = difficultyColors[q.difficulty]
+                          const isAuthenticated = useAuthStore.getState().isAuthenticated
+                          const isLocked = !isAuthenticated && qIdx >= 3
+
                           return (
                             <div
                               key={q.id}
-                              onClick={() => handleSelectQuestion(q.id)}
+                              onClick={() => {
+                                if (isLocked) {
+                                  window.location.href = '/login'
+                                } else {
+                                  handleSelectQuestion(q.id)
+                                }
+                              }}
                               style={{
                                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                                 padding: '10px 16px', borderRadius: 10, cursor: 'pointer',
@@ -284,10 +293,20 @@ export function CodeAnalyzerPage() {
                               <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13.5, color: 'var(--color-on-surface-variant)', fontWeight: 500 }}>
                                 {solvedQuestions.has(q.id) && <span style={{ color: '#4ADE80', fontSize: 14 }}>✓</span>}
                                 {q.title}
+                                {isLocked && (
+                                  <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 99, background: 'var(--color-primary-container)', color: 'var(--color-primary)' }}>
+                                    Sign in required
+                                  </span>
+                                )}
                               </span>
-                              <span style={{ fontSize: 11, fontWeight: 600, color: dc.text, background: dc.bg, padding: '2px 10px', borderRadius: 8 }}>
-                                {q.difficulty}
-                              </span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                <span style={{ fontSize: 11, fontWeight: 600, color: dc.text, background: dc.bg, padding: '2px 10px', borderRadius: 8 }}>
+                                  {q.difficulty}
+                                </span>
+                                {isLocked && (
+                                  <span className="material-symbols-outlined" style={{ fontSize: 14, color: 'var(--color-primary)' }}>lock</span>
+                                )}
+                              </div>
                             </div>
                           )
                         })}

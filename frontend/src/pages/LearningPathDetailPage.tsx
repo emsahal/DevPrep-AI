@@ -2,9 +2,11 @@ import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { learningPathService } from '@/services/learningPathService'
 import { TechLogo } from '@/components/common/TechLogo'
+import { useAuthStore } from '@/store/authStore'
 
 export function LearningPathDetailPage() {
   const { path: slug } = useParams<{ path: string }>()
+  const isAuthenticated = useAuthStore(s => s.isAuthenticated)
 
   const { data: path, isLoading } = useQuery({
     queryKey: ['learning-path', slug],
@@ -80,27 +82,41 @@ export function LearningPathDetailPage() {
             <h2 className="font-bold text-sm uppercase tracking-widest" style={{ color: 'var(--color-outline)' }}>{tech.name}</h2>
           </div>
           <div className="space-y-3">
-            {tech.topics.map((t, i) => (
-              <Link key={t.slug} to={`/topics/${t.slug}`}
-                    className="flex items-center gap-4 p-4 rounded-xl transition-all group hover:border-primary"
-                    style={{ border: `1px solid ${t.completed ? 'rgba(16,185,129,0.3)' : 'var(--color-border-subtle)'}`, background: t.completed ? 'rgba(16,185,129,0.04)' : 'var(--color-surface-container-lowest)' }}>
-                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                     style={{ background: t.completed ? 'var(--color-success)' : 'var(--color-surface-container-high)' }}>
-                  {t.completed ? (
-                    <span className="material-symbols-outlined text-[16px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>check</span>
-                  ) : (
-                    <span className="text-xs font-bold" style={{ color: 'var(--color-outline)' }}>{i + 1}</span>
-                  )}
-                </div>
-                <div className="flex-1">
-                  <p className="font-semibold text-sm" style={{ color: t.completed ? 'var(--color-on-surface-variant)' : 'var(--color-on-surface)' }}>
-                    {t.title}
-                  </p>
-                </div>
-                <span className="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1"
-                      style={{ color: 'var(--color-outline)' }}>arrow_forward</span>
-              </Link>
-            ))}
+            {tech.topics.map((t, i) => {
+              const isLocked = !isAuthenticated && i > 0
+              const destination = isLocked ? '/login' : `/topics/${t.slug}`
+
+              return (
+                <Link key={t.slug} to={destination}
+                      className="flex items-center gap-4 p-4 rounded-xl transition-all group hover:border-primary"
+                      style={{ border: `1px solid ${t.completed ? 'rgba(16,185,129,0.3)' : 'var(--color-border-subtle)'}`, background: t.completed ? 'rgba(16,185,129,0.04)' : 'var(--color-surface-container-lowest)' }}>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                       style={{ background: isLocked ? 'var(--color-surface-container-high)' : (t.completed ? 'var(--color-success)' : 'var(--color-surface-container-high)') }}>
+                    {isLocked ? (
+                      <span className="material-symbols-outlined text-[16px]" style={{ color: 'var(--color-primary)' }}>lock</span>
+                    ) : t.completed ? (
+                      <span className="material-symbols-outlined text-[16px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>check</span>
+                    ) : (
+                      <span className="text-xs font-bold" style={{ color: 'var(--color-outline)' }}>{i + 1}</span>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-sm flex items-center gap-2" style={{ color: t.completed ? 'var(--color-on-surface-variant)' : 'var(--color-on-surface)' }}>
+                      <span>{t.title}</span>
+                      {isLocked && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'var(--color-primary-container)', color: 'var(--color-primary)' }}>
+                          Sign in required
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                  <span className="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1"
+                        style={{ color: 'var(--color-outline)' }}>
+                    {isLocked ? 'lock' : 'arrow_forward'}
+                  </span>
+                </Link>
+              )
+            })}
           </div>
         </div>
       ))}
