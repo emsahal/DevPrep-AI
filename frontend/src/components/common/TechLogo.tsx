@@ -16,6 +16,7 @@ import {
   SiDocker,
   SiNginx,
   SiPm2,
+  SiMysql,
 } from 'react-icons/si'
 import {
   TbApi,
@@ -43,6 +44,7 @@ const BRAND_ICONS: Record<string, { Icon: IconType; color: string }> = {
   authentication: { Icon: TbLockAccess, color: '#FFB703' },
   mongodb: { Icon: SiMongodb, color: '#47A248' },
   postgresql: { Icon: SiPostgresql, color: '#4169E1' },
+  mysql: { Icon: SiMysql, color: '#4479A1' },
   redis: { Icon: SiRedis, color: '#DC382D' },
   git: { Icon: SiGit, color: '#F05032' },
   docker: { Icon: SiDocker, color: '#2496ED' },

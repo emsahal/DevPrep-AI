@@ -72,9 +72,9 @@ const learningPaths = [
     technologies: ['html', 'css', 'javascript', 'typescript', 'react', 'nextjs', 'nodejs', 'expressjs', 'rest-apis', 'mongodb', 'postgresql'],
   },
   {
-    title: 'Database Administration (DBA)',
+    title: 'Database Systems',
     slug: 'database-administration',
-    description: 'Master core DBA skills across MySQL, PostgreSQL, MongoDB, and Redis. Learn server configuration, query optimization, backup & disaster recovery, replication, sharding, high availability, and database security.',
+    description: 'Master database engineering & DBA skills across MySQL, PostgreSQL, MongoDB, and Redis. Learn query optimization, backup & disaster recovery, replication, sharding, high availability, and security.',
     icon: 'database',
     color: 'from-cyan-500 to-blue-600',
     category: 'database',
