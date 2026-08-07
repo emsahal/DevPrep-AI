@@ -210,7 +210,7 @@ export function HomePage() {
             {/* Primary White Button */}
             <StarBorder
               as={Link}
-              to="/register"
+              to="/learning-paths"
               color="#a78bfa"
               speed="4s"
               thickness={2}
@@ -218,7 +218,7 @@ export function HomePage() {
               innerClassName="inner-content-white"
               style={{ borderRadius: '9999px' }}
             >
-              <span className="font-semibold text-sm px-1">Get Started</span>
+              <span className="font-semibold text-sm px-1">Explore Roadmaps</span>
             </StarBorder>
 
             {/* Secondary Purple Button */}
