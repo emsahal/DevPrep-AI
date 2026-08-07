@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { quizService, type QuizQuestion } from '@/services/quizService'
 import { BackButton } from '@/components/common/BackButton'
+import { SEOHead } from '@/components/common/SEOHead'
 
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -253,7 +254,12 @@ export function QuizDetailPage() {
   if (!q) return null
 
   return (
-    <div className="px-6 py-8 max-w-2xl mx-auto">
+    <>
+      <SEOHead
+        title={`${quiz.title || 'Interactive Quiz'} - DevPrep AI`}
+        description={quiz.description || 'Test your knowledge with AI-crafted practice questions.'}
+      />
+      <div className="px-6 py-8 max-w-2xl mx-auto">
       {/* Back Link */}
       <div className="mb-6">
         <BackButton to="/quizzes" label="Back to Quizzes" />
@@ -482,6 +488,6 @@ export function QuizDetailPage() {
           )}
         </button>
       </div>
-    </div>
+    </>
   )
 }

@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { quizService } from '@/services/quizService'
 import { TechLogo } from '@/components/common/TechLogo'
+import { SEOHead } from '@/components/common/SEOHead'
 import {
   Select,
   SelectContent,
@@ -72,7 +73,12 @@ export function QuizzesPage() {
   }
 
   return (
-    <div className="px-6 py-8 max-w-7xl mx-auto">
+    <>
+      <SEOHead
+        title="Coding Quizzes & AI Skill Assessments - DevPrep AI"
+        description="Test your software engineering knowledge with AI-generated quizzes across JavaScript, React, System Design, DSA, and databases."
+      />
+      <div className="px-6 py-8 max-w-7xl mx-auto">
       {/* Page Title Header */}
       <div className="mb-8 animate-fade-up">
         <h1 className="text-4xl font-extrabold tracking-tight mb-2" style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-on-surface)' }}>
@@ -282,6 +288,7 @@ export function QuizzesPage() {
           </button>
         </div>
       )}
-    </div>
+      </div>
+    </>
   )
-}
+}
