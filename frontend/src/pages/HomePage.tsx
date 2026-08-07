@@ -116,21 +116,12 @@ const faqs = [
 
 function SectionSeparator() {
   return (
-    <div className="relative w-full h-24 overflow-hidden pointer-events-none z-20 flex items-center justify-center -my-12">
-      {/* Radiant Conic & Radial Light Beam */}
+    <div className="relative w-full max-w-5xl mx-auto overflow-hidden rounded-3xl border-t border-white/10 px-6 py-12 pointer-events-none z-20">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[350px] w-[600px] -translate-x-1/2 -translate-y-1/2 opacity-70 blur-xl"
+        className="pointer-events-none absolute max-w-full -translate-x-1/2 -translate-y-1/2 -top-1 left-1/2 h-[300px] w-[320px]"
         style={{
-          background: 'conic-gradient(from 90deg at 50% 50%, rgba(139, 92, 246, 0) 0deg, rgba(167, 139, 250, 0.4) 180deg, rgba(139, 92, 246, 0) 360deg), radial-gradient(circle at center, rgba(192, 132, 252, 0.35) 0%, rgba(139, 92, 246, 0.15) 50%, transparent 80%)',
-        }}
-      />
-      {/* Horizontal glowing divider line */}
-      <div
-        className="w-full max-w-4xl h-[1px] relative z-10 opacity-60"
-        style={{
-          background: 'linear-gradient(90deg, transparent 0%, rgba(167, 139, 250, 0.6) 50%, transparent 100%)',
-          boxShadow: '0 0 15px rgba(167, 139, 250, 0.8)',
+          background: 'conic-gradient(from 90deg, rgba(0, 0, 0, 0) 50%, rgb(139, 92, 246) 50%), radial-gradient(rgba(167, 139, 250, 0.25) 0%, transparent 80%)',
         }}
       />
     </div>
