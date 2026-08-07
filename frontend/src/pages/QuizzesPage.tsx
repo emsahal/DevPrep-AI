@@ -85,7 +85,7 @@ export function QuizzesPage() {
 
       {/* AI Quiz Generation Form - 2 Sided (Left & Right) */}
       <form onSubmit={handleCreateQuiz}
-            className="bento-card ai-glow-border p-6 mb-8 rounded-2xl animate-fade-up animation-delay-100 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            className="bento-card hover:border-primary p-6 mb-8 rounded-2xl animate-fade-up animation-delay-100 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start transition-all duration-300">
         {/* Left Side: Title & Custom Topic Input */}
         <div className="flex flex-col gap-4">
           <div>
@@ -205,8 +205,7 @@ export function QuizzesPage() {
           const techIcon = quiz.topic?.technology?.icon
 
           return (
-            <div key={quiz.id} className="bento-card ai-glow-border group p-6 flex flex-col justify-between rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-                 style={{ background: 'var(--color-surface-container-low)', border: '1px solid var(--color-border-muted)' }}>
+            <div key={quiz.id} className="bento-card group p-6 flex flex-col justify-between rounded-2xl hover:border-primary transition-all duration-300">
               <div>
                 <div className="flex items-center justify-between gap-3 mb-3">
                   <span className="px-3 py-1 rounded-full text-xs font-bold capitalize"

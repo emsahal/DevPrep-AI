@@ -10,6 +10,8 @@ import { TopicContent } from '@/features/topics/components/TopicContent'
 
 const ADMIN_EMAIL = 'sarcasticsahal@gmail.com'
 
+import { BackButton } from '@/components/common/BackButton'
+
 const LEVEL_COLOR: Record<string, string> = {
   beginner: 'var(--color-success)',
   intermediate: 'var(--color-warning)',
@@ -82,8 +84,8 @@ export function TopicPage() {
   if (!topic) return (
     <div className="px-6 py-20 max-w-3xl mx-auto text-center">
       <span className="material-symbols-outlined text-6xl mb-4 block" style={{ color: 'var(--color-border-muted)' }}>error</span>
-      <p className="text-xl font-bold mb-2" style={{ color: 'var(--color-on-surface)' }}>Topic not found</p>
-      <Link to="/library" className="text-sm" style={{ color: 'var(--color-primary)' }}>← Back to Library</Link>
+      <p className="text-xl font-bold mb-4" style={{ color: 'var(--color-on-surface)' }}>Topic not found</p>
+      <BackButton to="/library" label="Back to Library" />
     </div>
   )
 

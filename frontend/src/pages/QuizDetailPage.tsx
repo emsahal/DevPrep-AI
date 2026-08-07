@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { quizService, type QuizQuestion } from '@/services/quizService'
+import { BackButton } from '@/components/common/BackButton'
 
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -190,10 +191,8 @@ export function QuizDetailPage() {
         <span className="material-symbols-outlined text-6xl mb-4 block" style={{ color: 'var(--color-border-muted)' }}>
           error
         </span>
-        <p className="text-xl font-bold mb-2" style={{ color: 'var(--color-on-surface)' }}>Quiz not found</p>
-        <Link to="/quizzes" className="text-sm" style={{ color: 'var(--color-primary)' }}>
-          ← Back to Quizzes
-        </Link>
+        <p className="text-xl font-bold mb-4" style={{ color: 'var(--color-on-surface)' }}>Quiz not found</p>
+        <BackButton to="/quizzes" label="Back to Quizzes" />
       </div>
     )
   }
@@ -255,6 +254,11 @@ export function QuizDetailPage() {
 
   return (
     <div className="px-6 py-8 max-w-2xl mx-auto">
+      {/* Back Link */}
+      <div className="mb-6">
+        <BackButton to="/quizzes" label="Back to Quizzes" />
+      </div>
+
       {/* Header Info */}
       <div className="mb-8 animate-fade-up">
         <div className="flex items-center justify-between text-xs mb-2">

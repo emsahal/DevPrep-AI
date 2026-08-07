@@ -2,6 +2,8 @@ import { useParams, Link } from 'react-router-dom'
 import { SEOHead } from '@/components/common/SEOHead'
 import { BLOG_ARTICLES } from '@/data/blogArticlesData'
 
+import { BackButton } from '@/components/common/BackButton'
+
 export function BlogDetailPage() {
   const { id } = useParams<{ id: string }>()
   const article = BLOG_ARTICLES.find(a => a.id === id)
@@ -31,10 +33,9 @@ export function BlogDetailPage() {
       />
       <div className="px-6 py-8 max-w-4xl mx-auto">
         {/* Back link */}
-        <Link to="/blogs" className="inline-flex items-center gap-1 text-xs font-semibold mb-6 hover:underline" style={{ color: 'var(--color-primary)' }}>
-          <span className="material-symbols-outlined text-[16px]">arrow_back</span>
-          <span>Back to all articles</span>
-        </Link>
+        <div className="mb-6">
+          <BackButton to="/blogs" label="Back to all articles" />
+        </div>
 
         {/* Article Meta */}
         <div className="mb-8">

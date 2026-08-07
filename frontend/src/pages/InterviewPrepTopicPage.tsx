@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { interviewPrepService } from '@/services/interviewPrepService'
 import ReactMarkdown from 'react-markdown'
@@ -208,6 +208,8 @@ function QuestionCard({
   )
 }
 
+import { BackButton } from '@/components/common/BackButton'
+
 export function InterviewPrepTopicPage() {
   const { slug } = useParams<{ slug: string }>()
   const [openQuestions, setOpenQuestions] = useState<Set<number>>(new Set())
@@ -241,8 +243,8 @@ export function InterviewPrepTopicPage() {
     return (
       <div className="px-6 py-8 max-w-4xl mx-auto text-center py-20">
         <span className="material-symbols-outlined text-5xl block mb-3" style={{ color: 'var(--color-border-muted)' }}>error</span>
-        <p style={{ color: 'var(--color-outline)' }}>Topic not found</p>
-        <Link to="/interview-prep" className="text-sm mt-4 inline-block" style={{ color: 'var(--color-primary)' }}>Back to topics</Link>
+        <p className="mb-4" style={{ color: 'var(--color-outline)' }}>Topic not found</p>
+        <BackButton to="/interview-prep" label="Back to topics" />
       </div>
     )
   }
@@ -258,11 +260,9 @@ export function InterviewPrepTopicPage() {
   return (
     <div className="px-6 py-8 max-w-4xl mx-auto">
       <div className="mb-6 animate-fade-up">
-        <Link to="/interview-prep" className="text-xs flex items-center gap-1 mb-3"
-              style={{ color: 'var(--color-primary)' }}>
-          <span className="material-symbols-outlined text-[14px]">arrow_back</span>
-          Back to topics
-        </Link>
+        <div className="mb-3">
+          <BackButton to="/interview-prep" label="Back to topics" />
+        </div>
         <h1 className="text-3xl font-extrabold tracking-tight mb-1" style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-on-surface)' }}>
           {topic.name}
         </h1>
