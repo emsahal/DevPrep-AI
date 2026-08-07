@@ -10,6 +10,7 @@ const SECTIONS = [
       { to: '/dashboard',      icon: 'dashboard',       label: 'Dashboard'  },
       { to: '/learning-paths', icon: 'map',              label: 'Roadmaps'   },
       { to: '/library',        icon: 'menu_book',        label: 'Library'    },
+      { to: '/blogs',          icon: 'article',          label: 'Blogs'      },
       { to: '/ai-tutor',       icon: 'smart_toy',        label: 'AI Tutor'   },
     ],
   },

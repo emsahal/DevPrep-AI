@@ -28,6 +28,7 @@ import { ProfilePage } from '@/pages/ProfilePage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { ResumeOptimizerPage } from '@/pages/ResumeOptimizerPage'
 import { AdminPage } from '@/pages/AdminPage'
+import { BlogsPage } from '@/pages/BlogsPage'
 import { useAuthStore } from '@/store/authStore'
 import { ThemeProvider } from '@/providers/ThemeProvider'
 import { QueryProvider } from '@/providers/QueryProvider'
@@ -77,6 +78,7 @@ export default function App() {
               <Route path="/learning-paths" element={<ProtectedRoute><LearningPathsPage /></ProtectedRoute>} />
               <Route path="/learning-paths/:path" element={<ProtectedRoute><LearningPathDetailPage /></ProtectedRoute>} />
               <Route path="/library" element={<ProtectedRoute><TechnologyLibraryPage /></ProtectedRoute>} />
+              <Route path="/blogs" element={<BlogsPage />} />
               <Route path="/library/:technology" element={<ProtectedRoute><TechnologyDetailPage /></ProtectedRoute>} />
               <Route path="/topics/:slug" element={<ProtectedRoute><TopicPage /></ProtectedRoute>} />
               <Route path="/ai-tutor" element={<ProtectedRoute><AITutorPage /></ProtectedRoute>} />

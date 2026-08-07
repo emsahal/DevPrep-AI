@@ -25,6 +25,7 @@ export function TopNavBar() {
     { to: '/code-analyzer',  label: 'Code Lab' },
     { to: '/interview-prep', label: 'Practice' },
     { to: '/library',        label: 'Library' },
+    { to: '/blogs',          label: 'Blogs' },
     { to: '/ai-tutor',       label: 'AI Tutor' },
   ]
 
