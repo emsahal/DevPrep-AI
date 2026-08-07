@@ -28,7 +28,7 @@ export function BlogDetailPage() {
   return (
     <>
       <SEOHead
-        title={`${article.title} - DevPrep AI`}
+        title={article.title}
         description={article.description}
       />
       <div className="px-6 py-8 max-w-4xl mx-auto">

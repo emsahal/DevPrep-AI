@@ -31,7 +31,7 @@ export function BlogsPage() {
   return (
     <>
       <SEOHead
-        title="Tech Articles & System Design Blogs - DevPrep AI"
+        title="Engineering Blogs"
         description="Explore in-depth engineering articles on Netflix System Design, Microservices patterns, React performance, DSA interview patterns, PostgreSQL, API Security, Kafka, and AI engineering."
       />
       <div className="px-6 py-8 max-w-7xl mx-auto">

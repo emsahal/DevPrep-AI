@@ -10,7 +10,7 @@ interface SEOHeadProps {
   jsonLd?: Record<string, any> | Record<string, any>[]
 }
 
-const DEFAULT_TITLE = 'DevPreps - Developer Preparation & AI Coding Technical Interview Prep'
+const DEFAULT_TITLE = 'DevPreps - Dev Preparation'
 const DEFAULT_DESCRIPTION = 'Master developer preparation, software engineering technical interviews, system design, and coding practice with DevPreps AI tools and developer roadmaps.'
 const DEFAULT_DOMAIN = 'https://devpreps.tech'
 const DEFAULT_OG_IMAGE = 'https://devpreps.tech/fab.png'
@@ -26,9 +26,21 @@ export function SEOHead({
   jsonLd,
 }: SEOHeadProps) {
   useEffect(() => {
-    // 1. Update Title to strictly follow "DevPreps - {page}" format
-    const cleanTitle = title.replace(/\s*[-|]\s*DevPrep.*$/i, '').trim()
-    document.title = cleanTitle.startsWith('DevPreps') ? cleanTitle : `DevPreps - ${cleanTitle}`
+    // Clean and shorten page name for browser tab title
+    let pageName = title.replace(/\s*[-|]\s*DevPrep.*$/i, '').trim()
+    if (pageName.startsWith('DevPreps - ')) {
+      pageName = pageName.replace('DevPreps - ', '')
+    } else if (pageName.startsWith('DevPreps')) {
+      pageName = pageName.replace('DevPreps', '')
+    }
+
+    // Keep page name short (max 25 chars)
+    if (pageName.length > 25) {
+      pageName = pageName.slice(0, 22) + '...'
+    }
+
+    const shortTitle = pageName ? `DevPreps - ${pageName}` : 'DevPreps - Dev Preparation'
+    document.title = shortTitle
 
     // Helper function to update or create meta tags
     const updateMetaTag = (name: string, content: string, isProperty = false) => {
