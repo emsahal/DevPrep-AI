@@ -1,5 +1,8 @@
 import { PrismaClient } from '@prisma/client'
+import dotenv from 'dotenv'
 import { generateTopicContent } from './topic-content'
+
+dotenv.config()
 
 const prisma = new PrismaClient()
 
@@ -17,17 +20,18 @@ const technologies = [
   { name: 'Authentication', slug: 'authentication', description: 'Process of verifying user identity and managing access control in web applications.', category: 'backend', icon: 'lock', color: '#ff6c2c', order: 11 },
   { name: 'MongoDB', slug: 'mongodb', description: 'NoSQL document database with flexible schema design and powerful aggregation pipeline.', category: 'database', icon: 'mongodb', color: '#47a248', order: 12 },
   { name: 'PostgreSQL', slug: 'postgresql', description: 'Advanced open-source relational database with ACID compliance and extensible features.', category: 'database', icon: 'postgresql', color: '#336791', order: 13 },
-  { name: 'Redis', slug: 'redis', description: 'In-memory data structure store used as cache, message broker, and database with built-in replication.', category: 'database', icon: 'redis', color: '#dc382d', order: 14 },
-  { name: 'Git', slug: 'git', description: 'Distributed version control system for tracking changes in source code during development.', category: 'devops', icon: 'git', color: '#f05032', order: 15 },
-  { name: 'Docker', slug: 'docker', description: 'Platform for developing, shipping, and running applications in lightweight containers.', category: 'devops', icon: 'docker', color: '#2496ed', order: 16 },
-  { name: 'CI/CD', slug: 'cicd', description: 'Continuous Integration and Continuous Deployment practices for automated software delivery.', category: 'devops', icon: 'cicd', color: '#2396ed', order: 17 },
-  { name: 'Nginx', slug: 'nginx', description: 'High-performance web server, reverse proxy, and load balancer for modern web infrastructure.', category: 'devops', icon: 'nginx', color: '#009639', order: 18 },
-  { name: 'PM2', slug: 'pm2', description: 'Production process manager for Node.js applications with clustering and monitoring.', category: 'devops', icon: 'pm2', color: '#2b037a', order: 19 },
-  { name: 'Testing', slug: 'testing', description: 'Software testing methodologies including unit, integration, and end-to-end testing strategies.', category: 'other', icon: 'test', color: '#7c3aed', order: 20 },
-  { name: 'Performance', slug: 'performance', description: 'Web performance optimization techniques for faster load times and better user experience.', category: 'other', icon: 'zap', color: '#eab308', order: 21 },
-  { name: 'Security', slug: 'security', description: 'Web security principles and practices for protecting applications from vulnerabilities and attacks.', category: 'other', icon: 'shield', color: '#dc2626', order: 22 },
-  { name: 'System Design', slug: 'system-design', description: 'Architecture and design of scalable, distributed systems for modern software applications.', category: 'other', icon: 'layout', color: '#0891b2', order: 23 },
-  { name: 'DSA', slug: 'dsa', description: 'Data Structures and Algorithms for solving computational problems efficiently in interviews.', category: 'other', icon: 'code', color: '#7c3aed', order: 24 },
+  { name: 'MySQL', slug: 'mysql', description: 'World\'s most popular open-source relational database management system for ACID transactions and web workloads.', category: 'database', icon: 'mysql', color: '#4479a1', order: 14 },
+  { name: 'Redis', slug: 'redis', description: 'In-memory data structure store used as cache, message broker, and database with built-in replication.', category: 'database', icon: 'redis', color: '#dc382d', order: 15 },
+  { name: 'Git', slug: 'git', description: 'Distributed version control system for tracking changes in source code during development.', category: 'devops', icon: 'git', color: '#f05032', order: 16 },
+  { name: 'Docker', slug: 'docker', description: 'Platform for developing, shipping, and running applications in lightweight containers.', category: 'devops', icon: 'docker', color: '#2496ed', order: 17 },
+  { name: 'CI/CD', slug: 'cicd', description: 'Continuous Integration and Continuous Deployment practices for automated software delivery.', category: 'devops', icon: 'cicd', color: '#2396ed', order: 18 },
+  { name: 'Nginx', slug: 'nginx', description: 'High-performance web server, reverse proxy, and load balancer for modern web infrastructure.', category: 'devops', icon: 'nginx', color: '#009639', order: 19 },
+  { name: 'PM2', slug: 'pm2', description: 'Production process manager for Node.js applications with clustering and monitoring.', category: 'devops', icon: 'pm2', color: '#2b037a', order: 20 },
+  { name: 'Testing', slug: 'testing', description: 'Software testing methodologies including unit, integration, and end-to-end testing strategies.', category: 'other', icon: 'test', color: '#7c3aed', order: 21 },
+  { name: 'Performance', slug: 'performance', description: 'Web performance optimization techniques for faster load times and better user experience.', category: 'other', icon: 'zap', color: '#eab308', order: 22 },
+  { name: 'Security', slug: 'security', description: 'Web security principles and practices for protecting applications from vulnerabilities and attacks.', category: 'other', icon: 'shield', color: '#dc2626', order: 23 },
+  { name: 'System Design', slug: 'system-design', description: 'Architecture and design of scalable, distributed systems for modern software applications.', category: 'other', icon: 'layout', color: '#0891b2', order: 24 },
+  { name: 'DSA', slug: 'dsa', description: 'Data Structures and Algorithms for solving computational problems efficiently in interviews.', category: 'other', icon: 'code', color: '#7c3aed', order: 25 },
 ]
 
 const learningPaths = [
@@ -68,6 +72,18 @@ const learningPaths = [
     technologies: ['html', 'css', 'javascript', 'typescript', 'react', 'nextjs', 'nodejs', 'expressjs', 'rest-apis', 'mongodb', 'postgresql'],
   },
   {
+    title: 'Database Administration (DBA)',
+    slug: 'database-administration',
+    description: 'Master core DBA skills across MySQL, PostgreSQL, MongoDB, and Redis. Learn server configuration, query optimization, backup & disaster recovery, replication, sharding, high availability, and database security.',
+    icon: 'database',
+    color: 'from-cyan-500 to-blue-600',
+    category: 'database',
+    difficulty: 'intermediate',
+    estimatedHours: 140,
+    order: 4,
+    technologies: ['mysql', 'postgresql', 'mongodb', 'redis'],
+  },
+  {
     title: 'DevOps Engineering',
     slug: 'devops',
     description: 'Learn DevOps practices including version control with Git, containerization with Docker, CI/CD pipelines, Nginx configuration, and process management with PM2.',
@@ -76,7 +92,7 @@ const learningPaths = [
     category: 'devops',
     difficulty: 'advanced',
     estimatedHours: 80,
-    order: 4,
+    order: 5,
     technologies: ['git', 'docker', 'cicd', 'nginx', 'pm2'],
   },
   {
@@ -88,7 +104,7 @@ const learningPaths = [
     category: 'architecture',
     difficulty: 'advanced',
     estimatedHours: 60,
-    order: 5,
+    order: 6,
     technologies: ['system-design'],
   },
   {
@@ -100,7 +116,7 @@ const learningPaths = [
     category: 'algorithms',
     difficulty: 'intermediate',
     estimatedHours: 150,
-    order: 6,
+    order: 7,
     technologies: ['dsa'],
   },
 ]
@@ -198,25 +214,34 @@ const topicTemplates: Record<string, Array<{ title: string; slug: string; descri
   ],
   mongodb: [
     { title: 'MongoDB Basics', slug: 'mongodb-basics', description: 'Documents, collections, and CRUD operations.', difficulty: 'beginner', order: 1 },
-    { title: 'Schema Design', slug: 'mongodb-schema-design', description: 'Embedding vs referencing, and schema design patterns.', difficulty: 'intermediate', order: 2 },
-    { title: 'Indexing & Aggregation', slug: 'mongodb-indexing', description: 'Indexes, aggregation pipeline, and performance optimization.', difficulty: 'intermediate', order: 3 },
-    { title: 'MongoDB with Node.js', slug: 'mongodb-nodejs', description: 'Using Mongoose ODM and MongoDB driver with Node.js.', difficulty: 'intermediate', order: 4 },
-    { title: 'MongoDB Replication & Sharding', slug: 'mongodb-replication', description: 'High availability and horizontal scaling with MongoDB.', difficulty: 'advanced', order: 5 },
+    { title: 'Schema Design & Data Modeling', slug: 'mongodb-schema-design', description: 'Embedding vs referencing, schema validation, and anti-patterns.', difficulty: 'intermediate', order: 2 },
+    { title: 'Indexing & Aggregation Framework', slug: 'mongodb-indexing', description: 'Compound indexes, execution plans, and aggregation pipelines.', difficulty: 'intermediate', order: 3 },
+    { title: 'MongoDB Replica Sets & High Availability', slug: 'mongodb-replication', description: 'Primary/Secondary nodes, election process, read preferences, and write concerns.', difficulty: 'advanced', order: 4 },
+    { title: 'MongoDB Sharding & Cluster Administration', slug: 'mongodb-sharding', description: 'Shard keys, mongos routing, chunk balancing, and horizontal scaling.', difficulty: 'advanced', order: 5 },
+    { title: 'MongoDB Security, Backup & Maintenance', slug: 'mongodb-security-backup', description: 'RBAC, WiredTiger storage engine tuning, mongodump/mongorestore, and Ops Manager.', difficulty: 'advanced', order: 6 },
   ],
   postgresql: [
-    { title: 'PostgreSQL Basics', slug: 'postgresql-basics', description: 'Tables, constraints, and basic SQL queries.', difficulty: 'beginner', order: 1 },
-    { title: 'Advanced SQL Queries', slug: 'advanced-sql', description: 'Joins, subqueries, CTEs, and window functions.', difficulty: 'intermediate', order: 2 },
-    { title: 'Database Design', slug: 'database-design', description: 'Normalization, indexes, and database schema design.', difficulty: 'intermediate', order: 3 },
-    { title: 'PostgreSQL with Prisma', slug: 'postgresql-prisma', description: 'Using Prisma ORM with PostgreSQL for type-safe database access.', difficulty: 'intermediate', order: 4 },
-    { title: 'PostgreSQL Performance', slug: 'postgresql-performance', description: 'Query optimization, indexing strategies, and EXPLAIN analysis.', difficulty: 'advanced', order: 5 },
-    { title: 'PostgreSQL Security', slug: 'postgresql-security', description: 'Authentication, authorization, encryption, and backup strategies.', difficulty: 'advanced', order: 6 },
+    { title: 'PostgreSQL Architecture & Core SQL', slug: 'postgresql-basics', description: 'Process architecture, MVCC, WAL, tables, and constraints.', difficulty: 'beginner', order: 1 },
+    { title: 'Advanced SQL & Window Functions', slug: 'advanced-sql', description: 'Joins, subqueries, CTEs, window functions, and JSONB queries.', difficulty: 'intermediate', order: 2 },
+    { title: 'Database Design & Indexing Strategies', slug: 'database-design', description: 'Normalization, B-Tree, GIN, GiST indexes, and partial indexes.', difficulty: 'intermediate', order: 3 },
+    { title: 'Query Tuning & EXPLAIN ANALYZE', slug: 'postgresql-performance', description: 'Reading execution plans, autovacuum tuning, connection pooling (PgBouncer), and work_mem.', difficulty: 'advanced', order: 4 },
+    { title: 'PostgreSQL Replication & High Availability', slug: 'postgresql-replication', description: 'Streaming replication, logical replication, Patroni, and failover management.', difficulty: 'advanced', order: 5 },
+    { title: 'PostgreSQL Security, Backup & Disaster Recovery', slug: 'postgresql-security', description: 'Roles, pg_dump, WAL archiving, pg_basebackup, PITR (Point-In-Time Recovery), and SSL.', difficulty: 'advanced', order: 6 },
+  ],
+  mysql: [
+    { title: 'MySQL Architecture & Fundamentals', slug: 'mysql-architecture', description: 'InnoDB storage engine, buffer pool, redo log, undo log, and connection management.', difficulty: 'beginner', order: 1 },
+    { title: 'SQL Query Optimization & Indexing', slug: 'mysql-optimization', description: 'EXPLAIN plans, composite indexes, B-tree indexes, query cache, and slow query log analysis.', difficulty: 'intermediate', order: 2 },
+    { title: 'MySQL Transactions & Concurrency', slug: 'mysql-transactions', description: 'ACID properties, isolation levels, row-level locking, deadlocks, and MVCC in InnoDB.', difficulty: 'intermediate', order: 3 },
+    { title: 'MySQL Replication & High Availability', slug: 'mysql-replication', description: 'Source-replica replication, GTID-based replication, MySQL InnoDB Cluster, and Orchestrator.', difficulty: 'advanced', order: 4 },
+    { title: 'MySQL Backup, Recovery & Disaster Planning', slug: 'mysql-backup-recovery', description: 'Physical vs logical backups (mysqldump, Percona XtraBackup), point-in-time recovery with binary logs.', difficulty: 'advanced', order: 5 },
+    { title: 'MySQL Security & Server Administration', slug: 'mysql-security-admin', description: 'User privilege management, SSL/TLS, data encryption at rest, memory tuning, and monitoring.', difficulty: 'advanced', order: 6 },
   ],
   redis: [
-    { title: 'Redis Basics', slug: 'redis-basics', description: 'Data types, commands, and Redis fundamentals.', difficulty: 'beginner', order: 1 },
-    { title: 'Caching Strategies', slug: 'caching-strategies', description: 'Cache-aside, write-through, and invalidation strategies.', difficulty: 'intermediate', order: 2 },
-    { title: 'Redis Pub/Sub & Queues', slug: 'redis-pub-sub', description: 'Message queues, pub/sub patterns, and Bull/BullMQ.', difficulty: 'intermediate', order: 3 },
-    { title: 'Redis for Sessions & Rate Limiting', slug: 'redis-sessions', description: 'Session storage, rate limiting, and real-time counters.', difficulty: 'intermediate', order: 4 },
-    { title: 'Redis Cluster & Sentinel', slug: 'redis-cluster', description: 'High availability and horizontal scaling with Redis.', difficulty: 'advanced', order: 5 },
+    { title: 'Redis Fundamentals & Data Structures', slug: 'redis-basics', description: 'Strings, Hashes, Lists, Sets, Sorted Sets, Bitmaps, and HyperLogLogs.', difficulty: 'beginner', order: 1 },
+    { title: 'Caching Strategies & Eviction Policies', slug: 'caching-strategies', description: 'Cache-aside, write-through, TTL, LRU/LFU eviction policies, and cache stampede protection.', difficulty: 'intermediate', order: 2 },
+    { title: 'Redis Persistence & Memory Management', slug: 'redis-persistence', description: 'RDB snapshots, AOF log rewriting, memory optimization, and maxmemory policies.', difficulty: 'intermediate', order: 3 },
+    { title: 'Redis High Availability & Replication', slug: 'redis-replication', description: 'Master-Replica replication, Redis Sentinel failover, and automatic leader election.', difficulty: 'advanced', order: 4 },
+    { title: 'Redis Cluster & Horizontal Scaling', slug: 'redis-cluster', description: 'Hash slots, sharding, resharding, client-side routing, and cluster administration.', difficulty: 'advanced', order: 5 },
   ],
   git: [
     { title: 'Git Basics', slug: 'git-basics', description: 'init, add, commit, branch, and merge.', difficulty: 'beginner', order: 1 },

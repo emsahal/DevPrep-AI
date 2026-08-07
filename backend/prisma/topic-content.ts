@@ -15,7 +15,7 @@ function codeLanguage(technologySlug: string): string {
   if (technologySlug === 'html') return 'html'
   if (technologySlug === 'css') return 'css'
   if (technologySlug === 'typescript' || technologySlug === 'react' || technologySlug === 'nextjs') return 'tsx'
-  if (technologySlug === 'postgresql') return 'sql'
+  if (technologySlug === 'postgresql' || technologySlug === 'mysql') return 'sql'
   if (technologySlug === 'mongodb') return 'javascript'
   if (technologySlug === 'docker') return 'dockerfile'
   if (technologySlug === 'nginx') return 'nginx'
@@ -197,7 +197,7 @@ ${questions}`
 }
 
 function formatDetailContent(
-  detail: { explanation: string; code: string; codeExplanation: string },
+  detail: { explanation?: string; code: string; codeExplanation?: string },
   input: TopicContentInput,
   language: string
 ): string {
