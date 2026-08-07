@@ -10,10 +10,11 @@ interface SEOHeadProps {
   jsonLd?: Record<string, any> | Record<string, any>[]
 }
 
-const DEFAULT_TITLE = 'DevPrep AI - AI-Powered Coding Interview Preparation'
-const DEFAULT_DESCRIPTION = 'Prepare for software engineering interviews with AI-powered coding practice, developer roadmaps, system design guides, and personalized technical preparation tools.'
+const DEFAULT_TITLE = 'DevPreps - Developer Preparation & AI Coding Technical Interview Prep'
+const DEFAULT_DESCRIPTION = 'Master developer preparation, software engineering technical interviews, system design, and coding practice with DevPreps AI tools and developer roadmaps.'
 const DEFAULT_DOMAIN = 'https://devpreps.tech'
 const DEFAULT_OG_IMAGE = 'https://devpreps.tech/fab.png'
+const DEFAULT_KEYWORDS = 'Dev Preparation, Developer Preparation, Technical Interview, Coding Interview Prep, System Design, Data Structures Algorithms, Software Engineer Interview'
 
 export function SEOHead({
   title = DEFAULT_TITLE,
@@ -25,8 +26,9 @@ export function SEOHead({
   jsonLd,
 }: SEOHeadProps) {
   useEffect(() => {
-    // 1. Update Title
-    document.title = title.includes('DevPrep') ? title : `${title} | DevPrep AI`
+    // 1. Update Title to strictly follow "DevPreps - {page}" format
+    const cleanTitle = title.replace(/\s*[-|]\s*DevPrep.*$/i, '').trim()
+    document.title = cleanTitle.startsWith('DevPreps') ? cleanTitle : `DevPreps - ${cleanTitle}`
 
     // Helper function to update or create meta tags
     const updateMetaTag = (name: string, content: string, isProperty = false) => {
@@ -40,8 +42,9 @@ export function SEOHead({
       element.setAttribute('content', content)
     }
 
-    // 2. Standard Meta Tags
+    // 2. Standard Meta Tags & Targeted SEO Keywords
     updateMetaTag('description', description)
+    updateMetaTag('keywords', DEFAULT_KEYWORDS)
     updateMetaTag('robots', noindex ? 'noindex, nofollow' : 'index, follow')
 
     // 3. OpenGraph Meta Tags

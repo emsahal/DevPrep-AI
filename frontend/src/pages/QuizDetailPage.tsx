@@ -488,6 +488,7 @@ export function QuizDetailPage() {
           )}
         </button>
       </div>
+    </div>
     </>
   )
 }
