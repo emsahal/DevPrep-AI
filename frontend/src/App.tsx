@@ -57,6 +57,8 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
+import { ScrollToTop } from '@/components/common/ScrollToTop'
+
 export default function App() {
   const initialize = useAuthStore(s => s.initialize)
 
@@ -67,6 +69,7 @@ export default function App() {
       <ThemeProvider>
         <ToastProvider>
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
             <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
