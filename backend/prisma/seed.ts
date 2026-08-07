@@ -418,6 +418,26 @@ async function main() {
     }
   }
   console.log('Learning paths seeded')
+
+  try {
+    const Redis = (await import('ioredis')).default
+    const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
+      lazyConnect: true,
+      maxRetriesPerRequest: 1,
+      retryStrategy: () => null,
+    })
+    redis.on('error', () => undefined)
+    await redis.connect()
+    const keys = await redis.keys('learning-path*')
+    if (keys.length > 0) {
+      await redis.del(...keys)
+      console.log(`Cleared ${keys.length} cached learning path entries.`)
+    }
+    await redis.disconnect()
+  } catch {
+    console.log('Redis cache not cleared because Redis is unavailable.')
+  }
+
   console.log('Seed completed')
 }
 
