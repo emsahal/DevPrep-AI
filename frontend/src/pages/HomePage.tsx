@@ -1,4 +1,35 @@
 import { Link } from 'react-router-dom'
+import { SEOHead } from '@/components/common/SEOHead'
+
+const homeJsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'DevPrep AI',
+    url: 'https://devpreps.tech',
+    logo: 'https://devpreps.tech/fab.png',
+    sameAs: ['https://github.com/emsahal'],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'DevPrep AI',
+    url: 'https://devpreps.tech',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'DevPrep AI',
+    applicationCategory: 'EducationalApplication',
+    operatingSystem: 'Web',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+    },
+    description: 'Prepare for software engineering interviews with AI-powered coding practice, developer roadmaps, system design guides, and personalized preparation tools.',
+  },
+]
 import { useState, useEffect } from 'react'
 import { motion } from 'motion/react'
 import { AnimateOnScroll } from '@/components/common/AnimateOnScroll'
@@ -118,6 +149,8 @@ export function HomePage() {
   }
 
   return (
+    <>
+      <SEOHead jsonLd={homeJsonLd} />
     <div className="min-h-[calc(100vh-64px)] flex flex-col font-sans selection:bg-primary/30 selection:text-white" style={{ background: 'var(--color-surface-container-lowest)', color: '#ffffff', fontFamily: '"Inter", sans-serif' }}>
 
       {/* ═══════ 1. Hero Section (No bottom border, opacity 0.50) ═══════ */}
@@ -1188,5 +1221,6 @@ export function HomePage() {
       </section>
 
     </div>
+    </>
   )
 }

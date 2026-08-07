@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { learningPathService } from '@/services/learningPathService'
 import { MaterialIcon } from '@/components/common/MaterialIcon'
 import { TechLogo } from '@/components/common/TechLogo'
+import { SEOHead } from '@/components/common/SEOHead'
 
 const COLORS = [
   'var(--color-primary)', 'var(--color-secondary)', 'var(--color-tertiary)',
@@ -17,7 +18,12 @@ export function LearningPathsPage() {
   })
 
   return (
-    <div className="px-6 py-8 max-w-7xl mx-auto">
+    <>
+      <SEOHead
+        title="Developer Roadmaps & CS Learning Paths"
+        description="Structured, step-by-step developer learning roadmaps for Frontend, Backend, Full-Stack, Database Systems, DevOps, System Design, and DSA."
+      />
+      <div className="px-6 py-8 max-w-7xl mx-auto">
       <div className="mb-10 animate-fade-up">
         <h1 className="text-4xl font-extrabold tracking-tight mb-2" style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-on-surface)' }}>
           Learning Roadmaps
@@ -93,5 +99,6 @@ export function LearningPathsPage() {
         </div>
       )}
     </div>
+    </>
   )
 }

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { technologyService } from '@/services/technologyService'
 import { TechLogo } from '@/components/common/TechLogo'
+import { SEOHead } from '@/components/common/SEOHead'
 
 const CATEGORIES = ['All', 'Frontend', 'Backend', 'Database', 'Security', 'DevOps', 'System Design', 'DSA', 'Projects']
 
@@ -24,7 +25,12 @@ export function TechnologyLibraryPage() {
   )
 
   return (
-    <div className="px-6 py-8 max-w-7xl mx-auto">
+    <>
+      <SEOHead
+        title="Technology & Computer Science Library"
+        description="Explore in-depth technical documentation, interview topics, and code labs across HTML, CSS, JavaScript, React, Node.js, MySQL, PostgreSQL, MongoDB, Redis, Docker, System Design, and DSA."
+      />
+      <div className="px-6 py-8 max-w-7xl mx-auto">
       <div className="mb-8 animate-fade-up">
         <h1 className="text-4xl font-extrabold tracking-tight mb-2" style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-on-surface)' }}>
           Tech Library
@@ -103,5 +109,6 @@ export function TechnologyLibraryPage() {
         </>
       )}
     </div>
+    </>
   )
 }

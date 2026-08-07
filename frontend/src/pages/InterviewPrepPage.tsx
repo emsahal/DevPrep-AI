@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { interviewPrepService } from '@/services/interviewPrepService'
 import { MaterialIcon } from '@/components/common/MaterialIcon'
+import { SEOHead } from '@/components/common/SEOHead'
 
 const TOPIC_ICONS: Record<string, string> = {
   HTML: 'code',
@@ -24,8 +25,8 @@ const TOPIC_ICONS: Record<string, string> = {
   Security: 'shield',
   DevOps: 'devops',
   System_Design: 'architecture',
-  DSA: 'algorithm',
-  System_Design_Case_Scenarios: 'architecture',
+  DSA: 'psychology',
+  System_Design_Case_Scenarios: 'design_services',
 }
 
 const TOPIC_COLORS: Record<string, string> = {
@@ -65,15 +66,20 @@ export function InterviewPrepPage() {
   )
 
   return (
-    <div className="px-6 py-8 max-w-7xl mx-auto">
-      <div className="mb-8 animate-fade-up">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-2" style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-on-surface)' }}>
-          Interview Prep
-        </h1>
-        <p className="text-sm max-w-xl" style={{ color: 'var(--color-on-surface-variant)' }}>
-          {isLoading ? 'Loading...' : `${topics?.length ?? 0} topics with ${(topics ?? []).reduce((s, t) => s + t.questionCount, 0)}+ questions and code examples.`}
-        </p>
-      </div>
+    <>
+      <SEOHead
+        title="Technical Interview Preparation Questions & Answers"
+        description="Comprehensive technical interview preparation with topic guides, code walkthroughs, conceptual explanations, and interview Q&A for software engineers."
+      />
+      <div className="px-6 py-8 max-w-7xl mx-auto">
+        <div className="mb-8 animate-fade-up">
+          <h1 className="text-4xl font-extrabold tracking-tight mb-2" style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-on-surface)' }}>
+            Interview Prep
+          </h1>
+          <p className="text-sm max-w-xl" style={{ color: 'var(--color-on-surface-variant)' }}>
+            {isLoading ? 'Loading...' : `${topics?.length ?? 0} topics with ${(topics ?? []).reduce((s, t) => s + t.questionCount, 0)}+ questions and code examples.`}
+          </p>
+        </div>
 
       <div className="glass-panel rounded-2xl px-4 py-3 mb-8 flex items-center gap-4 sticky top-[72px] z-30 animate-fade-up animation-delay-100">
         <div className="flex items-center gap-2 flex-1 min-w-0 rounded-xl px-3 py-2 ai-glow-focus"
@@ -131,5 +137,6 @@ export function InterviewPrepPage() {
         </>
       )}
     </div>
+    </>
   )
 }

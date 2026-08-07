@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { gamificationService } from '@/services/gamificationService'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { SEOHead } from '@/components/common/SEOHead'
 import type { LeaderboardEntry } from '@/types'
 
 const TABS = [
@@ -79,7 +80,12 @@ export function LeaderboardPage() {
   })
 
   return (
-    <div className="px-6 py-8 max-w-4xl mx-auto">
+    <>
+      <SEOHead
+        title="Developer Leaderboard & Technical Rankings"
+        description="Top software engineers and computer science learners on DevPrep AI. Compete in technical duels, complete roadmaps, and earn badges."
+      />
+      <div className="px-6 py-8 max-w-4xl mx-auto">
       <div className="mb-8 animate-fade-up">
         <h1 className="text-4xl font-extrabold tracking-tight mb-2" style={{ color: 'var(--color-on-surface)' }}>
           Leaderboard
@@ -179,5 +185,6 @@ export function LeaderboardPage() {
         </>
       )}
     </div>
+    </>
   )
 }

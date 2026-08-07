@@ -17,7 +17,7 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      "flex h-11 w-full items-center justify-between rounded-xl border border-[var(--color-border-muted)] bg-[var(--color-surface-container)] px-3.5 py-2 text-sm text-[var(--color-on-surface)] shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-500/50 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 cursor-pointer transition-all hover:bg-[var(--color-surface-container-high)]",
+      "flex h-11 w-full items-center justify-between rounded-xl border-none bg-[var(--color-surface-container)] px-4 py-2 text-sm text-[var(--color-on-surface)] shadow-none outline-none focus:outline-none focus:ring-0 focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 cursor-pointer transition-all hover:bg-[var(--color-surface-container-high)]",
       className
     )}
     {...props}
@@ -100,7 +100,7 @@ SelectContent.displayName = SelectPrimitive.Content.displayName
 const SelectLabel = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Label>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>
->(({ className, ...props }, ref) => (
+>(({ className, children, ...props }, ref) => (
   <SelectPrimitive.Label
     ref={ref}
     className={cn("py-1.5 pl-8 pr-2 text-xs font-semibold text-[var(--color-outline)]", className)}

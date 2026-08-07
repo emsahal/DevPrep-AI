@@ -83,43 +83,50 @@ export function QuizzesPage() {
         </p>
       </div>
 
-      {/* AI Quiz Generation Form */}
+      {/* AI Quiz Generation Form - 2 Sided (Left & Right) */}
       <form onSubmit={handleCreateQuiz}
-            className="bento-card ai-glow-border p-6 mb-8 rounded-2xl animate-fade-up animation-delay-100">
-        <div className="flex items-center gap-2.5 mb-2">
-          <span className="material-symbols-outlined text-2xl" style={{ color: 'var(--color-primary)' }}>auto_awesome</span>
-          <h2 className="font-extrabold text-xl" style={{ color: 'var(--color-on-surface)' }}>Create Custom AI Quiz</h2>
-        </div>
-        <p className="text-xs mb-4" style={{ color: 'var(--color-outline)' }}>
-          Type any topic, like "debouncing and throttling", and Gemini will create a saved quiz.
-        </p>
-
+            className="bento-card ai-glow-border p-6 mb-8 rounded-2xl animate-fade-up animation-delay-100 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        {/* Left Side: Title & Custom Topic Input */}
         <div className="flex flex-col gap-4">
-          <input
-            value={customTopic}
-            onChange={event => setCustomTopic(event.target.value)}
-            placeholder="Enter custom topic..."
-            className="w-full rounded-xl px-4 py-3 text-sm outline-none transition-all"
-            style={{
-              background: 'var(--color-surface-container)',
-              border: '1px solid var(--color-border-muted)',
-              color: 'var(--color-on-surface)'
-            }}
-          />
-          {createQuizMutation.isError && (
-            <p className="text-xs font-medium" style={{ color: 'var(--color-error)' }}>
-              Could not create quiz. Check Gemini quota/API key and try again.
+          <div>
+            <div className="flex items-center gap-2.5 mb-1.5">
+              <span className="material-symbols-outlined text-2xl" style={{ color: 'var(--color-primary)' }}>auto_awesome</span>
+              <h2 className="font-extrabold text-xl" style={{ color: 'var(--color-on-surface)' }}>Create Custom AI Quiz</h2>
+            </div>
+            <p className="text-xs" style={{ color: 'var(--color-outline)' }}>
+              Type any topic, like "debouncing and throttling", and Gemini will create a saved quiz.
             </p>
-          )}
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+          <div className="flex flex-col gap-2">
+            <input
+              value={customTopic}
+              onChange={event => setCustomTopic(event.target.value)}
+              placeholder="Enter custom topic..."
+              className="w-full rounded-xl px-4 py-3 text-sm outline-none border-none focus:outline-none focus:ring-0 focus-visible:ring-0 transition-all"
+              style={{
+                background: 'var(--color-surface-container)',
+                color: 'var(--color-on-surface)'
+              }}
+            />
+            {createQuizMutation.isError && (
+              <p className="text-xs font-medium" style={{ color: 'var(--color-error)' }}>
+                Could not create quiz. Check Gemini quota/API key and try again.
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Right Side: Shadcn Select Dropdowns & Submit Button */}
+        <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--color-outline)' }}>
+              <label className="block text-xs font-semibold mb-1.5 ml-0.5" style={{ color: 'var(--color-outline)' }}>
                 Type
               </label>
               <Select value={quizType} onValueChange={setQuizType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select type" />
+                <SelectTrigger className="border-none shadow-none focus:ring-0">
+                  <SelectValue placeholder="Custom" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="custom">Custom</SelectItem>
@@ -130,12 +137,12 @@ export function QuizzesPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--color-outline)' }}>
+              <label className="block text-xs font-semibold mb-1.5 ml-0.5" style={{ color: 'var(--color-outline)' }}>
                 Difficulty
               </label>
               <Select value={difficulty} onValueChange={setDifficulty}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select difficulty" />
+                <SelectTrigger className="border-none shadow-none focus:ring-0">
+                  <SelectValue placeholder="Mixed" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="mixed">Mixed</SelectItem>
@@ -147,12 +154,12 @@ export function QuizzesPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--color-outline)' }}>
+              <label className="block text-xs font-semibold mb-1.5 ml-0.5" style={{ color: 'var(--color-outline)' }}>
                 Questions
               </label>
               <Select value={String(questionCount)} onValueChange={val => setQuestionCount(Number(val))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Questions count" />
+                <SelectTrigger className="border-none shadow-none focus:ring-0">
+                  <SelectValue placeholder="15" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="15">15</SelectItem>
@@ -164,7 +171,7 @@ export function QuizzesPage() {
           </div>
 
           <button type="submit" disabled={!customTopic.trim() || createQuizMutation.isPending}
-                  className="w-full py-3 rounded-xl font-bold text-sm transition-all hover:opacity-90 active:scale-[0.99] disabled:opacity-40"
+                  className="w-full py-3 rounded-xl font-bold text-sm transition-all hover:opacity-90 active:scale-[0.99] disabled:opacity-40 border-none outline-none"
                   style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary-fixed)' }}>
             {createQuizMutation.isPending ? 'Creating...' : 'Create Quiz'}
           </button>

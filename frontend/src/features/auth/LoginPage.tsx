@@ -13,6 +13,7 @@ import { SocialAuthButton } from './SocialAuthButton'
 import { Loader2 } from 'lucide-react'
 import BlurText from '@/components/ui/BlurText'
 import logo from '@/assets/logo.png'
+import { SEOHead } from '@/components/common/SEOHead'
 
 const codeLineStyle = (index: number, text: string, baseDelayMs = 0): CSSProperties => {
   const chars = Math.max(text.length, 2)
@@ -61,7 +62,9 @@ export function LoginPage() {
   }
 
   return (
-    <div className="h-screen w-full flex overflow-hidden font-sans selection:bg-white/30 selection:text-zinc-950 relative" style={{ fontFamily: '"Inter", sans-serif' }}>
+    <>
+      <SEOHead title="Sign In to DevPrep AI" noindex={true} />
+      <div className="h-screen w-full flex overflow-hidden font-sans selection:bg-white/30 selection:text-zinc-950 relative" style={{ fontFamily: '"Inter", sans-serif' }}>
       
       {/* ═══════ Fixed Top-Left Logo Badge ═══════ */}
       <div className="fixed top-6 left-6 sm:top-8 sm:left-8 z-50">
@@ -271,5 +274,6 @@ export function LoginPage() {
       </section>
 
     </div>
+    </>
   )
 }
