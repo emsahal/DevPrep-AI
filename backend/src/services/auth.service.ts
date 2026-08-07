@@ -6,6 +6,7 @@ import { config } from '@/config'
 import { AppError } from '@/middleware/errorHandler'
 import type { RegisterInput, LoginInput, GoogleAuthInput } from '@/validators/auth'
 import type { Prisma } from '@prisma/client'
+import { sendOnboardingEmail } from '@/services/email.service'
 
 interface GoogleTokenInfo {
   aud?: string
@@ -263,6 +264,12 @@ export class AuthService {
     })
 
     const { accessToken, refreshToken } = await this.issueTokens(user)
+
+    // Trigger beautiful Resend onboarding email
+    sendOnboardingEmail(user.email, user.name).catch((err) => {
+      console.error('[Onboarding Email Error]', err)
+    })
+
     return { user, accessToken, refreshToken }
   }
 

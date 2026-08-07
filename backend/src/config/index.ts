@@ -24,6 +24,11 @@ export const config = {
     refreshExpiry: process.env.JWT_REFRESH_EXPIRY || '7d',
   },
 
+  resend: {
+    apiKey: process.env.RESEND_API_KEY || '',
+    fromEmail: process.env.RESEND_FROM_EMAIL || 'onboarding@devpreps.tech',
+  },
+
   nvidia: {
     apiKey: process.env.NVIDIA_API_KEY || '',
     model: process.env.NVIDIA_MODEL || 'openai/gpt-oss-20b',

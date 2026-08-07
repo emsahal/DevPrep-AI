@@ -30,7 +30,7 @@ const homeJsonLd = [
     description: 'Prepare for software engineering interviews with AI-powered coding practice, developer roadmaps, system design guides, and personalized preparation tools.',
   },
 ]
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion } from 'motion/react'
 import { AnimateOnScroll } from '@/components/common/AnimateOnScroll'
 import BlurText from '@/components/ui/BlurText'
@@ -39,7 +39,6 @@ import { secondLargestQuestions, twoSumQuestions } from '@/data/homeCodeSamples'
 import GradientWaves from '@/components/ui/GradientWaves'
 import StarBorder from '@/components/ui/StarBorder'
 import LogoLoop from '@/components/ui/LogoLoop'
-import { reviewService } from '@/services/reviewService'
 import {
   SiHtml5,
   SiCss,
@@ -98,55 +97,42 @@ const techLogos = [
   { node: <TbGauge className="text-[#EAB308]" />, title: "Performance", href: "/library/performance" },
   { node: <TbShieldLock className="text-[#DC2626]" />, title: "Security", href: "/library/security" },
   { node: <TbTopologyStar3 className="text-[#0891B2]" />, title: "System Design", href: "/library/system-design" },
-  { node: <TbBinaryTree className="text-[#7C3AED]" />, title: "DSA", href: "/library/dsa" },
+  { node: <TbBinaryTree className="text-[#A855F7]" />, title: "DSA", href: "/library/dsa" },
 ]
 
+const sectionHeadingStyle = {
+  fontFamily: '"Inter", sans-serif',
+  fontWeight: 800,
+  letterSpacing: '-0.03em',
+  color: '#ffffff',
+}
+
 const faqs = [
-  { q: 'Is there a free trial?', a: 'Yes. Our platform allows complete diagnostic assessments and access to introductory modules across all CS paths at no cost.' },
-  { q: 'How realistic are the mock practice sessions?', a: 'Our AI Tutor provides structured, step-by-step technical interviewing questions, instant rubrics, and real-time code analysis.' },
-  { q: 'What programming languages are supported?', a: 'Full support for C++, Java, Python, Go, JavaScript, TypeScript, and Rust, including language-specific optimization feedback and idiom checks.' },
-  { q: 'How does the AI tutor work?', a: 'Our AI tutor provides real-time explanations, code reviews, and hints. You can ask questions about any topic, get code walkthroughs, or request personalized study plans.' },
-  { q: 'Can I practice company-specific questions?', a: 'Absolutely. Our platform includes curated question banks and practice topics covering core computer science subjects and interview patterns.' },
+  { q: 'How does DevPrep AI differ from conventional DSA platforms?', a: 'DevPrep AI combines interactive coding practice with real-time AI tutoring, complexity heatmaps, ATS resume optimization, and competitive 1v1 duels designed specifically for end-to-end technical interview loops.' },
+  { q: 'What programming languages are supported in the Code Analyzer?', a: 'Our live Code Analyzer supports C++, JavaScript, TypeScript, Python, and Java with real-time linting, complexity estimation, and unit test generation.' },
+  { q: 'Can I track my progress across different computer science topics?', a: 'Yes! DevPrep AI features structured Learning Paths with milestone tracking, space repetition flashcards, and personalized performance analytics.' },
+  { q: 'Are the interview preparation questions updated for FAANG & top tech companies?', a: 'Our question bank and system design breakdown guides are updated regularly to reflect real-world interview loops at top software engineering firms.' },
 ]
+
+function SectionSeparator() {
+  return (
+    <div className="relative w-full overflow-hidden h-0 z-20 pointer-events-none">
+      <div
+        aria-hidden="true"
+        className="center pointer-events-none absolute max-w-full -translate-x-1/2 -translate-y-1/2 -top-1 left-1/2 right-1 h-[300px] w-[320px] sm:left-auto"
+        style={{
+          background: 'conic-gradient(from 90deg, rgba(0, 0, 0, 0) 50%, rgb(0, 0, 0) 50%), radial-gradient(rgba(200, 200, 200, 0.15) 0%, transparent 80%)',
+        }}
+      />
+    </div>
+  )
+}
 
 export function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
-  const [reviews, setReviews] = useState<any[]>([])
-  const [secondLargestQ] = useState(
-    () => secondLargestQuestions[Math.floor(Math.random() * secondLargestQuestions.length)]
-  )
-  const [twoSumQ] = useState(
-    () => twoSumQuestions[Math.floor(Math.random() * twoSumQuestions.length)]
-  )
 
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const data = await reviewService.getReviews()
-        setReviews(data)
-      } catch (err) {
-        console.error('Failed to fetch reviews:', err)
-      }
-    }
-
-    fetchReviews()
-
-    window.addEventListener('devprep-reviews-updated', fetchReviews)
-    return () => window.removeEventListener('devprep-reviews-updated', fetchReviews)
-  }, [])
-
-  // Standard Framer/SaaS section heading style
-  const sectionHeadingStyle = {
-    fontFamily: '"Inter", sans-serif',
-    fontWeight: 500,
-    fontStyle: 'normal',
-    letterSpacing: '-0.04em',
-    lineHeight: 1.1,
-    textAlign: 'center' as const,
-    color: 'rgb(207, 234, 255)',
-    textTransform: 'none' as const,
-    textDecoration: 'none',
-  }
+  const secondLargestQ = secondLargestQuestions[0]
+  const twoSumQ = twoSumQuestions[0]
 
   return (
     <>
@@ -238,8 +224,10 @@ export function HomePage() {
         </div>
       </section>
 
+      <SectionSeparator />
+
       {/* ═══════ Tech Stack & Topics LogoLoop Marquee ═══════ */}
-      <section className="py-7 border-b border-white/10 overflow-hidden" style={{ background: 'rgba(14,14,18,0.95)' }}>
+      <section className="relative py-7 border-b border-white/10 overflow-hidden" style={{ background: 'rgba(14,14,18,0.95)' }}>
         <LogoLoop
           logos={techLogos}
           speed={60}
@@ -265,6 +253,8 @@ export function HomePage() {
           )}
         />
       </section>
+
+      <SectionSeparator />
 
       {/* ═══════ 2. Platform Overview ═══════ */}
       <section className="py-20 border-b border-white/10" style={{ background: 'var(--color-surface-container-low)' }}>
@@ -340,6 +330,8 @@ export function HomePage() {
           </div>
         </div>
       </section>
+
+      <SectionSeparator />
 
       {/* ═══════ 3. Core Features ═══════ */}
       <section className="py-20 border-b border-white/10" style={{ background: 'var(--color-surface-container-lowest)' }}>
@@ -424,6 +416,8 @@ export function HomePage() {
         </div>
       </section>
 
+      <SectionSeparator />
+
       {/* ═══════ 4. How it Works (Workflow) ═══════ */}
       <section className="py-24 border-b border-white/10" style={{ background: 'var(--color-surface-container-low)' }}>
         <div className="container mx-auto px-6 max-w-5xl">
@@ -470,6 +464,8 @@ export function HomePage() {
           </div>
         </div>
       </section>
+
+      <SectionSeparator />
 
       {/* ═══════ 5. Live Code Lab ═══════ */}
       <section className="py-20 border-b border-white/10 relative overflow-hidden" style={{ background: 'var(--color-surface-container-lowest)' }}>
@@ -557,6 +553,8 @@ export function HomePage() {
           </div>
         </div>
       </section>
+
+      <SectionSeparator />
 
       {/* ═══════ 6. AI Powered Tools Preview ═══════ */}
       <section className="py-20 border-b border-white/10 relative overflow-hidden" style={{ background: 'var(--color-surface-container-low)' }}>
@@ -669,6 +667,8 @@ export function HomePage() {
         </div>
       </section>
 
+      <SectionSeparator />
+
       {/* ═══════ 7. 2-Column Comparison Section ═══════ */}
       <section className="py-20 border-b border-white/10" style={{ background: 'var(--color-surface-container-lowest)' }}>
         <div className="container mx-auto px-6 max-w-5xl">
@@ -766,6 +766,8 @@ export function HomePage() {
           </div>
         </div>
       </section>
+
+      <SectionSeparator />
 
       {/* ═══════ 8. Neural Engine ═══════ */}
       <section className="py-24 border-b border-white/10 relative overflow-hidden" style={{ background: 'var(--color-surface-container-low)' }}>
@@ -876,6 +878,8 @@ export function HomePage() {
         </div>
       </section>
 
+      <SectionSeparator />
+
       {/* ═══════ 9. Career Stages ═══════ */}
       <section className="py-24 border-b border-white/10" style={{ background: 'var(--color-surface-container-low)' }}>
         <div className="container mx-auto px-6 max-w-5xl">
@@ -935,235 +939,7 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* ═══════ 10. Process Section (Methodology) ═══════ */}
-      <section className="py-24 border-b border-white/10 relative overflow-hidden" style={{ background: 'var(--color-surface-container-lowest)' }}>
-        {/* Background glow accent */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-primary/5 rounded-full blur-[140px] pointer-events-none" />
-
-        <div className="container mx-auto px-6 max-w-6xl relative z-10">
-          <AnimateOnScroll direction="up">
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <span className="badge mb-3">Methodology</span>
-              <h2 className="text-3xl sm:text-[40px] mb-4" style={sectionHeadingStyle}>The Engineering Process</h2>
-              <p className="text-white text-sm sm:text-base opacity-90 leading-relaxed mb-6 font-normal">
-                Our proprietary methodology for turning candidates into top-percentile hires through iterative AI loops.
-              </p>
-            </div>
-          </AnimateOnScroll>
-
-          {/* 4-Phase Grid with Glow Cards & Step Numbers */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
-            {[
-              {
-                num: '01',
-                tag: '01 / DIAGNOSTICS',
-                title: 'Deep Skill Assessment',
-                desc: 'AI-driven benchmarking of your current technical stack and interview readiness across 12 dimensions.',
-                icon: 'radar',
-                color: '#38bdf8',
-                badgeBg: 'rgba(56, 189, 248, 0.1)',
-                borderColor: 'rgba(56, 189, 248, 0.25)',
-              },
-              {
-                num: '02',
-                tag: '02 / EXECUTION',
-                title: 'Targeted Prep Sprints',
-                desc: 'Rapid iteration on weak points with adaptive problem sets that increase in complexity as you improve.',
-                icon: 'bolt',
-                color: '#a78bfa',
-                badgeBg: 'rgba(167, 139, 250, 0.1)',
-                borderColor: 'rgba(167, 139, 250, 0.25)',
-              },
-              {
-                num: '03',
-                tag: '03 / SIMULATION',
-                title: 'Mock Interview Loops',
-                desc: 'High-pressure simulations with our LLM-powered interviewers, trained on verified tech interview transcripts.',
-                icon: 'psychology',
-                color: '#f43f5e',
-                badgeBg: 'rgba(244, 63, 94, 0.1)',
-                borderColor: 'rgba(244, 63, 94, 0.25)',
-              },
-              {
-                num: '04',
-                tag: '04 / DEPLOYMENT',
-                title: 'Final Polish & Placement',
-                desc: 'Confidence calibration and negotiation coaching for your final onboarding phase.',
-                icon: 'verified',
-                color: '#10b981',
-                badgeBg: 'rgba(16, 185, 129, 0.1)',
-                borderColor: 'rgba(16, 185, 129, 0.25)',
-              },
-            ].map((node, i) => (
-              <AnimateOnScroll key={node.tag} direction="up" delay={i * 100}>
-                <div
-                  className="group relative p-8 rounded-2xl border transition-all duration-300 hover:-translate-y-1.5 overflow-hidden h-full flex flex-col justify-between"
-                  style={{
-                    background: 'linear-gradient(145deg, rgba(24,24,30,0.75) 0%, rgba(14,14,18,0.95) 100%)',
-                    borderColor: node.borderColor,
-                    boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.4)',
-                  }}
-                >
-                  {/* Glowing background corner accent */}
-                  <div
-                    className="absolute -top-10 -right-10 w-32 h-32 rounded-full blur-2xl opacity-15 group-hover:opacity-35 transition-opacity duration-500 pointer-events-none"
-                    style={{ background: node.color }}
-                  />
-
-                  {/* Giant Watermark Step Number */}
-                  <span
-                    className="absolute right-6 bottom-4 font-mono font-black text-7xl select-none pointer-events-none opacity-10 group-hover:opacity-20 transition-opacity duration-300"
-                    style={{ color: node.color, fontFamily: '"Inter", sans-serif' }}
-                  >
-                    {node.num}
-                  </span>
-
-                  <div className="relative z-10">
-                    <div className="flex items-center justify-between gap-3 mb-6">
-                      <span
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-bold tracking-wider uppercase"
-                        style={{
-                          background: node.badgeBg,
-                          color: node.color,
-                          border: `1px solid ${node.borderColor}`,
-                        }}
-                      >
-                        {node.tag}
-                      </span>
-                      <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 duration-300"
-                        style={{ background: node.badgeBg, color: node.color }}
-                      >
-                        <span className="material-symbols-outlined text-2xl">{node.icon}</span>
-                      </div>
-                    </div>
-
-                    <h3 className="font-bold text-xl mb-3 text-white tracking-tight" style={{ fontFamily: '"Inter", sans-serif' }}>
-                      {node.title}
-                    </h3>
-                    <p className="text-white text-sm opacity-85 leading-relaxed font-normal">
-                      {node.desc}
-                    </p>
-                  </div>
-                </div>
-              </AnimateOnScroll>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════ 11. Testimonials (Social Proof) ═══════ */}
-      <section className="py-24 border-b border-white/10" style={{ background: 'var(--color-surface-container-low)' }}>
-        <div className="container mx-auto px-6 max-w-6xl">
-          <AnimateOnScroll direction="up">
-            <div className="text-center max-w-3xl mx-auto mb-14 flex flex-col items-center">
-              <span className="badge mb-3">Social Proof</span>
-              <h2 className="text-3xl sm:text-[40px] mb-4" style={sectionHeadingStyle}>Verified Tech Placements</h2>
-              <p className="text-white text-sm sm:text-base opacity-90 font-normal">
-                Hear from engineers who leveraged DevPrep AI to land roles at top tech companies.
-              </p>
-              <button
-                onClick={() => window.dispatchEvent(new CustomEvent('open-review-modal'))}
-                className="mt-5 px-5 py-2.5 rounded-full font-semibold text-xs text-white border border-white/15 bg-white/5 hover:bg-white/10 hover:border-white/25 hover:shadow-[0_0_15px_rgba(255,255,255,0.05)] transition-all active:scale-95 duration-150"
-              >
-                Write a Review
-              </button>
-            </div>
-          </AnimateOnScroll>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {reviews.length > 0 ? (
-              reviews.map((rev: any, index: number) => (
-                <AnimateOnScroll key={rev.id || index} direction="up" delay={index * 100}>
-                  <div className="p-6 rounded-2xl border h-full transition-all duration-300 hover:-translate-y-1"
-                       style={{
-                         background: 'linear-gradient(145deg, rgba(28,27,35,0.7) 0%, rgba(18,18,22,0.9) 100%)',
-                         borderColor: 'rgba(255,255,255,0.08)',
-                       }}>
-                    <div className="flex items-center gap-1 text-yellow-400 mb-3">
-                      {Array.from({ length: rev.rating || 5 }).map((_, i) => (
-                        <svg key={i} className="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                      ))}
-                    </div>
-                    <p className="text-white text-xs sm:text-sm leading-relaxed mb-6 opacity-90 italic">
-                      "{rev.text}"
-                    </p>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary text-sm">
-                        {rev.initials}
-                      </div>
-                      <div>
-                        <div className="text-sm font-semibold text-white">{rev.name}</div>
-                        <div className="text-[10px] font-mono text-primary uppercase">{rev.role}</div>
-                      </div>
-                    </div>
-                  </div>
-                </AnimateOnScroll>
-              ))
-            ) : (
-              <>
-                <AnimateOnScroll direction="left" delay={0}>
-                  <div className="p-6 rounded-2xl border h-full transition-all duration-300 hover:-translate-y-1"
-                       style={{
-                         background: 'linear-gradient(145deg, rgba(28,27,35,0.7) 0%, rgba(18,18,22,0.9) 100%)',
-                         borderColor: 'rgba(255,255,255,0.08)',
-                       }}>
-                    <p className="text-white text-xs sm:text-sm leading-relaxed mb-6 opacity-90 italic">
-                      "The system design feedback was incredibly detailed. It pointed out flaws in my database sharding logic that I never would have noticed myself."
-                    </p>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary">AR</div>
-                      <div>
-                        <div className="text-sm font-semibold text-white">Alex Rivera</div>
-                        <div className="text-[10px] font-mono text-primary uppercase">SDE II @ Stripe</div>
-                      </div>
-                    </div>
-                  </div>
-                </AnimateOnScroll>
-
-                <AnimateOnScroll direction="up" delay={100}>
-                  <div className="p-6 rounded-2xl border h-full transition-all duration-300 hover:-translate-y-1 shadow-[0_0_25px_rgba(139,92,246,0.1)]"
-                       style={{
-                         background: 'linear-gradient(145deg, rgba(139,92,246,0.12) 0%, rgba(20,20,25,0.9) 100%)',
-                         borderColor: 'rgba(139,92,246,0.3)',
-                       }}>
-                    <p className="text-white text-xs sm:text-sm leading-relaxed mb-6 italic">
-                      "DevPrep AI helped me transition smoothly to a top software role in just 3 months. The roadmap kept me focused on what actually matters in interviews."
-                    </p>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-primary/30 flex items-center justify-center font-bold text-primary">SC</div>
-                      <div>
-                        <div className="text-sm font-semibold text-white">Sarah Chen</div>
-                        <div className="text-[10px] font-mono text-primary uppercase">Software Engineer</div>
-                      </div>
-                    </div>
-                  </div>
-                </AnimateOnScroll>
-
-                <AnimateOnScroll direction="right" delay={200}>
-                  <div className="p-6 rounded-2xl border h-full transition-all duration-300 hover:-translate-y-1"
-                       style={{
-                         background: 'linear-gradient(145deg, rgba(28,27,35,0.7) 0%, rgba(18,18,22,0.9) 100%)',
-                         borderColor: 'rgba(255,255,255,0.08)',
-                       }}>
-                    <p className="text-white text-xs sm:text-sm leading-relaxed mb-6 opacity-90 italic">
-                      "The AI tutor doesn't just give the answer; it guides you to find it. Essential for mastering senior-level technical communication."
-                    </p>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary">MT</div>
-                      <div>
-                        <div className="text-sm font-semibold text-white">Marcus Thorne</div>
-                        <div className="text-[10px] font-mono text-primary uppercase">Lead Architect @ Vercel</div>
-                      </div>
-                    </div>
-                  </div>
-                </AnimateOnScroll>
-              </>
-            )}
-          </div>
-        </div>
-      </section>
+      <SectionSeparator />
 
       {/* ═══════ 12. FAQ (Support) ═══════ */}
       <section className="py-24 border-b border-white/10" style={{ background: 'var(--color-surface-container-lowest)' }}>
@@ -1201,6 +977,8 @@ export function HomePage() {
           </AnimateOnScroll>
         </div>
       </section>
+
+      <SectionSeparator />
 
       {/* ═══════ 13. Final CTA (Get Started) ═══════ */}
       <section className="py-24 text-center" style={{ background: 'var(--color-surface-container-low)' }}>
