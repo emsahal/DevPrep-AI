@@ -114,20 +114,6 @@ const faqs = [
   { q: 'Are the interview preparation questions updated for FAANG & top tech companies?', a: 'Our question bank and system design breakdown guides are updated regularly to reflect real-world interview loops at top software engineering firms.' },
 ]
 
-function SectionSeparator() {
-  return (
-    <div className="relative w-full max-w-5xl mx-auto overflow-hidden rounded-3xl border-t border-white/10 px-6 py-12 pointer-events-none z-20">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute max-w-full -translate-x-1/2 -translate-y-1/2 -top-1 left-1/2 h-[300px] w-[320px]"
-        style={{
-          background: 'conic-gradient(from 90deg, rgba(0, 0, 0, 0) 50%, rgb(139, 92, 246) 50%), radial-gradient(rgba(167, 139, 250, 0.25) 0%, transparent 80%)',
-        }}
-      />
-    </div>
-  )
-}
-
 export function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
 
@@ -224,8 +210,6 @@ export function HomePage() {
         </div>
       </section>
 
-      <SectionSeparator />
-
       {/* ═══════ Tech Stack & Topics LogoLoop Marquee ═══════ */}
       <section className="relative py-7 border-b border-white/10 overflow-hidden" style={{ background: 'rgba(14,14,18,0.95)' }}>
         <LogoLoop
@@ -254,7 +238,7 @@ export function HomePage() {
         />
       </section>
 
-      <SectionSeparator />
+
 
       {/* ═══════ 2. Platform Overview ═══════ */}
       <section className="py-20 border-b border-white/10" style={{ background: 'var(--color-surface-container-low)' }}>
@@ -331,7 +315,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <SectionSeparator />
+
 
       {/* ═══════ 3. Core Features ═══════ */}
       <section className="py-20 border-b border-white/10" style={{ background: 'var(--color-surface-container-lowest)' }}>
@@ -416,7 +400,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <SectionSeparator />
+
 
       {/* ═══════ 4. How it Works (Workflow) ═══════ */}
       <section className="py-24 border-b border-white/10" style={{ background: 'var(--color-surface-container-low)' }}>
@@ -465,7 +449,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <SectionSeparator />
+
 
       {/* ═══════ 5. Live Code Lab ═══════ */}
       <section className="py-20 border-b border-white/10 relative overflow-hidden" style={{ background: 'var(--color-surface-container-lowest)' }}>
@@ -554,7 +538,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <SectionSeparator />
+
 
       {/* ═══════ 6. AI Powered Tools Preview ═══════ */}
       <section className="py-20 border-b border-white/10 relative overflow-hidden" style={{ background: 'var(--color-surface-container-low)' }}>
@@ -667,7 +651,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <SectionSeparator />
+
 
       {/* ═══════ 7. 2-Column Comparison Section ═══════ */}
       <section className="py-20 border-b border-white/10" style={{ background: 'var(--color-surface-container-lowest)' }}>
@@ -767,7 +751,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <SectionSeparator />
+
 
       {/* ═══════ 8. Neural Engine ═══════ */}
       <section className="py-24 border-b border-white/10 relative overflow-hidden" style={{ background: 'var(--color-surface-container-low)' }}>
@@ -878,7 +862,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <SectionSeparator />
+
 
       {/* ═══════ 9. Career Stages ═══════ */}
       <section className="py-24 border-b border-white/10" style={{ background: 'var(--color-surface-container-low)' }}>
@@ -939,7 +923,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <SectionSeparator />
+
 
       {/* ═══════ 12. FAQ (Support) ═══════ */}
       <section className="py-24 border-b border-white/10" style={{ background: 'var(--color-surface-container-lowest)' }}>
@@ -978,7 +962,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <SectionSeparator />
+
 
       {/* ═══════ 13. Final CTA (Get Started) ═══════ */}
       <section className="py-24 text-center" style={{ background: 'var(--color-surface-container-low)' }}>
