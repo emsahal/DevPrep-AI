@@ -90,13 +90,13 @@ export default function App() {
               <Route path="/code-analyzer" element={<CodeAnalyzerPage />} />
               <Route path="/quizzes" element={<QuizzesPage />} />
               <Route path="/quizzes/:id" element={<QuizDetailPage />} />
+              <Route path="/flashcards" element={<FlashcardsPage />} />
+              <Route path="/revision" element={<RevisionPage />} />
               <Route path="/interview-prep" element={<InterviewPrepPage />} />
               <Route path="/interview-prep/:slug" element={<InterviewPrepTopicPage />} />
 
               {/* Protected Routes */}
               <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-              <Route path="/flashcards" element={<ProtectedRoute><FlashcardsPage /></ProtectedRoute>} />
-              <Route path="/revision" element={<ProtectedRoute><RevisionPage /></ProtectedRoute>} />
               <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
               <Route path="/bookmarks" element={<ProtectedRoute><BookmarksPage /></ProtectedRoute>} />
               <Route path="/duel" element={<ProtectedRoute><DuelPage /></ProtectedRoute>} />

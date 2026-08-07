@@ -1,4 +1,10 @@
 User-agent: *
 Allow: /
+Disallow: /dashboard
+Disallow: /bookmarks
+Disallow: /profile
+Disallow: /settings
+Disallow: /notifications
+Disallow: /admin
 
 Sitemap: https://devpreps.tech/sitemap.xml
