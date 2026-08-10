@@ -1,2 +1,4 @@
 .vercel
 .env*
+.claude/
+litellm_config.yaml

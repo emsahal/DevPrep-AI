@@ -11,6 +11,7 @@ import { TopicContent } from '@/features/topics/components/TopicContent'
 const ADMIN_EMAIL = 'sarcasticsahal@gmail.com'
 
 import { BackButton } from '@/components/common/BackButton'
+import { BookmarkButton } from '@/components/common/BookmarkButton'
 
 const LEVEL_COLOR: Record<string, string> = {
   beginner: 'var(--color-success)',
@@ -200,6 +201,7 @@ export function TopicPage() {
                     {regenerateMutation.isPending ? 'Regenerating…' : 'Regenerate with AI'}
                   </button>
                 )}
+                <BookmarkButton type="topic" itemId={topic.id} />
                 <div className="flex rounded-full p-1" style={{ background: 'var(--color-surface-container)', border: '1px solid var(--color-border-muted)' }}>
                   {[
                     { value: 'roman', label: 'Roman Urdu' },
