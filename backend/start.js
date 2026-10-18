@@ -11,14 +11,8 @@ function sanitizeUrl(raw) {
   url = url.replace(/^["'`]|["'`]$/g, '').trim();
   // Strip accidental key prefix
   url = url.replace(/^DATABASE_URL=\s*/i, '').trim();
-  // Strip all invisible carriage returns, newlines, tabs
-  url = url.replace(/[\r\n\t]/g, '');
-  // Fix spaces around delimiters
-  url = url.replace(/\s*@\s*/g, '@')
-           .replace(/:\s+/g, ':')
-           .replace(/\s+:/g, ':')
-           .replace(/\s+\//g, '/')
-           .replace(/\/\s+/g, '/');
+  // Strip ALL whitespace, spaces, newlines, tabs anywhere in the URL
+  url = url.replace(/\s+/g, '');
 
   // Verify protocol
   if (!url.startsWith('postgresql://') && !url.startsWith('postgres://')) {

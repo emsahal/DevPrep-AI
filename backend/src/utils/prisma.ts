@@ -1,7 +1,12 @@
 import { PrismaClient } from '@prisma/client'
 import logger from './logger'
 
+const dbUrl = process.env.DATABASE_URL
+  ? process.env.DATABASE_URL.trim().replace(/^["'`]|["'`]$/g, '').replace(/\s+/g, '')
+  : undefined
+
 const prisma = new PrismaClient({
+  datasources: dbUrl ? { db: { url: dbUrl } } : undefined,
   log: [
     { level: 'warn', emit: 'event' },
     { level: 'error', emit: 'event' },
