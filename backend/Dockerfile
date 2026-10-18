@@ -35,12 +35,13 @@ COPY prisma ./prisma/
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma/client ./node_modules/@prisma/client
 
-# Copy compiled output
+# Copy compiled output and start script
 COPY --from=builder /app/dist ./dist
+COPY start.js ./start.js
 
 # Create uploads directory
 RUN mkdir -p uploads
 
 EXPOSE 5000
 
-CMD ["sh", "-c", "npx prisma db push --accept-data-loss && node dist/server.js"]
+CMD ["node", "start.js"]
