@@ -26,7 +26,7 @@ services:
       - key: PORT
         value: "5000"
       - key: DATABASE_URL
-        value: postgresql://neondb_owner:npg_54FlNBLxqQOf@ep-bitter-water-ayoiadpq-pooler.c-5.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+        value: "postgresql://neondb_owner:npg_54FlNBLxqQOf@ep-bitter-water-ayoiadpq-pooler.c-5.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
       - key: REDIS_URL
         fromService:
           type: redis

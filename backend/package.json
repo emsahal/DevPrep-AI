@@ -14,7 +14,8 @@
     "prisma:seed-content": "tsx prisma/seed-content.ts",
     "prisma:seed-real-content": "tsx prisma/seed-real-topic-content.ts",
     "prisma:reset-seed": "tsx prisma/reset-and-seed.ts",
-    "prisma:clear-topics": "tsx prisma/clear-topics.ts",    "generate-mcqs": "tsx src/scripts/generate-all-mcqs.ts",
+    "prisma:clear-topics": "tsx prisma/clear-topics.ts",
+    "generate-mcqs": "tsx src/scripts/generate-all-mcqs.ts",
     "lint": "eslint src/**/*.ts"
   },
   "keywords": [],
@@ -23,6 +24,7 @@
   "dependencies": {
     "@prisma/client": "^6.7.0",
     "@types/pdfkit": "^0.17.6",
+    "@types/pg": "^8.23.1",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -38,6 +40,7 @@
     "node-cron": "^4.6.0",
     "pdf-parse": "^2.4.5",
     "pdfkit": "^0.19.1",
+    "pg": "^8.23.1",
     "socket.io": "^4.8.3",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
