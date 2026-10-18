@@ -7,7 +7,7 @@
 # After first deploy:
 #   1. Set GEMINI_API_KEY in the Render dashboard (Environment tab)
 #   2. Set FRONTEND_URL to your Vercel frontend URL
-#   3. Run `npx prisma db push` locally against the Render DB
+#   3. Run `npx prisma db push` locally against your Neon DB
 #      to create tables, then seed manually if needed.
 # ========================================================
 
@@ -26,9 +26,7 @@ services:
       - key: PORT
         value: "5000"
       - key: DATABASE_URL
-        fromDatabase:
-          name: devprep-db
-          property: connectionString
+        value: postgresql://neondb_owner:npg_54FlNBLxqQOf@ep-bitter-water-ayoiadpq-pooler.c-5.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
       - key: REDIS_URL
         fromService:
           type: redis
@@ -68,9 +66,3 @@ services:
     maxmemoryPolicy: allkeys-lru
     ipAllowList: []
 
-# ── PostgreSQL Database ─────────────────────────────────
-databases:
-  - name: devprep-db
-    plan: free
-    databaseName: interview_prep
-    user: devprep
